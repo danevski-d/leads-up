@@ -250,36 +250,22 @@ function Hero({ onOpenTrial }) {
             <div className="hidden sm:block">
               <IntegrationHub />
             </div>
-            {/* Mobile — 3-col logo grid with names */}
-            {(() => {
-              const NAMES = { hubspot:'HubSpot', airtable:'Airtable', gmail:'Gmail', zapier:'Zapier', openai:'OpenAI', n8n:'n8n', linkedin:'LinkedIn', outlook:'Outlook', clay:'Clay' }
-              return (
-                <div className="sm:hidden px-3 pt-3 pb-5">
-                  {/* Center Leads Up node */}
-                  <div className="flex flex-col items-center mb-6">
-                    <div style={{ width:64, height:64, borderRadius:'50%', background:`linear-gradient(135deg, #6366F1, #7C3AED)`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 32px -6px rgba(99,102,241,0.65)', marginBottom:8 }}>
-                      <Zap size={28} color="white" strokeWidth={2.2}/>
-                    </div>
-                    <span style={{ fontSize:13, fontWeight:800, color:'#F9FAFB', letterSpacing:'-0.01em' }}>Leads Up</span>
-                    <span style={{ fontSize:9, fontWeight:700, color:'#6366F1', letterSpacing:'0.16em', textTransform:'uppercase', marginTop:3 }}>AI ENGINE · ACTIVE</span>
-                  </div>
-                  {/* 3-column integration grid */}
-                  <div className="grid grid-cols-3 gap-x-4 gap-y-5">
-                    {NODES.map(n => (
-                      <div key={n.id} className="flex flex-col items-center gap-2">
-                        <div style={{ width:56, height:56, borderRadius:'50%', background:'#1a2235', border:`1.5px solid ${n.ring}40`, display:'flex', alignItems:'center', justifyContent:'center', padding:11, boxShadow:`0 2px 14px rgba(0,0,0,0.4), 0 0 12px -4px ${n.ring}30` }}>
-                          <img src={n.logo} alt={NAMES[n.id]} loading="lazy"
-                            style={{ width:'100%', height:'100%', objectFit:'contain', borderRadius:3, display:'block' }}
-                            onError={e => { e.target.style.opacity='0.25' }}
-                          />
-                        </div>
-                        <span style={{ fontSize:10, color:'#9CA3AF', textAlign:'center', lineHeight:1.3, fontWeight:500 }}>{NAMES[n.id]}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            })()}
+            {/* Mobile — same animated diagram scaled to fit */}
+            <div className="sm:hidden w-full overflow-hidden" style={{ height: '280px', position: 'relative' }}>
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%) scale(0.48)',
+                transformOrigin: 'center center',
+                width: '900px',
+                height: '520px',
+                marginLeft: '-450px',
+                marginTop: '-260px',
+              }}>
+                <IntegrationHub />
+              </div>
+            </div>
           </div>
         </div>
 
