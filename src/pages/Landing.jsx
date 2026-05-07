@@ -140,11 +140,11 @@ function IntegrationHub() {
       <div className="absolute" style={{ left:'50%', top:`${(cy/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:10 }}>
         <div style={{ textAlign:'center' }}>
           <div style={{ width:72, height:72, borderRadius:'50%', margin:'0 auto', background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 0 0 3px rgba(99,102,241,0.2), 0 0 50px -8px ${C.primaryGlow}, 0 0 0 6px rgba(99,102,241,0.06)` }}>
-            <Zap size={28} color="white" strokeWidth={2.2}/>
+            <img src="/leadsup-icon.png" alt="" style={{ height:40, width:40, objectFit:'contain', mixBlendMode:'lighten' }}/>
           </div>
           <div style={{ marginTop:8 }}>
-            <div style={{ fontSize:12, fontWeight:800, color:C.text, letterSpacing:'-0.01em' }}>Leads Up</div>
-            <div style={{ fontSize:8.5, fontWeight:700, color:C.primary, letterSpacing:'0.14em', textTransform:'uppercase', marginTop:2 }}>AI ENGINE</div>
+            <img src="/leadsup-text.png" alt="Leads Up" style={{ height:14, objectFit:'contain', mixBlendMode:'lighten', display:'block', margin:'0 auto' }}/>
+            <div style={{ fontSize:8.5, fontWeight:700, color:C.primary, letterSpacing:'0.14em', textTransform:'uppercase', marginTop:3 }}>AI ENGINE</div>
           </div>
         </div>
       </div>
@@ -158,7 +158,10 @@ function Navbar({ onOpenTrial }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50" style={{ background:`${C.bg}E8`, borderBottom:'1px solid #1F2937', backdropFilter:'blur(20px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link to="/"><img src="/leadsup-logo.jpg" alt="Leads Up" style={{ height:44, width:'auto', objectFit:'contain' }}/></Link>
+        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', mixBlendMode:'lighten' }}/>
+          <img src="/leadsup-text.png" alt="Leads Up" style={{ height:28, objectFit:'contain', mixBlendMode:'lighten' }}/>
+        </Link>
         <div className="hidden md:flex items-center gap-7 text-sm">
           {[['#features','Features'],['#how-it-works','How It Works'],['#faq','FAQ']].map(([h,l])=>(
             <a key={h} href={h} style={{ color:C.textMuted, textDecoration:'none', transition:'color 0.15s' }}
@@ -516,7 +519,10 @@ function Footer() {
   return (
     <footer className="pb-28 sm:pb-10" style={{ borderTop:`1px solid ${C.cardBorder}`, background:C.bg, paddingTop:36, paddingLeft:24, paddingRight:24 }}>
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <img src="/leadsup-logo.jpg" alt="Leads Up" style={{ height:36, width:'auto', objectFit:'contain' }}/>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <img src="/leadsup-icon.png" alt="" style={{ height:28, objectFit:'contain', mixBlendMode:'lighten' }}/>
+          <img src="/leadsup-text.png" alt="Leads Up" style={{ height:22, objectFit:'contain', mixBlendMode:'lighten' }}/>
+        </div>
         <div className="flex gap-6" style={{ fontSize:13, color:C.textMuted }}>
           <a href="#" style={{ color:C.textMuted, textDecoration:'none' }}>Privacy</a>
           <a href="#" style={{ color:C.textMuted, textDecoration:'none' }}>Terms</a>

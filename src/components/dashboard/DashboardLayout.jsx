@@ -40,11 +40,12 @@ function Sidebar({ collapsed, mobile, onClose, onLogout, avatarInitials, display
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {collapsed && !mobile ? (
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: 'linear-gradient(135deg, #6366F1, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Zap size={14} color="white" />
-            </div>
+            <img src="/leadsup-icon.png" alt="Leads Up" style={{ height: 28, objectFit: 'contain', mixBlendMode: 'lighten' }} />
           ) : (
-            <img src="/leadsup-logo.jpg" alt="Leads Up" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <img src="/leadsup-icon.png" alt="" style={{ height: 28, objectFit: 'contain', mixBlendMode: 'lighten' }} />
+              <img src="/leadsup-text.png" alt="Leads Up" style={{ height: 22, objectFit: 'contain', mixBlendMode: 'lighten' }} />
+            </div>
           )}
         </div>
         {/* Close button on mobile only */}
