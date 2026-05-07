@@ -9,7 +9,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Restore session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       if (session?.user) fetchProfile(session.user.id)
@@ -26,16 +25,17 @@ export function AuthProvider({ children }) {
   }, [])
 
   const fetchProfile = async (userId) => {
-    // maybeSingle() returns null (not an error) when no row exists — fixes 406
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .maybeSingle()
-
-    if (error) console.error('Profile fetch error:', error.message)
-    setProfile(data ?? null)
+    setProfile(data || null)
     setLoading(false)
+  }
+
+  const refetchProfile = () => {
+    if (user) fetchProfile(user.id)
   }
 
   const login = async (email, password) => {
@@ -50,22 +50,14 @@ export function AuthProvider({ children }) {
     setProfile(null)
   }
 
-  // Derive display name: prefer profile full_name, then email local part
-  const displayName = profile?.full_name
-    || (user?.email ? user.email.split('@')[0] : 'User')
+  const isAdmin = profile?.role === 'admin'
+  const isClient = profile?.role === 'client'
 
-  const avatarInitials = displayName
-    .split(' ')
-    .map(w => w[0]?.toUpperCase() ?? '')
-    .slice(0, 2)
-    .join('')
+  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'User'
+  const avatarInitials = displayName.split(' ').map(w => w[0]?.toUpperCase() ?? '').slice(0, 2).join('')
 
   return (
-    <AuthContext.Provider value={{
-      user, profile, login, logout, loading,
-      displayName, avatarInitials,
-      refetchProfile: () => user && fetchProfile(user.id),
-    }}>
+    <AuthContext.Provider value={{ user, profile, login, logout, loading, isAdmin, isClient, displayName, avatarInitials, refetchProfile }}>
       {!loading && children}
     </AuthContext.Provider>
   )
