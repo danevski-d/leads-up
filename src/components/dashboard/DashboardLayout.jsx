@@ -13,7 +13,7 @@ const nav = [
 const SB = { bg: '#08090F', border: '#111220', text: '#3D4165', textHover: '#9296C4', activeText: '#818CF8', activeBg: 'rgba(129,140,248,0.08)', activeBorder: 'rgba(129,140,248,0.25)' }
 
 export default function DashboardLayout() {
-  const { user, logout } = useAuth()
+  const { user, logout, displayName, avatarInitials } = useAuth()
   const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -58,10 +58,10 @@ export default function DashboardLayout() {
         {(!collapsed || mobile) ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px' }}>
             <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'linear-gradient(135deg, #6D71F4, #8B5CF6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
-              {user?.avatar}
+              {avatarInitials}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.name}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</div>
               <div style={{ fontSize: 11, color: SB.text }}>{user?.role}</div>
             </div>
             <button onClick={handleLogout} style={{ color: SB.text, cursor: 'pointer', background: 'none', border: 'none', padding: 4 }}
@@ -115,9 +115,9 @@ export default function DashboardLayout() {
           </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#3D4165', cursor: 'pointer', fontSize: 13 }}>
             <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg, #6D71F4, #8B5CF6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 11, fontWeight: 700 }}>
-              {user?.avatar}
+              {avatarInitials}
             </div>
-            <span className="hidden sm:block" style={{ color: '#9296C4', fontSize: 13 }}>{user?.name}</span>
+            <span className="hidden sm:block" style={{ color: '#9296C4', fontSize: 13 }}>{displayName}</span>
             <ChevronDown size={13} />
           </div>
         </header>
