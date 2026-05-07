@@ -349,10 +349,31 @@ function Hero({ onOpenTrial }) {
           </button>
         </div>
 
-        {/* Integration Hub */}
+        {/* Integration Hub — full diagram on sm+, logo grid on mobile */}
         <div style={{ padding:'2px', borderRadius:24, background:`linear-gradient(135deg, rgba(99,102,241,0.25), rgba(124,58,237,0.1), rgba(99,102,241,0.05))` }}>
-          <div style={{ borderRadius:22, padding:'32px 24px 16px', background:'rgba(13,17,23,0.9)', backdropFilter:'blur(12px)' }}>
-            <IntegrationHub />
+          <div style={{ borderRadius:22, padding:'24px 16px 12px', background:'rgba(13,17,23,0.9)', backdropFilter:'blur(12px)' }}>
+            {/* Full diagram — hidden on small mobile */}
+            <div className="hidden sm:block">
+              <IntegrationHub />
+            </div>
+            {/* Compact logo grid — mobile only */}
+            <div className="sm:hidden py-4">
+              <div className="flex flex-wrap justify-center gap-3 mb-4">
+                {NODES.map(n => (
+                  <div key={n.id} style={{ width:48, height:48, borderRadius:'50%', background:'#1a2235', border:`1.5px solid ${n.ring}30`, display:'flex', alignItems:'center', justifyContent:'center', padding:9 }}>
+                    {n.logo ? (
+                      <img src={n.logo} alt="" loading="lazy" style={{ width:'100%', height:'100%', objectFit:'contain', borderRadius:3 }} onError={e => e.target.style.opacity='0.2'} />
+                    ) : (
+                      <span style={{ fontSize:9, fontWeight:900, color:n.ring }}>{n.abbr}</span>
+                    )}
+                  </div>
+                ))}
+                <div style={{ width:56, height:56, borderRadius:'50%', background:`linear-gradient(135deg, #6366F1, #7C3AED)`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 24px -6px rgba(99,102,241,0.6)' }}>
+                  <Zap size={22} color="white" />
+                </div>
+              </div>
+              <p className="text-center text-xs" style={{ color:'#4B5563' }}>9 integrations connected · AI processing live</p>
+            </div>
           </div>
         </div>
 
@@ -379,7 +400,7 @@ function Hero({ onOpenTrial }) {
 /* ─── Problem ────────────────────────────────────────────────── */
 function Problem() {
   return (
-    <section id="problem" className="py-24" style={{ background:C.bgSection }}>
+    <section id="problem" className="py-16 md:py-24" style={{ background:C.bgSection }}>
       <div className="max-w-5xl mx-auto px-6">
         <div className="text-center mb-12">
           <div className="section-label">The Problem</div>
@@ -423,7 +444,7 @@ function Features() {
   ]
 
   return (
-    <section id="features" className="py-24" style={{ background:C.bg }}>
+    <section id="features" className="py-16 md:py-24" style={{ background:C.bg }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-14">
           <div className="section-label">Features</div>
@@ -529,7 +550,7 @@ function HowItWorks() {
     {n:'04',icon:Calendar, title:'Books the Appointment',desc:'High-priority leads choose a time from your real availability and get a confirmed booking instantly.'},
   ]
   return (
-    <section id="how-it-works" className="py-24" style={{ background:C.bgSection }}>
+    <section id="how-it-works" className="py-16 md:py-24" style={{ background:C.bgSection }}>
       <div className="max-w-5xl mx-auto px-6">
         <div className="text-center mb-14">
           <div className="section-label">How It Works</div>
@@ -586,7 +607,7 @@ function FAQ() {
     {q:'How does the AI Receptionist handle calls?', a:'It answers within 1 second, introduces your business, qualifies the caller through natural conversation, and offers direct booking. If needed, it warm-transfers to your team or takes a detailed message.'},
   ]
   return (
-    <section id="faq" className="py-24" style={{ background:C.bg }}>
+    <section id="faq" className="py-16 md:py-24" style={{ background:C.bg }}>
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-10">
           <div className="section-label">FAQ</div>

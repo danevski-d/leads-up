@@ -1,213 +1,251 @@
 import { useState, useEffect } from 'react'
-import { TrendingUp, TrendingDown, Clock, Calendar, DollarSign } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Search, Plus, X, Filter } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
 
-const ranges = ['7d', '30d', '90d', 'All']
+const COLUMNS = [
+  { key: 'new',       label: 'New',       dot: '#6366F1', badge: 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' },
+  { key: 'contacted', label: 'Contacted', dot: '#67E8F9', badge: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' },
+  { key: 'qualified', label: 'Qualified', dot: '#A78BFA', badge: 'bg-purple-500/20 text-purple-400 border border-purple-500/30' },
+  { key: 'booked',    label: 'Booked',    dot: '#34D399', badge: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' },
+  { key: 'lost',      label: 'Lost',      dot: '#6B7280', badge: 'bg-slate-500/20 text-slate-400 border border-slate-500/30' },
+]
 
-function RevenueChart({ leads }) {
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-  
-  // Group booked leads by month
-  const monthlyData = months.map((month, i) => {
-    const total = leads
-      .filter(l => l.status === 'booked' && new Date(l.created_at).getMonth() === i)
-      .reduce((s, l) => s + (Number(l.value) || 0), 0)
-    return { month, value: total }
-  }).filter(d => d.value > 0)
+const SOURCE_COLORS = {
+  'Web Form':   'bg-cyan-500/10 text-cyan-400',
+  'Google Ads': 'bg-blue-500/10 text-blue-400',
+  'Facebook':   'bg-indigo-500/10 text-indigo-400',
+  'Referral':   'bg-emerald-500/10 text-emerald-400',
+  'Yelp':       'bg-red-500/10 text-red-400',
+}
 
-  if (monthlyData.length === 0) {
-    return (
-      <div className="p-6 rounded-2xl" style={{ background: '#0A0B16', border: '1px solid #181928' }}>
-        <div className="flex items-center gap-2 mb-4">
-          <DollarSign size={15} style={{ color: '#6EE7B7' }} />
-          <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#6EE7B7' }}>Revenue Recovered</span>
+/* ── Lead card ──────────────────────────────────────────────── */
+function LeadCard({ lead }) {
+  return (
+    <Link to={`/app/leads/${lead.id}`}
+      className="block rounded-xl p-3.5 border transition-all group"
+      style={{ background: 'rgba(255,255,255,0.03)', borderColor: '#1F2937' }}
+      onMouseOver={e => e.currentTarget.style.borderColor = '#374151'}
+      onMouseOut={e => e.currentTarget.style.borderColor = '#1F2937'}
+    >
+      <div className="flex items-start gap-2.5 mb-2.5">
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+          style={{ background: 'rgba(99,102,241,0.2)', color: '#818CF8' }}>
+          {lead.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || '?'}
         </div>
-        <div className="text-3xl font-black text-white mb-2">$0</div>
-        <div className="text-sm" style={{ color: '#3D4165' }}>No booked leads yet</div>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-white truncate group-hover:text-indigo-300 transition-colors">
+            {lead.name || 'Unnamed Lead'}
+          </div>
+          <div className="text-xs truncate" style={{ color: '#6B7280' }}>{lead.email || '—'}</div>
+        </div>
       </div>
+      <div className="flex items-center justify-between gap-2">
+        <span className={`text-xs px-2 py-0.5 rounded-full truncate max-w-[120px] ${SOURCE_COLORS[lead.source] || 'bg-slate-700/50 text-slate-400'}`}>
+          {lead.source || 'Unknown'}
+        </span>
+        {lead.value ? (
+          <span className="text-xs font-bold text-emerald-400 flex-shrink-0">
+            ${Number(lead.value).toLocaleString()}
+          </span>
+        ) : null}
+      </div>
+      <div className="text-xs mt-2" style={{ color: '#374151' }}>
+        {new Date(lead.created_at).toLocaleDateString()}
+      </div>
+    </Link>
+  )
+}
+
+/* ── Add Lead Modal ─────────────────────────────────────────── */
+function AddLeadModal({ onClose, onAdded, userId }) {
+  const [saving, setSaving] = useState(false)
+  const [err, setErr] = useState('')
+
+  const inputStyle = {
+    width: '100%', background: '#0D1117', border: '1px solid #1F2937',
+    borderRadius: 12, padding: '10px 14px', color: 'white', fontSize: 14,
+    outline: 'none', transition: 'border-color 0.15s',
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setErr(''); setSaving(true)
+    const fd = new FormData(e.target)
+    const { error } = await supabase.from('leads').insert({
+      user_id: userId,
+      name:    fd.get('leadName'),
+      email:   fd.get('leadEmail'),
+      source:  fd.get('source'),
+      value:   fd.get('value') ? Number(fd.get('value')) : null,
+      status:  'new',
+    })
+    if (error) { setErr(error.message); setSaving(false) }
+    else { onAdded(); onClose() }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-0 sm:px-4"
+      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}>
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-5 sm:p-6"
+        style={{ background: '#111827', border: '1px solid #1F2937', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-white font-bold text-base">Add New Lead</h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors p-1" style={{ minWidth: 36, minHeight: 36 }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        {err && <div className="mb-4 text-sm rounded-xl px-4 py-3" style={{ color: '#F87171', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}>{err}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {[
+            { label: 'Full Name', name: 'leadName', type: 'text', required: true },
+            { label: 'Email',     name: 'leadEmail', type: 'email', required: true },
+          ].map(({ label, name, type, required }) => (
+            <div key={name}>
+              <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>{label}</label>
+              <input name={name} type={type} required={required} style={inputStyle}
+                onFocus={e => e.target.style.borderColor = '#6366F1'}
+                onBlur={e => e.target.style.borderColor = '#1F2937'} />
+            </div>
+          ))}
+          <div>
+            <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Source</label>
+            <select name="source" style={{ ...inputStyle, cursor: 'pointer' }}>
+              {['Web Form','Google Ads','Facebook','Referral','Yelp','Other'].map(o => <option key={o}>{o}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Deal Value ($)</label>
+            <input name="value" type="number" min="0" style={inputStyle}
+              onFocus={e => e.target.style.borderColor = '#6366F1'}
+              onBlur={e => e.target.style.borderColor = '#1F2937'} />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl text-sm font-medium transition-all" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid #1F2937', color: '#6B7280', minHeight: 44 }}>
+              Cancel
+            </button>
+            <button type="submit" disabled={saving} className="flex-1 py-3 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', minHeight: 44 }}>
+              {saving ? 'Saving...' : 'Add Lead'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+/* ── Main page ──────────────────────────────────────────────── */
+export default function Leads() {
+  const { user } = useAuth()
+  const [leads, setLeads] = useState([])
+  const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+
+  useEffect(() => {
+    if (user) fetchLeads()
+  }, [user])
+
+  const fetchLeads = async () => {
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+    if (error) console.error('Leads fetch:', error.message)
+    setLeads(data || [])
+    setLoading(false)
+  }
+
+  const byStatus = (status) => {
+    let list = leads.filter(l => l.status === status)
+    if (!search) return list
+    const q = search.toLowerCase()
+    return list.filter(l =>
+      l.name?.toLowerCase().includes(q) ||
+      l.email?.toLowerCase().includes(q) ||
+      l.source?.toLowerCase().includes(q)
     )
   }
 
-  const max = Math.max(...monthlyData.map(d => d.value))
-  const min = Math.min(...monthlyData.map(d => d.value))
-  const span = max - min || 1
-  const W = 700, H = 160
-  const padL = 44, padR = 12, padT = 10, padB = 28
-  const cW = W - padL - padR
-  const cH = H - padT - padB
-  const pts = monthlyData.map((d, i) => ({
-    x: padL + (i / Math.max(monthlyData.length - 1, 1)) * cW,
-    y: padT + cH - ((d.value - min) / span) * cH,
-    ...d,
-  }))
-  const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ')
-  const areaPath = `${linePath} L ${pts.at(-1).x} ${H - padB} L ${pts[0].x} ${H - padB} Z`
-  const total = leads.filter(l => l.status === 'booked').reduce((s, l) => s + (Number(l.value) || 0), 0)
+  const totalValue = leads.reduce((s, l) => s + (Number(l.value) || 0), 0)
 
   return (
-    <div className="p-6 rounded-2xl" style={{ background: '#0A0B16', border: '1px solid #181928' }}>
-      <div className="flex items-start justify-between mb-5">
+    <div className="flex flex-col h-full p-3 sm:p-5 md:p-6">
+      {showModal && <AddLeadModal userId={user?.id} onClose={() => setShowModal(false)} onAdded={fetchLeads} />}
+
+      {/* Header */}
+      <div className="flex items-start sm:items-center justify-between gap-3 mb-4 flex-shrink-0">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <DollarSign size={15} style={{ color: '#6EE7B7' }} />
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#6EE7B7' }}>Revenue Recovered</span>
-          </div>
-          <div className="text-3xl font-black text-white">${total.toLocaleString()}</div>
+          <h1 className="text-xl font-bold text-white">Pipeline</h1>
+          <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>
+            {leads.length} leads ·{' '}
+            <span style={{ color: '#34D399' }}>${(totalValue / 1000).toFixed(1)}k total value</span>
+          </p>
         </div>
-        <div className="text-right">
-          <div className="text-sm" style={{ color: '#3D4165' }}>Booked leads value</div>
-        </div>
+        <button onClick={() => setShowModal(true)}
+          className="flex items-center gap-1.5 text-sm font-medium text-white rounded-xl px-4 py-2.5 flex-shrink-0 transition-all"
+          style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', minHeight: 44 }}>
+          <Plus size={15} />
+          <span className="hidden sm:inline">Add Lead</span>
+          <span className="sm:hidden">Add</span>
+        </button>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 160 }}>
-        <defs>
-          <linearGradient id="rev-area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6EE7B7" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="#6EE7B7" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        {[0, 0.33, 0.66, 1].map((t, i) => (
-          <g key={i}>
-            <line x1={padL} y1={padT + cH * (1 - t)} x2={padL + cW} y2={padT + cH * (1 - t)} stroke="#141526" strokeWidth="1" />
-            <text x={padL - 6} y={padT + cH * (1 - t) + 4} textAnchor="end" fontSize="9" fill="#2D3050">
-              ${((min + span * t) / 1000).toFixed(0)}k
-            </text>
-          </g>
-        ))}
-        <path d={areaPath} fill="url(#rev-area)" />
-        <path d={linePath} fill="none" stroke="#6EE7B7" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        {pts.map((p, i) => (
-          <g key={i}>
-            <circle cx={p.x} cy={p.y} r="3.5" fill="#0A0B16" stroke="#6EE7B7" strokeWidth="2" />
-            <text x={p.x} y={H - padB + 14} textAnchor="middle" fontSize="9" fill="#2D3050">{p.month}</text>
-          </g>
-        ))}
-      </svg>
-    </div>
-  )
-}
 
-function BookingRateChart({ leads }) {
-  const total = leads.length
-  const booked = leads.filter(l => l.status === 'booked').length
-  const qualified = leads.filter(l => l.status === 'qualified').length
-  const contacted = leads.filter(l => l.status === 'contacted').length
-  const bookingRate = total > 0 ? ((booked / total) * 100).toFixed(1) : 0
-
-  const stages = [
-    { label: 'Leads Captured', count: total, pct: 100 },
-    { label: 'Contacted', count: contacted + qualified + booked, pct: total > 0 ? Math.round(((contacted + qualified + booked) / total) * 100) : 0 },
-    { label: 'Qualified', count: qualified + booked, pct: total > 0 ? Math.round(((qualified + booked) / total) * 100) : 0 },
-    { label: 'Booked', count: booked, pct: total > 0 ? Math.round((booked / total) * 100) : 0 },
-  ]
-  const colors = ['#6D71F4', '#8B5CF6', '#9B4EF4', '#A78BFA']
-
-  return (
-    <div className="p-6 rounded-2xl" style={{ background: '#0A0B16', border: '1px solid #181928' }}>
-      <div className="flex items-start justify-between mb-5">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Calendar size={15} style={{ color: '#A78BFA' }} />
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#A78BFA' }}>Booking Rate</span>
-          </div>
-          <div className="text-3xl font-black text-white">{bookingRate}%</div>
-          <div className="text-xs mt-1" style={{ color: '#3D4165' }}>{booked} of {total} leads booked</div>
-        </div>
-        <div className="text-right">
-          <div className="text-xs mb-1" style={{ color: '#3D4165' }}>Industry avg</div>
-          <div className="text-sm font-bold" style={{ color: '#FCA5A5' }}>~12%</div>
-        </div>
-      </div>
-      <div className="space-y-2">
-        {stages.map(({ label, count, pct }, i) => (
-          <div key={label}>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs" style={{ color: '#4B4F6E' }}>{label}</span>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-bold" style={{ color: colors[i] }}>{pct}%</span>
-                <span className="text-xs w-6 text-right" style={{ color: '#2D3050' }}>{count}</span>
-              </div>
-            </div>
-            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#141526' }}>
-              <div className="h-full rounded-full" style={{ width: `${pct}%`, background: colors[i], opacity: 0.85 }} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-export default function Reports() {
-  const [range, setRange] = useState('30d')
-  const [leads, setLeads] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchLeads = async () => {
-      let query = supabase.from('leads').select('*')
-
-      if (range !== 'All') {
-        const days = range === '7d' ? 7 : range === '30d' ? 30 : 90
-        const from = new Date()
-        from.setDate(from.getDate() - days)
-        query = query.gte('created_at', from.toISOString())
-      }
-
-      const { data } = await query
-      setLeads(data || [])
-      setLoading(false)
-    }
-    fetchLeads()
-  }, [range])
-
-  const totalValue = leads.filter(l => l.status === 'booked').reduce((s, l) => s + (Number(l.value) || 0), 0)
-  const bookingRate = leads.length > 0 ? ((leads.filter(l => l.status === 'booked').length / leads.length) * 100).toFixed(1) : 0
-
-  const kpis = [
-    { label: 'Revenue Recovered', value: `$${totalValue.toLocaleString()}`, icon: DollarSign, color: '#6EE7B7' },
-    { label: 'Total Leads', value: leads.length, icon: Clock, color: '#818CF8' },
-    { label: 'Booking Rate', value: `${bookingRate}%`, icon: Calendar, color: '#A78BFA' },
-  ]
-
-  return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Reports</h1>
-          <p className="text-sm mt-0.5" style={{ color: '#3D4165' }}>Real data from your Supabase leads</p>
-        </div>
-        <div className="flex gap-1 p-1 rounded-xl" style={{ background: '#0A0B16', border: '1px solid #181928' }}>
-          {ranges.map(r => (
-            <button key={r} onClick={() => setRange(r)}
-              className="text-xs px-3 py-2 rounded-lg font-medium transition-all"
-              style={range === r ? { background: '#181928', color: '#ECEEFF' } : { color: '#3D4165' }}>
-              {r}
-            </button>
-          ))}
+      {/* Search bar */}
+      <div className="mb-4 flex-shrink-0">
+        <div className="relative max-w-xs">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#6B7280' }} />
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search leads..."
+            className="w-full rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none"
+            style={{ background: '#111827', border: '1px solid #1F2937', minHeight: 44 }}
+            onFocus={e => e.target.style.borderColor = '#6366F1'}
+            onBlur={e => e.target.style.borderColor = '#1F2937'}
+          />
         </div>
       </div>
 
+      {/* Kanban */}
       {loading ? (
-        <div style={{ color: '#2D3050', textAlign: 'center', padding: 40 }}>Loading...</div>
+        <div className="flex items-center justify-center flex-1 text-sm" style={{ color: '#6B7280' }}>Loading leads...</div>
       ) : (
-        <>
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            {kpis.map(({ label, value, icon: Icon, color }) => (
-              <div key={label} className="p-5 rounded-2xl" style={{ background: '#0A0B16', border: '1px solid #181928' }}>
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: `${color}15` }}>
-                  <Icon size={16} style={{ color }} />
+        <div className="flex gap-3 overflow-x-auto flex-1 pb-4" style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x mandatory' }}>
+          {COLUMNS.map(col => {
+            const colLeads = byStatus(col.key)
+            const total = colLeads.reduce((s, l) => s + (Number(l.value) || 0), 0)
+            return (
+              <div key={col.key} className="flex flex-col flex-shrink-0" style={{ width: 284, minWidth: 280, scrollSnapAlign: 'start' }}>
+                {/* Column header */}
+                <div className="flex items-center justify-between mb-2.5 px-0.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full" style={{ background: col.dot }} />
+                    <span className="text-sm font-semibold text-white">{col.label}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${col.badge}`}>{colLeads.length}</span>
+                  </div>
+                  {total > 0 && <span className="text-xs" style={{ color: '#4B5563' }}>${(total / 1000).toFixed(1)}k</span>}
                 </div>
-                <div className="text-2xl font-black text-white mb-1">{value}</div>
-                <div className="text-xs" style={{ color: '#3D4165' }}>{label}</div>
-              </div>
-            ))}
-          </div>
 
-          <div className="space-y-5">
-            <RevenueChart leads={leads} />
-            <BookingRateChart leads={leads} />
-          </div>
-        </>
+                {/* Cards */}
+                <div className="flex-1 space-y-2 min-h-[80px]">
+                  {colLeads.length === 0 ? (
+                    <div className="h-20 rounded-xl border-2 border-dashed flex items-center justify-center text-xs"
+                      style={{ borderColor: '#1F2937', color: '#374151' }}>
+                      No leads
+                    </div>
+                  ) : (
+                    colLeads.map(lead => <LeadCard key={lead.id} lead={lead} />)
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       )}
     </div>
   )
