@@ -17,19 +17,17 @@ export default function Login() {
     return null
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-    setTimeout(() => {
-      const ok = login(email, password)
-      if (ok) {
-        navigate('/app/dashboard')
-      } else {
-        setError('Invalid email or password.')
-        setLoading(false)
-      }
-    }, 600)
+    try {
+      await login(email, password)
+      navigate('/app/dashboard')
+    } catch (err) {
+      setError(err.message || 'Invalid email or password.')
+      setLoading(false)
+    }
   }
 
   return (
