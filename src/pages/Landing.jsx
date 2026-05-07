@@ -158,18 +158,7 @@ function Navbar({ onOpenTrial }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50" style={{ background:`${C.bg}E8`, borderBottom:'1px solid #1F2937', backdropFilter:'blur(20px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center">
-          {!logoErr ? (
-            <img src="/leadsup-logo.jpg" alt="Leads Up" style={{ width:120, height:'auto', maxHeight:36, objectFit:'contain' }} onError={()=>setLogoErr(true)}/>
-          ) : (
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})` }}>
-                <Zap size={15} color="white"/>
-              </div>
-              <span style={{ fontSize:15, fontWeight:700, color:C.text }}>Leads Up</span>
-            </div>
-          )}
-        </Link>
+        <Link to="/"><img src="/leadsup-logo.jpg" alt="Leads Up" style={{ height:44, width:'auto', objectFit:'contain' }}/></Link>
         <div className="hidden md:flex items-center gap-7 text-sm">
           {[['#features','Features'],['#how-it-works','How It Works'],['#faq','FAQ']].map(([h,l])=>(
             <a key={h} href={h} style={{ color:C.textMuted, textDecoration:'none', transition:'color 0.15s' }}
@@ -527,12 +516,7 @@ function Footer() {
   return (
     <footer className="pb-28 sm:pb-10" style={{ borderTop:`1px solid ${C.cardBorder}`, background:C.bg, paddingTop:36, paddingLeft:24, paddingRight:24 }}>
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <div style={{ width:24, height:24, borderRadius:6, background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <Zap size={13} color="white"/>
-          </div>
-          <span style={{ fontSize:14, fontWeight:700, color:C.text }}>Leads Up</span>
-        </div>
+        <img src="/leadsup-logo.jpg" alt="Leads Up" style={{ height:36, width:'auto', objectFit:'contain' }}/>
         <div className="flex gap-6" style={{ fontSize:13, color:C.textMuted }}>
           <a href="#" style={{ color:C.textMuted, textDecoration:'none' }}>Privacy</a>
           <a href="#" style={{ color:C.textMuted, textDecoration:'none' }}>Terms</a>
