@@ -251,17 +251,14 @@ function Hero({ onOpenTrial }) {
               <IntegrationHub />
             </div>
             {/* Mobile — same animated diagram scaled to fit */}
-            <div className="sm:hidden w-full overflow-hidden" style={{ height: '280px', position: 'relative' }}>
+            <div className="sm:hidden w-full" style={{ aspectRatio: '900/520', position: 'relative', overflow: 'visible' }}>
               <div style={{
                 position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%) scale(0.48)',
-                transformOrigin: 'center center',
-                width: '900px',
-                height: '520px',
-                marginLeft: '-450px',
-                marginTop: '-260px',
+                inset: 0,
+                transform: 'scale(0.42)',
+                transformOrigin: 'top left',
+                width: 'calc(100% / 0.42)',
+                mheight: 'calc(100% / 0.42)',
               }}>
                 <IntegrationHub />
               </div>
