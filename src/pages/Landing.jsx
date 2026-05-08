@@ -105,7 +105,7 @@ function Navbar() {
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent', flexShrink:0 }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:32, width:'auto', display:'inline-block', background:'transparent' }}/>
+          <img src="/leadsup-icon.png.png" alt="" style={{ height:32, width:'auto', display:'inline-block', background:'transparent', objectFit:'contain' }}/>
           <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF', background:'transparent', letterSpacing:'-0.01em' }}>
             Leads <span style={{ color:'#6B8AFF' }}>up</span>
           </span>
