@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 
 const font = "system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif"
 
-/* ── Design tokens ──────────────────────────────────────────── */
 const T = {
-  bg: '#0B0D16',
-  surface: '#0F1120',
+  bg: '#080A0F',
+  surface: '#0D0F18',
   border: '#1A1D2E',
   text: '#FFFFFF',
   sub: '#94A3B8',
@@ -110,13 +109,11 @@ function Navbar() {
   return (
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-        {/* Logo */}
-        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent' }}>
+        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent', flexShrink:0 }}>
           <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
           <img src="/leadsup-text.png" alt="Leadsup" style={{ height:22, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
         </Link>
 
-        {/* Center links — desktop */}
         <div className="hidden md:flex" style={{ alignItems:'center', gap:32 }}>
           {navLinks.map(([href, label]) => (
             <a key={href} href={href} style={{ fontSize:14, color:T.sub, textDecoration:'none', transition:'color 0.15s', fontFamily:font }}
@@ -125,33 +122,30 @@ function Navbar() {
           ))}
         </div>
 
-        {/* Right actions */}
         <div className="hidden md:flex" style={{ alignItems:'center', gap:20 }}>
           <Link to="/login" style={{ fontSize:14, color:T.sub, textDecoration:'none', transition:'color 0.15s', fontFamily:font }}
             onMouseOver={e=>e.currentTarget.style.color='#FFFFFF'}
-            onMouseOut={e=>e.currentTarget.style.color=T.sub}>Sign In</Link>
-          <a href="#cta" style={{ fontSize:14, fontWeight:600, color:'#080A0F', background:'#FFFFFF', padding:'8px 16px', borderRadius:99, textDecoration:'none', fontFamily:font, transition:'opacity 0.15s' }}
+            onMouseOut={e=>e.currentTarget.style.color=T.sub}>Sign in</Link>
+          <Link to="/login?mode=signup" style={{ fontSize:14, fontWeight:600, color:'#080A0F', background:'#FFFFFF', padding:'8px 18px', borderRadius:99, textDecoration:'none', fontFamily:font, transition:'opacity 0.15s' }}
             onMouseOver={e=>e.currentTarget.style.opacity='0.85'}
-            onMouseOut={e=>e.currentTarget.style.opacity='1'}>Get started</a>
+            onMouseOut={e=>e.currentTarget.style.opacity='1'}>Get started</Link>
         </div>
 
-        {/* Mobile burger — hidden on desktop via .nav-burger media query */}
         <button className="nav-burger" onClick={()=>setOpen(!open)}
           style={{ background:'none', border:'none', cursor:'pointer', color:T.sub, padding:8, minWidth:44, minHeight:44, alignItems:'center', justifyContent:'center' }}>
           {open ? <X size={20}/> : <Menu size={20}/>}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
-        <div className="md:hidden" style={{ position:'absolute', top:60, left:0, right:0, background:T.bg, borderBottom:`1px solid ${T.border}`, padding:'16px 24px 24px', display:'flex', flexDirection:'column', gap:12 }}>
+        <div style={{ position:'absolute', top:60, left:0, right:0, background:T.bg, borderBottom:`1px solid ${T.border}`, padding:'16px 24px 24px', display:'flex', flexDirection:'column', gap:12, zIndex:50 }}>
           {navLinks.map(([href, label]) => (
             <a key={href} href={href} onClick={()=>setOpen(false)}
               style={{ fontSize:15, color:T.sub, textDecoration:'none', padding:'8px 0', fontFamily:font }}>{label}</a>
           ))}
           <div style={{ height:1, background:T.border, margin:'4px 0' }}/>
-          <Link to="/login" onClick={()=>setOpen(false)} style={{ fontSize:15, color:T.sub, textDecoration:'none', padding:'8px 0', fontFamily:font }}>Sign In</Link>
-          <a href="#cta" onClick={()=>setOpen(false)} style={{ fontSize:15, fontWeight:600, color:'#080A0F', background:'#FFFFFF', padding:'12px 20px', borderRadius:99, textDecoration:'none', textAlign:'center', fontFamily:font }}>Get started</a>
+          <Link to="/login" onClick={()=>setOpen(false)} style={{ fontSize:15, color:T.sub, textDecoration:'none', padding:'8px 0', fontFamily:font }}>Sign in</Link>
+          <Link to="/login?mode=signup" onClick={()=>setOpen(false)} style={{ fontSize:15, fontWeight:600, color:'#080A0F', background:'#FFFFFF', padding:'12px 20px', borderRadius:99, textDecoration:'none', textAlign:'center', fontFamily:font }}>Get started</Link>
         </div>
       )}
     </nav>
@@ -161,31 +155,27 @@ function Navbar() {
 /* ── Hero ───────────────────────────────────────────────────── */
 function Hero() {
   return (
-    <section className="hero-section" style={{ background:T.bg, paddingTop:120, paddingBottom:80, fontFamily:font }}>
-      <div style={{ maxWidth:800, margin:'0 auto', padding:'0 24px', textAlign:'center' }}>
-        {/* Badge */}
-        <div style={{ display:'inline-flex', alignItems:'center', border:`1px solid ${T.border}`, borderRadius:99, padding:'6px 14px', marginBottom:32, fontSize:12, color:T.sub }}>
+    <section className="hero-section" style={{ background:T.bg, paddingTop:120, paddingBottom:60, fontFamily:font }}>
+      <div style={{ maxWidth:820, margin:'0 auto', padding:'0 24px', textAlign:'center' }}>
+        <div style={{ display:'inline-flex', alignItems:'center', border:`1px solid ${T.border}`, borderRadius:99, padding:'6px 14px', marginBottom:28, fontSize:12, color:T.sub }}>
           AI Revenue System · Now booking Q2 deployments
         </div>
 
-        {/* Headline */}
         <h1 className="hero-headline" style={{ fontSize:56, fontWeight:700, letterSpacing:'-0.02em', lineHeight:1.1, margin:'0 0 20px', color:T.text }}>
           Turn leads into<br/>
           <span style={{ background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>booked revenue</span>
           <span style={{ color:T.text }}>—on autopilot.</span>
         </h1>
 
-        {/* Subheadline */}
-        <p className="hero-sub" style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:560, margin:'0 auto 40px', textAlign:'center' }}>
+        <p className="hero-sub" style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:560, margin:'0 auto 36px', textAlign:'center' }}>
           LeadsUp is the AI revenue infrastructure that follows up, qualifies, and converts every lead into booked calls and paying customers — without human ops.
         </p>
 
-        {/* CTAs */}
         <div className="hero-btns" style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, flexWrap:'wrap' }}>
           <a href="#cta" className="hero-btn-primary" style={{ fontSize:15, fontWeight:600, color:'#FFFFFF', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding:'12px 24px', borderRadius:99, textDecoration:'none', transition:'opacity 0.15s' }}
             onMouseOver={e=>e.currentTarget.style.opacity='0.85'}
             onMouseOut={e=>e.currentTarget.style.opacity='1'}>
-            Book a strategy call →
+            Book a strategy call
           </a>
           <a href="#system" style={{ fontSize:15, color:'#FFFFFF', background:'transparent', border:'none', textDecoration:'none', cursor:'pointer', transition:'color 0.15s' }}
             onMouseOver={e=>e.currentTarget.style.color=T.sub}
@@ -195,8 +185,7 @@ function Hero() {
         </div>
       </div>
 
-      {/* Integration hub — scaled down on mobile */}
-      <div className="hub-outer" style={{ maxWidth:1000, margin:'60px auto 0', padding:'0 24px' }}>
+      <div className="hub-outer" style={{ maxWidth:1000, margin:'56px auto 0', padding:'0 24px' }}>
         <div className="hub-wrapper">
           <IntegrationHub />
         </div>
@@ -205,71 +194,34 @@ function Hero() {
   )
 }
 
-/* ── Social proof bar ───────────────────────────────────────── */
-function SocialProof() {
-  const companies = ['NORTHWIND','ACME','LINEARLY','QUANTUM','PARALLAX','VERTEX']
-  return (
-    <div style={{ background:T.bg, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:'40px 0', fontFamily:font }}>
-      <p style={{ fontSize:11, letterSpacing:'0.15em', color:T.sub, textAlign:'center', marginBottom:24 }}>
-        TRUSTED BY REVENUE TEAMS AT
-      </p>
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:48, flexWrap:'wrap', padding:'0 24px' }}>
-        {companies.map(c => (
-          <span key={c} style={{ fontSize:14, fontWeight:600, letterSpacing:'0.1em', color:'#3A4060' }}>{c}</span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/* ── Stats ──────────────────────────────────────────────────── */
+/* ── Stats bar ──────────────────────────────────────────────── */
 function Stats() {
-  const stats = [
-    { num:'3.4x',   label:'More booked calls',    sub:'vs. manual follow-up' },
-    { num:'<60s',   label:'Lead response time',   sub:'24/7, every channel' },
-    { num:'92%',    label:'Reply rate lift',       sub:'AI-personalized' },
-    { num:'$1.2M+', label:'Pipeline generated',   sub:'in last 90 days' },
+  const metrics = [
+    { num:'3.4x',   label:'More booked calls',  sub:'vs. manual follow-up' },
+    { num:'<60s',   label:'Lead response time',  sub:'24/7, every channel' },
+    { num:'92%',    label:'Reply rate lift',      sub:'AI-personalized' },
+    { num:'$1.2M+', label:'Pipeline generated',  sub:'in last 90 days' },
   ]
+  const brands = ['NORTHWIND','ACME','LINEAR','LY','QUANTUM','PARALLAX','VERTEX']
   return (
-    <div style={{ background:T.bg, padding:'80px 40px', fontFamily:font }}>
-      <div style={{ maxWidth:1200, margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:0 }} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((s, i) => (
-          <div key={s.num} style={{ padding:'40px', textAlign:'center', borderRight: i < 3 ? `1px solid ${T.border}` : 'none', borderLeft: i === 0 ? `1px solid ${T.border}` : 'none' }} className="stat-col">
-            <div style={{ fontSize:56, fontWeight:700, color:T.blue, letterSpacing:'-2px', lineHeight:1 }}>{s.num}</div>
-            <div style={{ fontSize:15, fontWeight:600, color:T.text, marginTop:8 }}>{s.label}</div>
-            <div style={{ fontSize:13, color:T.sub, marginTop:4 }}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/* ── System section ─────────────────────────────────────────── */
-function System() {
-  const cards = [
-    { num:'01', title:'Capture', desc:'Every form, ad, DM, and inbound source is unified into one revenue stream — instantly enriched and scored.' },
-    { num:'02', title:'Engage',  desc:'AI agents reply in under 60 seconds across SMS, email, and chat — with brand-perfect tone and full context.' },
-    { num:'03', title:'Qualify', desc:'Multi-turn conversations qualify intent, budget, and timing — then hand off only sales-ready leads.' },
-    { num:'04', title:'Book',    desc:'Calls land directly on your calendar. Reminders, reschedules, and no-show recovery run automatically.' },
-  ]
-  return (
-    <section id="system" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
-      <div style={{ maxWidth:1200, margin:'0 auto' }}>
-        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>THE SYSTEM</div>
-        <h2 style={{ fontSize:'clamp(32px,4.5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:16, lineHeight:1.12 }}>
-          A single revenue layer.<br/>Replacing your entire follow-up stack.
-        </h2>
-        <p style={{ fontSize:16, color:T.sub, maxWidth:560, lineHeight:1.7, marginBottom:60 }}>
-          LeadsUp connects to your existing tools and runs your pipeline like a top-performing SDR team — at 1/10th the cost.
+    <section style={{ background:T.bg, fontFamily:font }}>
+      <div style={{ borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:'32px 0' }}>
+        <p style={{ fontSize:11, letterSpacing:'0.15em', color:T.sub, textAlign:'center', marginBottom:20 }}>
+          TRUSTED BY REVENUE TEAMS AT
         </p>
-
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }} className="system-cards">
-          {cards.map(c => (
-            <div key={c.num} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:32 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:T.blue, marginBottom:40, letterSpacing:'0.05em' }}>{c.num}</div>
-              <div style={{ fontSize:22, fontWeight:700, color:T.text, marginBottom:12, letterSpacing:'-0.02em' }}>{c.title}</div>
-              <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{c.desc}</div>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:40, flexWrap:'wrap', padding:'0 24px' }}>
+          {brands.map(b => (
+            <span key={b} style={{ fontSize:13, fontWeight:600, letterSpacing:'0.1em', color:'#3A4060' }}>{b}</span>
+          ))}
+        </div>
+      </div>
+      <div style={{ maxWidth:1280, margin:'0 auto' }}>
+        <div className="stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)' }}>
+          {metrics.map((m, i) => (
+            <div key={m.num} className="stat-col" style={{ padding:'48px 40px', textAlign:'center', borderRight: i < 3 ? `1px solid ${T.border}` : 'none', borderLeft: i === 0 ? `1px solid ${T.border}` : 'none' }}>
+              <div style={{ fontSize:52, fontWeight:700, color:T.blue, letterSpacing:'-2px', lineHeight:1 }}>{m.num}</div>
+              <div style={{ fontSize:15, fontWeight:600, color:T.text, marginTop:10 }}>{m.label}</div>
+              <div style={{ fontSize:13, color:T.sub, marginTop:4 }}>{m.sub}</div>
             </div>
           ))}
         </div>
@@ -278,81 +230,259 @@ function System() {
   )
 }
 
-/* ── Platform section ───────────────────────────────────────── */
-function Platform() {
-  const features = [
+/* ── System section ─────────────────────────────────────────── */
+function System() {
+  const steps = [
+    { num:'01', title:'Capture', desc:'Every form, ad, DM, and inbound source is unified into one revenue stream — instantly enriched and scored.' },
+    { num:'02', title:'Engage',  desc:'AI agents reply in under 60 seconds across SMS, email, and chat — with brand-perfect tone and full context.' },
+    { num:'03', title:'Qualify', desc:'Multi-turn conversations qualify intent, budget, and timing — then hand off only sales-ready leads.' },
+    { num:'04', title:'Book',    desc:'Calls land directly on your calendar. Reminders, reschedules, and no-show recovery run automatically.' },
+  ]
+  return (
+    <section id="system" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:1280, margin:'0 auto' }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>The System</div>
+        <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:16, lineHeight:1.12, maxWidth:640 }}>
+          A single revenue layer. Replacing your entire follow-up stack.
+        </h2>
+        <p style={{ fontSize:16, color:T.sub, maxWidth:560, lineHeight:1.7, marginBottom:56 }}>
+          LeadsUp connects to your existing tools and runs your pipeline like a top-performing SDR team — at 1/10th the cost.
+        </p>
+        <div className="system-cards" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+          {steps.map(s => (
+            <div key={s.num} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:'32px 28px' }}>
+              <div style={{ fontSize:13, fontWeight:700, color:T.blue, marginBottom:40, letterSpacing:'0.05em' }}>{s.num}</div>
+              <div style={{ fontSize:20, fontWeight:700, color:T.text, marginBottom:12, letterSpacing:'-0.02em' }}>{s.title}</div>
+              <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{s.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ── Features section ───────────────────────────────────────── */
+function Features() {
+  const cards = [
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 3l1.912 5.813a2 2 0 001.272 1.272L21 12l-5.816 1.912a2 2 0 00-1.272 1.272L12 21l-1.912-5.816a2 2 0 00-1.272-1.272L3 12l5.816-1.912a2 2 0 001.272-1.272L12 3z"/>
-        </svg>
-      ),
-      title: 'AI follow-up that never sleeps',
-      desc: 'Conversational agents trained on your offer respond instantly across every channel — including the 80% of leads humans never reach.',
+      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.912 5.813a2 2 0 001.272 1.272L21 12l-5.816 1.912a2 2 0 00-1.272 1.272L12 21l-1.912-5.816a2 2 0 00-1.272-1.272L3 12l5.816-1.912a2 2 0 001.272-1.272L12 3z"/></svg>,
+      title:'AI follow-up that never sleeps',
+      desc:'Conversational agents trained on your offer respond instantly across every channel — including the 80% of leads humans never reach.',
     },
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-        </svg>
-      ),
-      title: 'Booked calls, not busy work',
-      desc: 'Every qualified conversation auto-converts into a calendar booking with reminders, confirmations, and re-engagement built in.',
+      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
+      title:'Booked calls, not busy work',
+      desc:'Every qualified conversation auto-converts into a calendar booking with reminders, confirmations, and re-engagement built in.',
     },
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-        </svg>
-      ),
-      title: 'Revenue-grade analytics',
-      desc: 'Every touchpoint, reply, and booking tied back to pipeline impact. Know exactly what\'s working — and scale it.',
+      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+      title:'Revenue-grade analytics',
+      desc:"Every touchpoint, reply, and booking tied back to pipeline impact. Know exactly what's working — and scale it.",
     },
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-        </svg>
-      ),
-      title: 'Plug into your stack',
-      desc: 'Native integrations with HubSpot, Salesforce, Pipedrive, GHL, Calendly, Slack, Stripe — and 1,000+ via API.',
+      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
+      title:'Plug into your stack',
+      desc:'Native integrations with HubSpot, Salesforce, Pipedrive, GHL, Calendly, Slack, Stripe — and 1,000+ via API.',
     },
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      ),
-      title: 'Trained on your brand',
-      desc: 'Voice, tone, objections, edge cases — your AI agent operates with the precision of your best closer.',
+      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+      title:'Trained on your brand',
+      desc:'Voice, tone, objections, edge cases — your AI agent operates with the precision of your best closer.',
     },
     {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-      ),
-      title: 'Enterprise-ready',
-      desc: 'SOC 2, GDPR, end-to-end encryption, role-based access. Built for teams who can\'t afford to play.',
+      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+      title:'Enterprise-ready',
+      desc:"SOC 2, GDPR, end-to-end encryption, role-based access. Built for teams who can't afford to play.",
     },
   ]
-
   return (
     <section id="features" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
-      <div style={{ maxWidth:1200, margin:'0 auto' }}>
-        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>PLATFORM</div>
-        <h2 style={{ fontSize:'clamp(32px,4.5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:60, lineHeight:1.12 }}>
+      <div style={{ maxWidth:1280, margin:'0 auto' }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>Platform</div>
+        <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:56, lineHeight:1.12 }}>
           Built like infrastructure.<br/>Used like magic.
         </h2>
 
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }} className="platform-cards">
-          {features.map((f, i) => (
-            <div key={i} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:32 }}>
+        <div className="platform-cards" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, marginBottom:48 }}>
+          {cards.map((c, i) => (
+            <div key={i} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:'28px 28px 32px' }}>
               <div style={{ background:'#13162A', border:`1px solid ${T.border}`, borderRadius:12, width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20 }}>
-                {f.icon}
+                {c.icon}
               </div>
-              <div style={{ fontSize:18, fontWeight:700, color:T.text, marginBottom:10, letterSpacing:'-0.02em' }}>{f.title}</div>
-              <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{f.desc}</div>
+              <div style={{ fontSize:17, fontWeight:700, color:T.text, marginBottom:10, letterSpacing:'-0.02em' }}>{c.title}</div>
+              <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{c.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Testimonial */}
+        <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:20, padding:'48px 56px', position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${T.blue}, ${T.purple})` }}/>
+          <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:24 }}>Customer Story</div>
+          <blockquote style={{ fontSize:'clamp(16px,2vw,22px)', fontWeight:500, color:T.text, lineHeight:1.6, margin:0, maxWidth:800, letterSpacing:'-0.01em' }}>
+            "We replaced two SDRs and a follow-up agency with LeadsUp. Booked calls went up 312% in the first 60 days — and our team finally stopped chasing cold leads."
+          </blockquote>
+          <div style={{ marginTop:28, display:'flex', alignItems:'center', gap:14 }}>
+            <div style={{ width:40, height:40, borderRadius:'50%', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:700, color:'#fff', flexShrink:0 }}>MR</div>
+            <div>
+              <div style={{ fontSize:14, fontWeight:600, color:T.text }}>Marcus Reyes</div>
+              <div style={{ fontSize:13, color:T.sub, marginTop:2 }}>VP Revenue, Northwind Capital</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ── Pricing section ────────────────────────────────────────── */
+function Pricing() {
+  const plans = [
+    {
+      name: 'Growth',
+      price: '$2,400',
+      period: '/mo',
+      tagline: 'For teams scaling inbound to 500+ leads/mo.',
+      features: [
+        'AI follow-up across SMS + email',
+        'Up to 1,500 leads/month',
+        'Calendar + CRM integration',
+        'Standard support',
+      ],
+      cta: 'Start with Growth',
+      href: '/login?mode=signup',
+      highlight: false,
+    },
+    {
+      name: 'Scale',
+      price: '$4,900',
+      period: '/mo',
+      tagline: 'Full revenue infrastructure for 7–8 figure operators.',
+      features: [
+        'Everything in Growth',
+        'Unlimited leads',
+        'Custom AI training on your offer',
+        'Dedicated revenue strategist',
+        'Priority + Slack support',
+      ],
+      cta: 'Book strategy call',
+      href: '#cta',
+      highlight: true,
+      badge: 'Most Popular',
+    },
+    {
+      name: 'Enterprise',
+      price: 'Custom',
+      period: '',
+      tagline: 'For multi-brand operators and high-volume sales orgs.',
+      features: [
+        'Custom integrations & SLAs',
+        'SOC 2 + dedicated infra',
+        'White-glove onboarding',
+        'Quarterly business reviews',
+      ],
+      cta: 'Talk to sales',
+      href: '#cta',
+      highlight: false,
+    },
+  ]
+  return (
+    <section id="pricing" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:1280, margin:'0 auto' }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>Pricing</div>
+        <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:56, lineHeight:1.12 }}>
+          Priced like a system.<br/>Pays for itself in week one.
+        </h2>
+
+        <div className="pricing-cards" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, alignItems:'start' }}>
+          {plans.map(p => (
+            <div key={p.name} style={{
+              background: p.highlight ? 'linear-gradient(135deg, #0D1035, #0F1220)' : T.surface,
+              border: p.highlight ? `1px solid ${T.blue}40` : `1px solid ${T.border}`,
+              borderRadius:20, padding:'36px 32px',
+              position:'relative', overflow:'hidden',
+              boxShadow: p.highlight ? `0 0 60px -20px ${T.blue}30` : 'none',
+            }}>
+              {p.highlight && (
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${T.blue}, ${T.purple})` }}/>
+              )}
+              {p.badge && (
+                <div style={{ display:'inline-flex', fontSize:11, fontWeight:700, color:T.blue, background:`${T.blue}15`, border:`1px solid ${T.blue}30`, borderRadius:99, padding:'4px 10px', marginBottom:20, letterSpacing:'0.05em', textTransform:'uppercase' }}>
+                  {p.badge}
+                </div>
+              )}
+              <div style={{ fontSize:13, fontWeight:700, color:T.text, letterSpacing:'0.05em', textTransform:'uppercase', marginBottom:8 }}>{p.name}</div>
+              <div style={{ display:'flex', alignItems:'baseline', gap:4, marginBottom:12 }}>
+                <span style={{ fontSize:42, fontWeight:700, color:T.text, letterSpacing:'-2px' }}>{p.price}</span>
+                {p.period && <span style={{ fontSize:15, color:T.sub }}>{p.period}</span>}
+              </div>
+              <div style={{ fontSize:14, color:T.sub, lineHeight:1.6, marginBottom:28, borderBottom:`1px solid ${T.border}`, paddingBottom:28 }}>{p.tagline}</div>
+              <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:32 }}>
+                {p.features.map(f => (
+                  <div key={f} style={{ display:'flex', alignItems:'flex-start', gap:10, fontSize:14, color:T.sub }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink:0, marginTop:1 }}><polyline points="20 6 9 17 4 12"/></svg>
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <a href={p.href} style={{
+                display:'block', textAlign:'center', padding:'13px 20px', borderRadius:12,
+                fontSize:14, fontWeight:600, textDecoration:'none', transition:'opacity 0.15s',
+                background: p.highlight ? `linear-gradient(135deg, ${T.blue}, ${T.purple})` : 'transparent',
+                color: p.highlight ? '#fff' : T.text,
+                border: p.highlight ? 'none' : `1px solid ${T.border}`,
+              }}
+                onMouseOver={e=>e.currentTarget.style.opacity='0.8'}
+                onMouseOut={e=>e.currentTarget.style.opacity='1'}>
+                {p.cta}
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ── FAQ section ────────────────────────────────────────────── */
+function FAQ() {
+  const [openIdx, setOpenIdx] = useState(null)
+  const items = [
+    {
+      q: 'What exactly does LeadsUp do?',
+      a: 'LeadsUp is an AI revenue system that follows up with every lead instantly across SMS, email and chat — qualifying intent and booking calls directly on your calendar. It replaces your follow-up stack and operates 24/7.',
+    },
+    { q: 'How is this different from a marketing agency?',       a: '' },
+    { q: 'How fast can we go live?',                              a: '' },
+    { q: 'What tools do you integrate with?',                    a: '' },
+    { q: 'Is my data secure?',                                    a: '' },
+    { q: "What if AI replies don't sound like our brand?",        a: '' },
+    { q: 'Do you offer a guarantee?',                             a: '' },
+  ]
+  return (
+    <section id="faq" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:760, margin:'0 auto' }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>FAQ</div>
+        <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:48, lineHeight:1.12 }}>
+          Questions, answered.
+        </h2>
+
+        <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
+          {items.map((item, i) => (
+            <div key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
+              <button
+                onClick={()=>setOpenIdx(openIdx === i ? null : i)}
+                style={{ width:'100%', display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, padding:'22px 0', background:'none', border:'none', cursor:'pointer', textAlign:'left', fontFamily:font }}>
+                <span style={{ fontSize:16, fontWeight:500, color:T.text }}>{item.q}</span>
+                <ChevronDown size={18} style={{ color:T.sub, flexShrink:0, transform: openIdx === i ? 'rotate(180deg)' : 'rotate(0deg)', transition:'transform 0.2s' }}/>
+              </button>
+              {openIdx === i && item.a && (
+                <div style={{ fontSize:15, color:T.sub, lineHeight:1.7, paddingBottom:22 }}>{item.a}</div>
+              )}
+              {openIdx === i && !item.a && (
+                <div style={{ fontSize:15, color:T.border, lineHeight:1.7, paddingBottom:22, fontStyle:'italic' }}>Answer coming soon.</div>
+              )}
             </div>
           ))}
         </div>
@@ -364,22 +494,23 @@ function Platform() {
 /* ── CTA section ────────────────────────────────────────────── */
 function CTASection() {
   return (
-    <section id="cta" style={{ background:T.bg, padding:'120px 40px', fontFamily:font }}>
-      <div style={{ maxWidth:860, margin:'0 auto', background:'linear-gradient(135deg, #0D0F24, #13162A)', border:`1px solid ${T.border}`, borderRadius:24, padding:80, textAlign:'center' }}>
-        <h2 style={{ fontSize:'clamp(36px,5vw,56px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, lineHeight:1.1, margin:0 }}>
+    <section id="cta" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:860, margin:'0 auto', background:'linear-gradient(135deg, #0D0F24, #13162A)', border:`1px solid ${T.border}`, borderRadius:24, padding:'80px 60px', textAlign:'center', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${T.blue}, ${T.purple})` }}/>
+        <h2 style={{ fontSize:'clamp(32px,5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, lineHeight:1.1, margin:0 }}>
           Stop losing leads.
         </h2>
-        <h2 style={{ fontSize:'clamp(36px,5vw,56px)', fontWeight:700, letterSpacing:'-0.02em', color:T.blue, lineHeight:1.1, margin:'0 0 20px' }}>
+        <h2 style={{ fontSize:'clamp(32px,5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', lineHeight:1.1, margin:'0 0 20px', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
           Start compounding revenue.
         </h2>
-        <p style={{ fontSize:18, color:T.sub, lineHeight:1.7, marginBottom:40, maxWidth:560, margin:'0 auto 40px' }}>
+        <p style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:520, margin:'0 auto 40px' }}>
           See exactly how LeadsUp would convert your pipeline. 30 minutes, no pitch.
         </p>
         <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer"
           style={{ display:'inline-block', fontSize:16, fontWeight:600, color:'#FFFFFF', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding:'14px 32px', borderRadius:99, textDecoration:'none', transition:'opacity 0.15s' }}
           onMouseOver={e=>e.currentTarget.style.opacity='0.85'}
           onMouseOut={e=>e.currentTarget.style.opacity='1'}>
-          Book your strategy call →
+          Book your strategy call
         </a>
         <p style={{ fontSize:13, color:T.sub, marginTop:16 }}>No credit card · No commitment · Real revenue audit</p>
       </div>
@@ -390,29 +521,26 @@ function CTASection() {
 /* ── Footer ─────────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer style={{ background:T.bg, borderTop:`1px solid ${T.border}`, padding:'32px 40px', fontFamily:font }}>
-      <div style={{ maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
-        {/* Left: logo */}
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block' }}/>
-          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:18, objectFit:'contain', display:'block' }}/>
+    <footer style={{ background:T.bg, borderTop:`1px solid ${T.border}`, padding:'36px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, background:'transparent' }}>
+          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:18, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <span style={{ fontSize:13, color:T.sub, marginLeft:8 }}>© 2026 · AI Revenue System</span>
         </div>
-        {/* Center: links */}
         <div style={{ display:'flex', alignItems:'center', gap:24 }}>
-          {['Privacy','Terms','Support'].map(l => (
+          {['Privacy','Terms','Security','Contact'].map(l => (
             <a key={l} href="#" style={{ fontSize:13, color:T.sub, textDecoration:'none', transition:'color 0.15s' }}
               onMouseOver={e=>e.currentTarget.style.color=T.text}
               onMouseOut={e=>e.currentTarget.style.color=T.sub}>{l}</a>
           ))}
         </div>
-        {/* Right: copyright */}
-        <div style={{ fontSize:13, color:T.sub }}>© 2026 Leads Up</div>
       </div>
     </footer>
   )
 }
 
-/* ── Root export ────────────────────────────────────────────── */
+/* ── Root ───────────────────────────────────────────────────── */
 export default function Landing() {
   return (
     <div style={{ background:T.bg, minHeight:'100vh', fontFamily:font, backgroundImage:'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize:'60px 60px' }}>
@@ -420,24 +548,35 @@ export default function Landing() {
         .nav-burger { display: none; }
         @media (max-width: 767px) {
           .nav-burger { display: flex !important; }
-        }
-        @media (max-width: 1024px) {
-          .system-cards { grid-template-columns: repeat(2, 1fr) !important; }
-          .platform-cards { grid-template-columns: repeat(2, 1fr) !important; }
-          .stat-col { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E; }
-        }
-        @media (max-width: 640px) {
+          .hero-section { padding-top: 90px !important; padding-bottom: 40px !important; }
+          .hero-headline { font-size: 36px !important; white-space: normal !important; }
+          .hero-sub { font-size: 16px !important; }
+          .hero-btns { flex-direction: column !important; width: 100% !important; }
+          .hero-btn-primary { width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
+          .hub-outer { padding: 0 8px !important; }
+          .hub-wrapper { transform: scale(0.55) !important; transform-origin: top center !important; margin-bottom: -24% !important; }
+          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .stat-col { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E !important; padding: 28px 20px !important; }
           .system-cards { grid-template-columns: 1fr !important; }
           .platform-cards { grid-template-columns: 1fr !important; }
+          .pricing-cards { grid-template-columns: 1fr !important; }
+        }
+        @media (min-width: 768px) and (max-width: 1024px) {
+          .system-cards { grid-template-columns: repeat(2,1fr) !important; }
+          .platform-cards { grid-template-columns: repeat(2,1fr) !important; }
+          .pricing-cards { grid-template-columns: repeat(2,1fr) !important; }
+          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .stat-col { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E; }
         }
       `}</style>
       <Navbar />
       <main style={{ paddingTop:60 }}>
         <Hero />
-        <SocialProof />
         <Stats />
         <System />
-        <Platform />
+        <Features />
+        <Pricing />
+        <FAQ />
         <CTASection />
       </main>
       <Footer />
