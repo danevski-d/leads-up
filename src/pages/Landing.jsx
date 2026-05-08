@@ -89,8 +89,8 @@ function IntegrationHub() {
         </div>
       ))}
       <div className="absolute" style={{ left:'50%', top:`${(cy/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:10 }}>
-        <div style={{ width:72, height:72, borderRadius:'50%', background:'#0D0F18', border:'1px solid #1A1D2E', padding:12, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 4px rgba(99,102,241,0.08), 0 0 32px -8px rgba(99,102,241,0.4)' }}>
-          <img src="/leadsup-icon.png" alt="LeadsUp" style={{ height:48, width:48, background:'transparent', objectFit:'contain', display:'block' }}/>
+        <div style={{ width:80, height:80, borderRadius:'50%', background:'#0D0F18', border:'1px solid #1A1D2E', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 4px rgba(99,102,241,0.08), 0 0 32px -8px rgba(99,102,241,0.4)' }}>
+          <img src="/leadsup-icon.png.png" alt="LeadsUp" width="48" height="48" style={{ background:'transparent', objectFit:'contain' }}/>
         </div>
       </div>
     </div>
@@ -104,11 +104,9 @@ function Navbar() {
   return (
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent', flexShrink:0 }}>
-          <img src="/leadsup-icon.png.png" alt="" style={{ height:32, width:'auto', display:'inline-block', background:'transparent', objectFit:'contain' }}/>
-          <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF', background:'transparent', letterSpacing:'-0.01em' }}>
-            Leads <span style={{ color:'#6B8AFF' }}>up</span>
-          </span>
+        <Link to="/" style={{ textDecoration:'none', flexShrink:0, display:'flex', alignItems:'center', gap:8, background:'transparent' }}>
+          <img src="/leadsup-icon.png.png" style={{ height:32, width:'auto', background:'transparent', objectFit:'contain' }} alt="LeadsUp" />
+          <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF' }}>Leads <span style={{ color:'#6B8AFF' }}>up</span></span>
         </Link>
 
         <div className="hidden md:flex" style={{ alignItems:'center', gap:32 }}>
@@ -520,11 +518,9 @@ function Footer() {
   return (
     <footer style={{ borderTop:`1px solid ${T.border}`, padding:'36px 40px', fontFamily:font }}>
       <div className="footer-inner" style={{ maxWidth:1280, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:8, background:'transparent' }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
-          <span style={{ fontSize:15, fontWeight:700, color:'#FFFFFF', background:'transparent' }}>
-            Leads <span style={{ color:'#6B8AFF' }}>up</span>
-          </span>
+        <div style={{ display:'flex', alignItems:'center', gap:6, background:'transparent' }}>
+          <img src="/leadsup-icon.png.png" alt="LeadsUp" style={{ height:20, width:'auto', background:'transparent', objectFit:'contain' }}/>
+          <span style={{ fontSize:14, fontWeight:700, color:'#FFFFFF' }}>Leads <span style={{ color:'#6B8AFF' }}>up</span></span>
           <span style={{ fontSize:13, color:T.sub, marginLeft:8 }}>© 2026 · AI Revenue System</span>
         </div>
         <div className="footer-links" style={{ display:'flex', alignItems:'center', gap:24 }}>

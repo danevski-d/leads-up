@@ -40,11 +40,11 @@ function Sidebar({ collapsed, mobile, onClose, onLogout, avatarInitials, display
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {collapsed && !mobile ? (
-            <img src="/leadsup-icon.png" alt="Leads Up" style={{ height: 28, objectFit: 'contain', mixBlendMode: 'lighten' }} />
+            <img src="/leadsup-icon.png.png" alt="Leads Up" style={{ height: 28, objectFit: 'contain', mixBlendMode: 'lighten' }} />
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <img src="/leadsup-icon.png" alt="" style={{ height: 28, objectFit: 'contain', mixBlendMode: 'lighten' }} />
-              <img src="/leadsup-text.png" alt="Leads Up" style={{ height: 22, objectFit: 'contain', mixBlendMode: 'lighten' }} />
+              <img src="/leadsup-icon.png.png" alt="" style={{ height: 28, objectFit: 'contain', mixBlendMode: 'lighten' }} />
+              <img src="/leadsup-text.png.png" alt="Leads Up" style={{ height: 22, objectFit: 'contain', mixBlendMode: 'lighten' }} />
             </div>
           )}
         </div>
