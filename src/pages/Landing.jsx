@@ -1,19 +1,21 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  Zap, Phone, MessageSquare, Calendar, ChevronDown, ChevronUp,
-  ArrowRight, CheckCircle, RefreshCw, Target, Menu, X,
-  PhoneCall, Mic
-} from 'lucide-react'
-import { faqs } from '../data/mockData'
+import { Menu, X } from 'lucide-react'
 
-const C = {
-  bg:'#0D1117', bgSection:'#111827', card:'#111827', cardBorder:'#1F2937',
-  primary:'#6366F1', primaryDark:'#7C3AED', primaryGlow:'rgba(99,102,241,0.55)',
-  text:'#F9FAFB', textSub:'#9CA3AF', textMuted:'#4B5563',
-  accent:'#818CF8', green:'#34D399', amber:'#FBBF24', rose:'#FB7185',
+const font = "system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif"
+
+/* ── Design tokens ──────────────────────────────────────────── */
+const T = {
+  bg: '#0B0D16',
+  surface: '#0F1120',
+  border: '#1A1D2E',
+  text: '#FFFFFF',
+  sub: '#94A3B8',
+  blue: '#6B8AFF',
+  purple: '#A78BFA',
 }
 
+/* ── IntegrationHub — preserved exactly ────────────────────── */
 const NODES = [
   { id:'hubspot',  logo:'https://assets.findstack.com/vdaa5x4wgysdzradrjabipgw14y6', ring:'#FF7A59', x:450, y:50  },
   { id:'airtable', logo:'https://play-lh.googleusercontent.com/Kv6IIya1TLiCSQCHOz1ihsxuBfSeriuVd8Qpsgby6RFjiWzIJeTnoOWEzHwzttHlhmGM', ring:'#FCB400', x:585, y:99  },
@@ -37,57 +39,6 @@ const PATHS = {
 const DUR = { hubspot:3.2, airtable:2.6, gmail:3.5, zapier:2.3, openai:3.0, n8n:3.8, linkedin:2.7, outlook:3.1, clay:3.4 }
 const DEL = { hubspot:0, airtable:0.9, gmail:0.4, zapier:1.7, openai:2.4, n8n:1.1, linkedin:0.7, outlook:0.5, clay:2.2 }
 
-function TrialModal({ onClose }) {
-  const [form, setForm] = useState({ name:'', company:'', role:'', email:'', size:'1-10', interest:'Both' })
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
-  const field = { background:'#0D1117', border:'1px solid #1F2937', borderRadius:12, padding:'10px 16px', color:C.text, fontSize:14, width:'100%', outline:'none', transition:'border-color 0.15s' }
-  const focus = e => e.target.style.borderColor = C.primary
-  const blur  = e => e.target.style.borderColor = '#1F2937'
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" style={{ background:'rgba(0,0,0,0.85)', backdropFilter:'blur(10px)' }}>
-      <div className="w-full max-w-lg rounded-2xl p-6 relative overflow-y-auto" style={{ background:'#0D1117', border:'1px solid #1F2937', boxShadow:`0 0 80px -20px ${C.primaryGlow}`, maxHeight:'90vh' }}>
-        <button onClick={onClose} style={{ position:'absolute', top:20, right:20, color:C.textMuted, background:'none', border:'none', cursor:'pointer', minWidth:32, minHeight:32 }}>
-          <X size={18}/>
-        </button>
-        <h2 style={{ fontSize:20, fontWeight:700, color:C.text, marginBottom:4 }}>Start Free Trial</h2>
-        <p style={{ fontSize:13, color:C.textMuted, marginBottom:20 }}>Tell us about your business to get set up.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-          {[
-            {label:'Full Name', key:'name', type:'text', ph:'Jane Smith'},
-            {label:'Company', key:'company', type:'text', ph:'Acme Services'},
-            {label:'Role', key:'role', type:'text', ph:'Owner / Sales Lead'},
-            {label:'Work Email', key:'email', type:'email', ph:'jane@company.com'},
-          ].map(({label,key,type,ph}) => (
-            <div key={key}>
-              <label style={{ fontSize:11, fontWeight:600, color:C.textMuted, display:'block', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</label>
-              <input type={type} value={form[key]} placeholder={ph} onChange={e=>set(key,e.target.value)} style={field} onFocus={focus} onBlur={blur}/>
-            </div>
-          ))}
-          <div>
-            <label style={{ fontSize:11, fontWeight:600, color:C.textMuted, display:'block', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.05em' }}>Company Size</label>
-            <select value={form.size} onChange={e=>set('size',e.target.value)} style={{...field,cursor:'pointer'}}>
-              {['1-10','11-50','51-200','200+'].map(o=><option key={o}>{o}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={{ fontSize:11, fontWeight:600, color:C.textMuted, display:'block', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.05em' }}>Interested In</label>
-            <select value={form.interest} onChange={e=>set('interest',e.target.value)} style={{...field,cursor:'pointer'}}>
-              {['Inbound Lead Conversion','Revenue Recovery','Both'].map(o=><option key={o}>{o}</option>)}
-            </select>
-          </div>
-        </div>
-        <p style={{ fontSize:11, color:C.textMuted, marginBottom:16 }}>By continuing you agree to our Terms & Privacy Policy.</p>
-        <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2"
-          style={{ width:'100%', padding:'15px 24px', borderRadius:14, background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, color:'white', fontWeight:700, fontSize:15, textDecoration:'none', boxShadow:`0 0 32px -8px ${C.primaryGlow}` }}>
-          Book a Call <ArrowRight size={16}/>
-        </a>
-      </div>
-    </div>
-  )
-}
-
 function IntegrationHub() {
   const W = 900, H = 520, cx = 450, cy = 260
   return (
@@ -105,7 +56,7 @@ function IntegrationHub() {
           </filter>
         </defs>
         {[90,130,170].map((r,i) => (
-          <circle key={r} cx={cx} cy={cy} r={r} fill="none" stroke={C.primary} strokeWidth={0.5-i*0.12} strokeOpacity={0.12-i*0.03}>
+          <circle key={r} cx={cx} cy={cy} r={r} fill="none" stroke="#6366F1" strokeWidth={0.5-i*0.12} strokeOpacity={0.12-i*0.03}>
             <animate attributeName="r" values={`${r-6};${r+6};${r-6}`} dur={`${4+i*1.2}s`} repeatCount="indefinite"/>
             <animate attributeName="stroke-opacity" values={`${0.12-i*0.03};0.02;${0.12-i*0.03}`} dur={`${4+i*1.2}s`} repeatCount="indefinite"/>
           </circle>
@@ -139,12 +90,12 @@ function IntegrationHub() {
       ))}
       <div className="absolute" style={{ left:'50%', top:`${(cy/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:10 }}>
         <div style={{ textAlign:'center' }}>
-          <div style={{ width:72, height:72, borderRadius:'50%', margin:'0 auto', background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 0 0 3px rgba(99,102,241,0.2), 0 0 50px -8px ${C.primaryGlow}, 0 0 0 6px rgba(99,102,241,0.06)` }}>
+          <div style={{ width:72, height:72, borderRadius:'50%', margin:'0 auto', background:'linear-gradient(135deg, #6366F1, #7C3AED)', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 3px rgba(99,102,241,0.2), 0 0 50px -8px rgba(99,102,241,0.55), 0 0 0 6px rgba(99,102,241,0.06)' }}>
             <img src="/leadsup-icon.png" alt="" style={{ height:40, width:40, objectFit:'contain', mixBlendMode:'lighten' }}/>
           </div>
           <div style={{ marginTop:8 }}>
             <img src="/leadsup-text.png" alt="Leads Up" style={{ height:14, objectFit:'contain', mixBlendMode:'lighten', display:'block', margin:'0 auto' }}/>
-            <div style={{ fontSize:8.5, fontWeight:700, color:C.primary, letterSpacing:'0.14em', textTransform:'uppercase', marginTop:3 }}>AI ENGINE</div>
+            <div style={{ fontSize:8.5, fontWeight:700, color:'#6366F1', letterSpacing:'0.14em', textTransform:'uppercase', marginTop:3 }}>AI ENGINE</div>
           </div>
         </div>
       </div>
@@ -152,154 +103,171 @@ function IntegrationHub() {
   )
 }
 
-function Navbar({ onOpenTrial }) {
+/* ── Navbar ─────────────────────────────────────────────────── */
+function Navbar() {
   const [open, setOpen] = useState(false)
-  const [logoErr, setLogoErr] = useState(false)
+  const navLinks = [['#system','System'],['#features','Features'],['#pricing','Pricing'],['#faq','FAQ']]
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50" style={{ background:`${C.bg}E8`, borderBottom:'1px solid #1F2937', backdropFilter:'blur(20px)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', mixBlendMode:'lighten' }}/>
-          <img src="/leadsup-text.png" alt="Leads Up" style={{ height:28, objectFit:'contain', mixBlendMode:'lighten' }}/>
+    <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font }}>
+      <div style={{ maxWidth:1200, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        {/* Logo */}
+        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none' }}>
+          <img src="/leadsup-icon.png" alt="" style={{ height:28, objectFit:'contain', display:'block' }}/>
+          <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF', letterSpacing:'-0.01em' }}>Leadsup</span>
         </Link>
-        <div className="hidden md:flex items-center gap-7 text-sm">
-          {[['#features','Features'],['#how-it-works','How It Works'],['#faq','FAQ']].map(([h,l])=>(
-            <a key={h} href={h} style={{ color:C.textMuted, textDecoration:'none', transition:'color 0.15s' }}
-              onMouseOver={e=>e.currentTarget.style.color=C.text} onMouseOut={e=>e.currentTarget.style.color=C.textMuted}>{l}</a>
+
+        {/* Center links — desktop */}
+        <div className="hidden md:flex" style={{ alignItems:'center', gap:32 }}>
+          {navLinks.map(([href, label]) => (
+            <a key={href} href={href} style={{ fontSize:14, color:T.sub, textDecoration:'none', transition:'color 0.15s', fontFamily:font }}
+              onMouseOver={e=>e.currentTarget.style.color='#FFFFFF'}
+              onMouseOut={e=>e.currentTarget.style.color=T.sub}>{label}</a>
           ))}
         </div>
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/login" style={{ fontSize:13, color:C.textMuted, textDecoration:'none', padding:'8px 16px', transition:'color 0.15s' }}
-            onMouseOver={e=>e.currentTarget.style.color=C.text} onMouseOut={e=>e.currentTarget.style.color=C.textMuted}>
-            Sign In
-          </Link>
-          <button onClick={onOpenTrial} style={{ fontSize:13, fontWeight:600, color:'white', padding:'9px 20px', borderRadius:12, border:'none', cursor:'pointer', background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, boxShadow:`0 0 20px -6px ${C.primaryGlow}` }}>
-            Get Started Free
-          </button>
+
+        {/* Right actions */}
+        <div className="hidden md:flex" style={{ alignItems:'center', gap:20 }}>
+          <Link to="/login" style={{ fontSize:14, color:T.sub, textDecoration:'none', transition:'color 0.15s', fontFamily:font }}
+            onMouseOver={e=>e.currentTarget.style.color='#FFFFFF'}
+            onMouseOut={e=>e.currentTarget.style.color=T.sub}>Sign In</Link>
+          <a href="#cta" style={{ fontSize:14, fontWeight:600, color:'#080A0F', background:'#FFFFFF', padding:'8px 16px', borderRadius:99, textDecoration:'none', fontFamily:font, transition:'opacity 0.15s' }}
+            onMouseOver={e=>e.currentTarget.style.opacity='0.85'}
+            onMouseOut={e=>e.currentTarget.style.opacity='1'}>Get started</a>
         </div>
-        <button className="md:hidden" style={{ color:C.textMuted, background:'none', border:'none', cursor:'pointer', padding:8, minWidth:44, minHeight:44, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={()=>setOpen(!open)}>
+
+        {/* Mobile burger — hidden on desktop via .nav-burger media query */}
+        <button className="nav-burger" onClick={()=>setOpen(!open)}
+          style={{ background:'none', border:'none', cursor:'pointer', color:T.sub, padding:8, minWidth:44, minHeight:44, alignItems:'center', justifyContent:'center' }}>
           {open ? <X size={20}/> : <Menu size={20}/>}
         </button>
       </div>
+
+      {/* Mobile menu */}
       {open && (
-        <div className="md:hidden px-4 pb-5 pt-3 space-y-2" style={{ borderTop:'1px solid #1F2937' }}>
-          {[['#features','Features'],['#how-it-works','How It Works'],['#faq','FAQ']].map(([h,l])=>(
-            <a key={h} href={h} className="block py-2.5 text-sm" style={{ color:C.textMuted }} onClick={()=>setOpen(false)}>{l}</a>
+        <div className="md:hidden" style={{ position:'absolute', top:60, left:0, right:0, background:T.bg, borderBottom:`1px solid ${T.border}`, padding:'16px 24px 24px', display:'flex', flexDirection:'column', gap:12 }}>
+          {navLinks.map(([href, label]) => (
+            <a key={href} href={href} onClick={()=>setOpen(false)}
+              style={{ fontSize:15, color:T.sub, textDecoration:'none', padding:'8px 0', fontFamily:font }}>{label}</a>
           ))}
-          <Link to="/login" onClick={()=>setOpen(false)}
-            className="block w-full py-3 text-center text-sm font-semibold rounded-xl"
-            style={{ background:'rgba(255,255,255,0.04)', border:'1px solid #1F2937', color:C.accent, textDecoration:'none' }}>
-            Sign In
-          </Link>
-          <button onClick={()=>{setOpen(false);onOpenTrial()}}
-            className="block w-full py-3 text-center text-sm font-semibold text-white rounded-xl"
-            style={{ background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, border:'none', cursor:'pointer' }}>
-            Get Started Free
-          </button>
+          <div style={{ height:1, background:T.border, margin:'4px 0' }}/>
+          <Link to="/login" onClick={()=>setOpen(false)} style={{ fontSize:15, color:T.sub, textDecoration:'none', padding:'8px 0', fontFamily:font }}>Sign In</Link>
+          <a href="#cta" onClick={()=>setOpen(false)} style={{ fontSize:15, fontWeight:600, color:'#080A0F', background:'#FFFFFF', padding:'12px 20px', borderRadius:99, textDecoration:'none', textAlign:'center', fontFamily:font }}>Get started</a>
         </div>
       )}
     </nav>
   )
 }
 
-function Hero({ onOpenTrial }) {
+/* ── Hero ───────────────────────────────────────────────────── */
+function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16">
-      <div className="absolute inset-0" style={{ background:`radial-gradient(ellipse 90% 65% at 50% -10%, rgba(99,102,241,0.2) 0%, transparent 65%), ${C.bg}` }}/>
-      <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage:'radial-gradient(circle, #818CF8 1px, transparent 1px)', backgroundSize:'40px 40px' }}/>
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 text-center">
-        <div className="inline-flex items-center gap-2 mb-7 px-4 py-1.5 rounded-full" style={{ background:'rgba(99,102,241,0.12)', border:`1px solid rgba(99,102,241,0.3)`, fontSize:11, fontWeight:700, color:C.accent, letterSpacing:'0.08em', textTransform:'uppercase' }}>
-          <span style={{ width:6, height:6, borderRadius:'50%', background:C.accent, display:'inline-block', animation:'pulse 2s infinite' }}/>
-          AI Revenue System
+    <section style={{ background:T.bg, paddingTop:120, paddingBottom:80, fontFamily:font }}>
+      <div style={{ maxWidth:800, margin:'0 auto', padding:'0 24px', textAlign:'center' }}>
+        {/* Badge */}
+        <div style={{ display:'inline-flex', alignItems:'center', border:`1px solid ${T.border}`, borderRadius:99, padding:'6px 14px', marginBottom:32, fontSize:12, color:T.sub }}>
+          AI Revenue System · Now booking Q2 deployments
         </div>
-        <h1 style={{ fontSize:'clamp(1.9rem,5.5vw,3.75rem)', fontWeight:700, lineHeight:1.13, letterSpacing:'-0.02em', marginBottom:20, color:C.text }}>
-          Never Miss a Lead.{' '}
-          <span style={{ background:'linear-gradient(135deg, #818CF8, #C4B5FD, #67E8F9)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-            Never Lose Revenue.
-          </span>
+
+        {/* Headline */}
+        <h1 style={{ fontSize:56, fontWeight:700, letterSpacing:'-0.02em', lineHeight:1.1, margin:'0 0 20px', color:T.text }}>
+          Turn leads into<br/>
+          <span style={{ background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>booked revenue</span>
+          <span style={{ color:T.text }}>—on autopilot.</span>
         </h1>
-        <p style={{ fontSize:'clamp(0.9rem,1.3vw,1.1rem)', color:C.textSub, maxWidth:520, margin:'0 auto 32px', lineHeight:1.7 }}>
-          Every inbound call, form, or message gets an AI response in under 60 seconds — qualified and booked directly to your calendar.{' '}
-          <span style={{ color:C.accent }}>Around the clock.</span>
+
+        {/* Subheadline */}
+        <p style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:560, margin:'0 auto 40px', textAlign:'center' }}>
+          LeadsUp is the AI revenue infrastructure that follows up, qualifies, and converts every lead into booked calls and paying customers — without human ops.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-          <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2"
-            style={{ padding:'14px 28px', borderRadius:14, background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, color:'white', fontWeight:600, fontSize:15, textDecoration:'none', boxShadow:`0 0 40px -8px ${C.primaryGlow}` }}>
-            Book a Demo <ArrowRight size={16}/>
+
+        {/* CTAs */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, flexWrap:'wrap' }}>
+          <a href="#cta" style={{ fontSize:15, fontWeight:600, color:'#FFFFFF', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding:'12px 24px', borderRadius:99, textDecoration:'none', transition:'opacity 0.15s' }}
+            onMouseOver={e=>e.currentTarget.style.opacity='0.85'}
+            onMouseOut={e=>e.currentTarget.style.opacity='1'}>
+            Book a strategy call →
           </a>
-          <button onClick={onOpenTrial}
-            className="inline-flex items-center justify-center gap-2"
-            style={{ padding:'14px 28px', borderRadius:14, border:`1px solid rgba(255,255,255,0.12)`, color:C.accent, background:'rgba(255,255,255,0.04)', fontWeight:600, fontSize:15, cursor:'pointer' }}>
-            Start Free Trial
-          </button>
+          <a href="#system" style={{ fontSize:15, color:'#FFFFFF', background:'transparent', border:'none', textDecoration:'none', cursor:'pointer', transition:'color 0.15s' }}
+            onMouseOver={e=>e.currentTarget.style.color=T.sub}
+            onMouseOut={e=>e.currentTarget.style.color='#FFFFFF'}>
+            See how it works
+          </a>
         </div>
+      </div>
 
-        {/* Integration Hub — animated on ALL screen sizes */}
-        <div style={{ padding:'2px', borderRadius:24, background:'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(124,58,237,0.1), rgba(99,102,241,0.05))' }}>
-          <div style={{ borderRadius:22, padding:'24px 8px 12px', background:'rgba(13,17,23,0.9)', backdropFilter:'blur(12px)' }}>
-            {/* Full animation — scaled down on mobile */}
-            <div className="hidden sm:block">
-              <IntegrationHub />
-            </div>
-            {/* Mobile — same animated diagram scaled to fit */}
-            <div className="sm:hidden w-full" style={{ aspectRatio: '900/520', position: 'relative', overflow: 'visible' }}>
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                transform: 'scale(0.42)',
-                transformOrigin: 'top left',
-                width: 'calc(100% / 0.42)',
-                mheight: 'calc(100% / 0.42)',
-              }}>
-                <IntegrationHub />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto mt-8">
-          {[
-            {n:'< 60s', l:'AI Response Time'},
-            {n:'3.4x',  l:'More Bookings'},
-            {n:'$2.6M', l:'Revenue Recovered'},
-            {n:'94%',   l:'Lead Capture Rate'},
-          ].map(({n,l})=>(
-            <div key={l} className="text-center py-4 rounded-2xl" style={{ background:'rgba(255,255,255,0.04)', border:'1px solid #1F2937' }}>
-              <div style={{ fontSize:20, fontWeight:800, color:C.accent, marginBottom:3 }}>{n}</div>
-              <div style={{ fontSize:10, color:C.textMuted, textTransform:'uppercase', letterSpacing:'0.08em' }}>{l}</div>
-            </div>
-          ))}
-        </div>
+      {/* Integration hub */}
+      <div style={{ maxWidth:1000, margin:'60px auto 0', padding:'0 24px' }}>
+        <IntegrationHub />
       </div>
     </section>
   )
 }
 
-function Problem() {
+/* ── Social proof bar ───────────────────────────────────────── */
+function SocialProof() {
+  const companies = ['NORTHWIND','ACME','LINEARLY','QUANTUM','PARALLAX','VERTEX']
   return (
-    <section id="problem" className="py-16 md:py-24" style={{ background:C.bgSection }}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-12">
-          <div className="section-label">The Problem</div>
-          <h2 style={{ fontSize:'clamp(1.7rem,3.5vw,2.4rem)', fontWeight:700, color:C.text, marginBottom:14, lineHeight:1.2 }}>
-            Every Inbound Lead Is a{' '}
-            <span style={{ background:'linear-gradient(135deg,#FCA5A5,#FBBF24)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-              Race You're Losing
-            </span>
-          </h2>
-          <p style={{ color:C.textSub, fontSize:15, maxWidth:480, margin:'0 auto' }}>Speed is the only metric that matters when a new lead lands.</p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          {[
-            { stat:'78%', label:'of buyers hire the first to respond', desc:'The average business takes 47 hours to reply. By then, your lead has booked with someone else.', accent:'#FB7185' },
-            { stat:'44%', label:'of reps give up after one follow-up', desc:'Manual outreach does not scale. Leads need instant replies and 5-7 follow-ups within 48 hours.', accent:'#FBBF24' },
-            { stat:'68%', label:'of lost leads eventually buy elsewhere', desc:'Without automated reactivation, those contacts quietly become someone else revenue.', accent:'#34D399' },
-          ].map(({ stat, label, desc, accent }) => (
-            <div key={stat} className="p-7 rounded-2xl" style={{ background:C.card, border:`1px solid ${C.cardBorder}` }}>
-              <div style={{ fontSize:48, fontWeight:900, color:accent, lineHeight:1, marginBottom:8 }}>{stat}</div>
-              <div style={{ fontSize:13, fontWeight:600, color:C.textSub, marginBottom:10 }}>{label}</div>
-              <p style={{ fontSize:13, color:C.textMuted, lineHeight:1.6 }}>{desc}</p>
+    <div style={{ background:T.bg, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:'40px 0', fontFamily:font }}>
+      <p style={{ fontSize:11, letterSpacing:'0.15em', color:T.sub, textAlign:'center', marginBottom:24 }}>
+        TRUSTED BY REVENUE TEAMS AT
+      </p>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:48, flexWrap:'wrap', padding:'0 24px' }}>
+        {companies.map(c => (
+          <span key={c} style={{ fontSize:14, fontWeight:600, letterSpacing:'0.1em', color:'#3A4060' }}>{c}</span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ── Stats ──────────────────────────────────────────────────── */
+function Stats() {
+  const stats = [
+    { num:'3.4x',   label:'More booked calls',    sub:'vs. manual follow-up' },
+    { num:'<60s',   label:'Lead response time',   sub:'24/7, every channel' },
+    { num:'92%',    label:'Reply rate lift',       sub:'AI-personalized' },
+    { num:'$1.2M+', label:'Pipeline generated',   sub:'in last 90 days' },
+  ]
+  return (
+    <div style={{ background:T.bg, padding:'80px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:1200, margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:0 }} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((s, i) => (
+          <div key={s.num} style={{ padding:'40px', textAlign:'center', borderRight: i < 3 ? `1px solid ${T.border}` : 'none', borderLeft: i === 0 ? `1px solid ${T.border}` : 'none' }} className="stat-col">
+            <div style={{ fontSize:56, fontWeight:700, color:T.blue, letterSpacing:'-2px', lineHeight:1 }}>{s.num}</div>
+            <div style={{ fontSize:15, fontWeight:600, color:T.text, marginTop:8 }}>{s.label}</div>
+            <div style={{ fontSize:13, color:T.sub, marginTop:4 }}>{s.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ── System section ─────────────────────────────────────────── */
+function System() {
+  const cards = [
+    { num:'01', title:'Capture', desc:'Every form, ad, DM, and inbound source is unified into one revenue stream — instantly enriched and scored.' },
+    { num:'02', title:'Engage',  desc:'AI agents reply in under 60 seconds across SMS, email, and chat — with brand-perfect tone and full context.' },
+    { num:'03', title:'Qualify', desc:'Multi-turn conversations qualify intent, budget, and timing — then hand off only sales-ready leads.' },
+    { num:'04', title:'Book',    desc:'Calls land directly on your calendar. Reminders, reschedules, and no-show recovery run automatically.' },
+  ]
+  return (
+    <section id="system" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:1200, margin:'0 auto' }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>THE SYSTEM</div>
+        <h2 style={{ fontSize:'clamp(32px,4.5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:16, lineHeight:1.12 }}>
+          A single revenue layer.<br/>Replacing your entire follow-up stack.
+        </h2>
+        <p style={{ fontSize:16, color:T.sub, maxWidth:560, lineHeight:1.7, marginBottom:60 }}>
+          LeadsUp connects to your existing tools and runs your pipeline like a top-performing SDR team — at 1/10th the cost.
+        </p>
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }} className="system-cards">
+          {cards.map(c => (
+            <div key={c.num} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:32 }}>
+              <div style={{ fontSize:13, fontWeight:700, color:T.blue, marginBottom:40, letterSpacing:'0.05em' }}>{c.num}</div>
+              <div style={{ fontSize:22, fontWeight:700, color:T.text, marginBottom:12, letterSpacing:'-0.02em' }}>{c.title}</div>
+              <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{c.desc}</div>
             </div>
           ))}
         </div>
@@ -308,86 +276,81 @@ function Problem() {
   )
 }
 
-function Features() {
+/* ── Platform section ───────────────────────────────────────── */
+function Platform() {
   const features = [
-    { icon:Zap, label:'Instant AI Response', headline:'First reply in under 60 seconds.', desc:'Every form, SMS, or chat gets a personalized AI response before your competitor sees the notification. 24/7.', highlight:'< 60s response time', color:'#818CF8', bg:'rgba(129,140,248,0.1)' },
-    { icon:Target, label:'Smart Qualification', headline:'Score and prioritize automatically.', desc:'The AI uncovers budget, timeline, and intent scoring each lead so your team focuses on what converts.', highlight:'0-100 lead scoring', color:'#67E8F9', bg:'rgba(103,232,249,0.1)' },
-    { icon:Calendar, label:'Direct Booking', headline:'Booked calls, no back-and-forth.', desc:'Qualified leads choose from your real availability and book instantly. Syncs with Google and Outlook.', highlight:'Google & Outlook integration', color:'#34D399', bg:'rgba(52,211,153,0.1)' },
-    { icon:MessageSquare, label:'Multi-touch Follow-up', headline:'14-day automated nurture.', desc:'Leads that do not respond enter smart SMS + email sequences, stopping the moment they engage.', highlight:'SMS + email sequences', color:'#FBBF24', bg:'rgba(251,191,36,0.1)' },
-    { icon:RefreshCw, label:'Lead Reactivation', headline:'Wake up dormant contacts.', desc:'Automatically re-engage cold leads. Most clients recover 10-20% of previously lost leads in 30 days.', highlight:'10-20% win-back rate', color:'#F9A8D4', bg:'rgba(249,168,212,0.1)' },
+    {
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3l1.912 5.813a2 2 0 001.272 1.272L21 12l-5.816 1.912a2 2 0 00-1.272 1.272L12 21l-1.912-5.816a2 2 0 00-1.272-1.272L3 12l5.816-1.912a2 2 0 001.272-1.272L12 3z"/>
+        </svg>
+      ),
+      title: 'AI follow-up that never sleeps',
+      desc: 'Conversational agents trained on your offer respond instantly across every channel — including the 80% of leads humans never reach.',
+    },
+    {
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+      ),
+      title: 'Booked calls, not busy work',
+      desc: 'Every qualified conversation auto-converts into a calendar booking with reminders, confirmations, and re-engagement built in.',
+    },
+    {
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+      ),
+      title: 'Revenue-grade analytics',
+      desc: 'Every touchpoint, reply, and booking tied back to pipeline impact. Know exactly what\'s working — and scale it.',
+    },
+    {
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+        </svg>
+      ),
+      title: 'Plug into your stack',
+      desc: 'Native integrations with HubSpot, Salesforce, Pipedrive, GHL, Calendly, Slack, Stripe — and 1,000+ via API.',
+    },
+    {
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      ),
+      title: 'Trained on your brand',
+      desc: 'Voice, tone, objections, edge cases — your AI agent operates with the precision of your best closer.',
+    },
+    {
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8AFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      ),
+      title: 'Enterprise-ready',
+      desc: 'SOC 2, GDPR, end-to-end encryption, role-based access. Built for teams who can\'t afford to play.',
+    },
   ]
+
   return (
-    <section id="features" className="py-16 md:py-24" style={{ background:C.bg }}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-14">
-          <div className="section-label">Features</div>
-          <h2 style={{ fontSize:'clamp(1.7rem,3.5vw,2.4rem)', fontWeight:700, color:C.text, lineHeight:1.2, marginBottom:14 }}>
-            One Platform.{' '}
-            <span style={{ background:`linear-gradient(135deg, ${C.accent}, #C4B5FD, #67E8F9)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-              Every Inbound Lead. Booked.
-            </span>
-          </h2>
-          <p style={{ fontSize:15, color:C.textSub, maxWidth:480, margin:'0 auto' }}>From the first ring or form to a confirmed appointment handled entirely by AI.</p>
-        </div>
-        <div className="mb-5 p-6 sm:p-8 rounded-3xl relative overflow-hidden" style={{ background:'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(99,102,241,0.06))', border:'1px solid rgba(124,58,237,0.25)', boxShadow:'0 0 60px -20px rgba(124,58,237,0.2)' }}>
-          <div className="absolute top-4 right-4 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full" style={{ background:'rgba(124,58,237,0.15)', color:'#C4B5FD', border:'1px solid rgba(124,58,237,0.3)' }}>Featured</div>
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background:'rgba(124,58,237,0.15)' }}>
-                  <Mic size={22} style={{ color:'#C4B5FD' }}/>
-                </div>
-                <div>
-                  <div style={{ fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', color:'#C4B5FD', marginBottom:4 }}>AI Receptionist</div>
-                  <div style={{ fontSize:17, fontWeight:700, color:C.text }}>Answers Every Call. Books Every Lead.</div>
-                </div>
+    <section id="features" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:1200, margin:'0 auto' }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>PLATFORM</div>
+        <h2 style={{ fontSize:'clamp(32px,4.5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:60, lineHeight:1.12 }}>
+          Built like infrastructure.<br/>Used like magic.
+        </h2>
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }} className="platform-cards">
+          {features.map((f, i) => (
+            <div key={i} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:32 }}>
+              <div style={{ background:'#13162A', border:`1px solid ${T.border}`, borderRadius:12, width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20 }}>
+                {f.icon}
               </div>
-              <p style={{ color:C.textSub, lineHeight:1.7, marginBottom:16, fontSize:14 }}>When a prospect calls after hours our AI Receptionist picks up, qualifies the caller in a natural conversation, and books an appointment instantly.</p>
-              <div className="flex flex-wrap gap-2">
-                {['24/7 call answering','Natural AI conversation','Live call transfer','Instant booking'].map(t=>(
-                  <span key={t} style={{ fontSize:11, padding:'5px 12px', borderRadius:99, background:'rgba(124,58,237,0.1)', color:'#C4B5FD', border:'1px solid rgba(124,58,237,0.2)', fontWeight:500 }}>{t}</span>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-2xl p-4 sm:p-5 mt-4 md:mt-0" style={{ background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.06)' }}>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background:'rgba(124,58,237,0.2)' }}>
-                  <PhoneCall size={14} style={{ color:'#C4B5FD' }}/>
-                </div>
-                <div className="min-w-0">
-                  <div style={{ fontSize:12, color:C.text, fontWeight:500 }}>Inbound Call - After Hours</div>
-                  <div style={{ fontSize:10, color:C.textMuted }}>Unknown caller - Mobile</div>
-                </div>
-                <div style={{ marginLeft:'auto', fontSize:10, fontWeight:700, color:C.green, flexShrink:0 }}>Answered in 1s</div>
-              </div>
-              {[
-                {from:'AI', msg:'Hi, thanks for calling! I am the AI assistant. How can I help you today?'},
-                {from:'Lead', msg:'Hi, I need my AC serviced. Is someone available this week?'},
-                {from:'AI', msg:'Absolutely! We have Thursday and Friday open. What is your address?'},
-                {from:'Lead', msg:'412 Oak St and you can reach me at this number.'},
-                {from:'AI', msg:'Perfect! Booked for Thursday at 10 AM. Confirmation SMS on its way.'},
-              ].map(({from,msg},i)=>(
-                <div key={i} style={{ marginBottom:10, textAlign:from==='Lead'?'right':'left' }}>
-                  <div style={{ display:'inline-block', padding:'8px 12px', borderRadius:12, fontSize:11, maxWidth:'88%', background:from==='AI'?'rgba(124,58,237,0.14)':'rgba(255,255,255,0.06)', color:from==='AI'?'#C4B5FD':'#9CA3AF', border:`1px solid ${from==='AI'?'rgba(124,58,237,0.2)':'rgba(255,255,255,0.07)'}` }}>
-                    {msg}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {features.map(({icon:Icon,label,headline,desc,highlight,color,bg})=>(
-            <div key={label} className="feature-card p-6">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background:bg }}>
-                <Icon size={18} style={{ color }}/>
-              </div>
-              <div style={{ fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.09em', color, marginBottom:6 }}>{label}</div>
-              <div style={{ fontSize:15, fontWeight:600, color:C.text, marginBottom:8 }}>{headline}</div>
-              <p style={{ fontSize:13, color:C.textMuted, lineHeight:1.6, marginBottom:14 }}>{desc}</p>
-              <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:11, fontWeight:600, color }}>
-                <CheckCircle size={11}/>{highlight}
-              </div>
+              <div style={{ fontSize:18, fontWeight:700, color:T.text, marginBottom:10, letterSpacing:'-0.02em' }}>{f.title}</div>
+              <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{f.desc}</div>
             </div>
           ))}
         </div>
@@ -396,169 +359,86 @@ function Features() {
   )
 }
 
-function HowItWorks() {
-  const steps = [
-    {n:'01',icon:Phone, title:'Lead Arrives', desc:'A call, form, SMS, or chat comes in from any source web, Google, Facebook, or a direct dial.'},
-    {n:'02',icon:Zap, title:'AI Responds Instantly', desc:'Within seconds, the AI Receptionist or messaging engine sends a personalized, on-brand reply.'},
-    {n:'03',icon:Target, title:'Qualifies & Scores', desc:'The AI gathers budget, timeline, and intent then assigns a priority score and routes the lead.'},
-    {n:'04',icon:Calendar, title:'Books the Appointment', desc:'High-priority leads choose a time from your real availability and get a confirmed booking instantly.'},
-  ]
+/* ── CTA section ────────────────────────────────────────────── */
+function CTASection() {
   return (
-    <section id="how-it-works" className="py-16 md:py-24" style={{ background:C.bgSection }}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-14">
-          <div className="section-label">How It Works</div>
-          <h2 style={{ fontSize:'clamp(1.7rem,3.5vw,2.4rem)', fontWeight:700, color:C.text, lineHeight:1.2, marginBottom:14 }}>
-            Inbound Lead to{' '}
-            <span style={{ background:`linear-gradient(135deg, ${C.accent}, #C4B5FD)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-              Booked Call
-            </span>{' '}in Under 90 Seconds
-          </h2>
-          <p style={{ fontSize:15, color:C.textSub, maxWidth:440, margin:'0 auto' }}>Set up in one afternoon. Revenue starts flowing the same day.</p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {steps.map(({n,icon:Icon,title,desc},i)=>(
-            <div key={n} className="p-6 rounded-2xl h-full" style={{ background:C.card, border:`1px solid ${C.cardBorder}` }}>
-              <div className="flex items-center gap-3 mb-4">
-                <div style={{ width:40, height:40, borderRadius:12, background:'rgba(99,102,241,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                  <Icon size={17} style={{ color:C.accent }}/>
-                </div>
-                <span style={{ fontSize:28, fontWeight:900, color:'#1F2937' }}>{n}</span>
-              </div>
-              <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:6 }}>{title}</div>
-              <p style={{ fontSize:12, color:C.textMuted, lineHeight:1.6 }}>{desc}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 p-5 sm:p-6 rounded-2xl flex flex-wrap items-center gap-6 justify-between" style={{ background:'rgba(99,102,241,0.07)', border:'1px solid rgba(99,102,241,0.2)' }}>
-          {[['< 60s','First AI response'],['< 90s','Lead qualified'],['< 5min','Appointment booked'],['0 mins','Manual work required']].map(([v,l])=>(
-            <div key={l} className="text-center flex-1" style={{ minWidth:80 }}>
-              <div style={{ fontSize:22, fontWeight:800, background:`linear-gradient(135deg, ${C.accent}, #C4B5FD)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>{v}</div>
-              <div style={{ fontSize:11, color:C.textMuted, marginTop:3 }}>{l}</div>
-            </div>
-          ))}
-        </div>
+    <section id="cta" style={{ background:T.bg, padding:'120px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:860, margin:'0 auto', background:'linear-gradient(135deg, #0D0F24, #13162A)', border:`1px solid ${T.border}`, borderRadius:24, padding:80, textAlign:'center' }}>
+        <h2 style={{ fontSize:'clamp(36px,5vw,56px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, lineHeight:1.1, margin:0 }}>
+          Stop losing leads.
+        </h2>
+        <h2 style={{ fontSize:'clamp(36px,5vw,56px)', fontWeight:700, letterSpacing:'-0.02em', color:T.blue, lineHeight:1.1, margin:'0 0 20px' }}>
+          Start compounding revenue.
+        </h2>
+        <p style={{ fontSize:18, color:T.sub, lineHeight:1.7, marginBottom:40, maxWidth:560, margin:'0 auto 40px' }}>
+          See exactly how LeadsUp would convert your pipeline. 30 minutes, no pitch.
+        </p>
+        <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer"
+          style={{ display:'inline-block', fontSize:16, fontWeight:600, color:'#FFFFFF', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding:'14px 32px', borderRadius:99, textDecoration:'none', transition:'opacity 0.15s' }}
+          onMouseOver={e=>e.currentTarget.style.opacity='0.85'}
+          onMouseOut={e=>e.currentTarget.style.opacity='1'}>
+          Book your strategy call →
+        </a>
+        <p style={{ fontSize:13, color:T.sub, marginTop:16 }}>No credit card · No commitment · Real revenue audit</p>
       </div>
     </section>
   )
 }
 
-function FAQ() {
-  const [open, setOpen] = useState(null)
-  const items = [
-    ...faqs.slice(0,5),
-    {q:'How does the AI Receptionist handle calls?', a:'It answers within 1 second, introduces your business, qualifies the caller through natural conversation, and offers direct booking. If needed, it warm-transfers to your team or takes a detailed message.'},
-  ]
-  return (
-    <section id="faq" className="py-16 md:py-24" style={{ background:C.bg }}>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-10">
-          <div className="section-label">FAQ</div>
-          <h2 style={{ fontSize:'clamp(1.7rem,3vw,2.2rem)', fontWeight:700, color:C.text }}>Common Questions</h2>
-        </div>
-        <div className="space-y-2">
-          {items.map(({q,a},i)=>(
-            <div key={i} style={{ borderRadius:16, overflow:'hidden', background:open===i?'rgba(99,102,241,0.06)':C.card, border:`1px solid ${open===i?'rgba(99,102,241,0.25)':C.cardBorder}`, transition:'all 0.2s' }}>
-              <button className="w-full text-left" style={{ padding:'18px 20px', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:16, background:'none', border:'none', cursor:'pointer', minHeight:56 }}
-                onClick={()=>setOpen(open===i?null:i)}>
-                <span style={{ fontSize:13, fontWeight:600, color:C.text, textAlign:'left' }}>{q}</span>
-                {open===i ? <ChevronUp size={16} style={{ color:C.accent, flexShrink:0, marginTop:2 }}/> : <ChevronDown size={16} style={{ color:C.textMuted, flexShrink:0, marginTop:2 }}/>}
-              </button>
-              {open===i && (
-                <div style={{ padding:'0 20px 18px', paddingTop:14, fontSize:13, color:C.textSub, lineHeight:1.7, borderTop:`1px solid ${C.cardBorder}` }}>{a}</div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function CTA({ onOpenTrial }) {
-  return (
-    <section className="py-16 md:py-24" style={{ background:C.bgSection }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <div className="relative p-8 sm:p-12 rounded-3xl overflow-hidden" style={{ background:'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(124,58,237,0.07))', border:'1px solid rgba(99,102,241,0.25)', boxShadow:`0 0 80px -20px ${C.primaryGlow}` }}>
-          <div className="absolute inset-0 opacity-25" style={{ background:'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(99,102,241,0.4) 0%, transparent 70%)' }}/>
-          <div className="relative z-10">
-            <div className="section-label justify-center mb-4">Ready to Scale?</div>
-            <h2 style={{ fontSize:'clamp(1.7rem,3.5vw,2.4rem)', fontWeight:700, color:C.text, lineHeight:1.2, marginBottom:14 }}>
-              Start Converting Inbound Leads<br/>
-              <span style={{ background:`linear-gradient(135deg, ${C.accent}, #C4B5FD)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-                Into Booked Calls
-              </span>
-            </h2>
-            <p style={{ fontSize:15, color:C.textSub, maxWidth:440, margin:'0 auto 32px' }}>Join 1,200+ service businesses. 14-day free trial. No credit card. Setup in under an hour.</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-              <button onClick={onOpenTrial} className="flex items-center justify-center gap-2"
-                style={{ padding:'15px 36px', borderRadius:14, background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, color:'white', fontWeight:700, fontSize:16, border:'none', cursor:'pointer', boxShadow:`0 0 50px -8px ${C.primaryGlow}` }}>
-                Get Started Free <ArrowRight size={17}/>
-              </button>
-              <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2"
-                style={{ padding:'15px 36px', borderRadius:14, border:'1px solid rgba(255,255,255,0.14)', color:C.accent, fontWeight:600, fontSize:16, textDecoration:'none' }}>
-                Book a Demo
-              </a>
-            </div>
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-              {['14-day free trial','No credit card','Cancel anytime','Setup in under 1 hour'].map(f=>(
-                <span key={f} className="flex items-center gap-1.5" style={{ fontSize:13, color:C.textMuted }}>
-                  <CheckCircle size={12} color={C.green}/>{f}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
+/* ── Footer ─────────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer className="pb-28 sm:pb-10" style={{ borderTop:`1px solid ${C.cardBorder}`, background:C.bg, paddingTop:36, paddingLeft:24, paddingRight:24 }}>
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer style={{ background:T.bg, borderTop:`1px solid ${T.border}`, padding:'32px 40px', fontFamily:font }}>
+      <div style={{ maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
+        {/* Left: logo */}
         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:28, objectFit:'contain', mixBlendMode:'lighten' }}/>
-          <img src="/leadsup-text.png" alt="Leads Up" style={{ height:22, objectFit:'contain', mixBlendMode:'lighten' }}/>
+          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block' }}/>
+          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:18, objectFit:'contain', display:'block' }}/>
         </div>
-        <div className="flex gap-6" style={{ fontSize:13, color:C.textMuted }}>
-          <a href="#" style={{ color:C.textMuted, textDecoration:'none' }}>Privacy</a>
-          <a href="#" style={{ color:C.textMuted, textDecoration:'none' }}>Terms</a>
-          <a href="mailto:support@useleadsup.com" style={{ color:C.textMuted, textDecoration:'none' }}>Support</a>
+        {/* Center: links */}
+        <div style={{ display:'flex', alignItems:'center', gap:24 }}>
+          {['Privacy','Terms','Support'].map(l => (
+            <a key={l} href="#" style={{ fontSize:13, color:T.sub, textDecoration:'none', transition:'color 0.15s' }}
+              onMouseOver={e=>e.currentTarget.style.color=T.text}
+              onMouseOut={e=>e.currentTarget.style.color=T.sub}>{l}</a>
+          ))}
         </div>
-        <div style={{ fontSize:13, color:'#374151' }}>2026 Leads Up</div>
+        {/* Right: copyright */}
+        <div style={{ fontSize:13, color:T.sub }}>© 2026 Leads Up</div>
       </div>
     </footer>
   )
 }
 
+/* ── Root export ────────────────────────────────────────────── */
 export default function Landing() {
-  const [showTrialModal, setShowTrialModal] = useState(false)
-  const openTrial = () => setShowTrialModal(true)
   return (
-    <div style={{ minHeight:'100vh', background:C.bg }}>
-      {showTrialModal && <TrialModal onClose={()=>setShowTrialModal(false)}/>}
-
-      {/* Sticky mobile CTA — hidden on sm+ */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden"
-        style={{ background:'rgba(13,17,23,0.97)', borderTop:`1px solid ${C.cardBorder}`, backdropFilter:'blur(16px)', padding:'10px 16px 14px' }}>
-        <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-white text-sm"
-          style={{ padding:'15px 20px', background:`linear-gradient(135deg, ${C.primary}, ${C.primaryDark})`, textDecoration:'none', boxShadow:`0 0 24px -6px ${C.primaryGlow}` }}>
-          Book a Free Demo <ArrowRight size={15}/>
-        </a>
-      </div>
-
-      <Navbar onOpenTrial={openTrial}/>
-      <Hero onOpenTrial={openTrial}/>
-      <Problem/>
-      <Features/>
-      <HowItWorks/>
-      <FAQ/>
-      <CTA onOpenTrial={openTrial}/>
-      <Footer/>
+    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:font, backgroundImage:'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize:'60px 60px' }}>
+      <style>{`
+        .nav-burger { display: none; }
+        @media (max-width: 767px) {
+          .nav-burger { display: flex !important; }
+        }
+        @media (max-width: 1024px) {
+          .system-cards { grid-template-columns: repeat(2, 1fr) !important; }
+          .platform-cards { grid-template-columns: repeat(2, 1fr) !important; }
+          .stat-col { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E; }
+        }
+        @media (max-width: 640px) {
+          .system-cards { grid-template-columns: 1fr !important; }
+          .platform-cards { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+      <Navbar />
+      <main style={{ paddingTop:60 }}>
+        <Hero />
+        <SocialProof />
+        <Stats />
+        <System />
+        <Platform />
+        <CTASection />
+      </main>
+      <Footer />
     </div>
   )
 }
