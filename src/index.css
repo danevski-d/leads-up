@@ -6,50 +6,155 @@
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    background: #FAFAFA;
-    color: #0A0A0A;
-    font-family: system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+    background-color: #0D1117;
+    color: #F9FAFB;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* ── Kanban scroll ─────────────────────────────── */
+@layer utilities {
+  /* ── Premium gradient text ────── */
+  .gradient-text {
+    background: linear-gradient(135deg, #C4B5FD 0%, #818CF8 40%, #67E8F9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-text-warm {
+    background: linear-gradient(135deg, #FDE68A 0%, #FCA5A5 50%, #C4B5FD 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-text-green {
+    background: linear-gradient(135deg, #6EE7B7 0%, #2DD4BF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Cards ────────────────────── */
+  .glass-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+  }
+  .premium-card {
+    background: #0A0B16;
+    border: 1px solid #181928;
+    border-radius: 16px;
+  }
+  .feature-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .feature-card:hover {
+    border-color: rgba(130,120,255,0.25);
+    box-shadow: 0 0 30px -10px rgba(99,102,241,0.25);
+  }
+
+  /* ── Glows ────────────────────── */
+  .glow-violet {
+    box-shadow: 0 0 60px -10px rgba(109, 113, 244, 0.45);
+  }
+  .glow-sm-violet {
+    box-shadow: 0 0 20px -5px rgba(109, 113, 244, 0.3);
+  }
+
+  /* ── Scrollbars ───────────────── */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #1E2035 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #1E2035; border-radius: 3px; }
+
+  /* ── Section label ────────────── */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7677F4;
+    margin-bottom: 20px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 1px;
+    background: #7677F4;
+    opacity: 0.6;
+  }
+}
+
+/* ── CPU Architecture animations ──────────────────────────── */
+.cpu-architecture {
+  offset-anchor: 10px 0px;
+  animation: animation-path;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.75, -0.01, 0, 0.99);
+}
+.cpu-line-1 { offset-path: path("M 10 20 h 79.5 q 5 0 5 5 v 30"); animation-duration: 5s; animation-delay: 1s; }
+.cpu-line-2 { offset-path: path("M 180 10 h -69.7 q -5 0 -5 5 v 40"); animation-delay: 6s; animation-duration: 2s; }
+.cpu-line-3 { offset-path: path("M 130 20 v 21.8 q 0 5 -5 5 h -25"); animation-delay: 4s; animation-duration: 6s; }
+.cpu-line-4 { offset-path: path("M 170 80 v -21.8 q 0 -5 -5 -5 h -65"); animation-delay: 3s; animation-duration: 3s; }
+.cpu-line-5 { offset-path: path("M 135 65 h 15 q 5 0 5 5 v 10 q 0 5 -5 5 h -39.8 q -5 0 -5 -5 v -35"); animation-delay: 9s; animation-duration: 4s; }
+.cpu-line-6 { offset-path: path("M 94.8 95 v -46"); animation-delay: 3s; animation-duration: 7s; }
+.cpu-line-7 { offset-path: path("M 88 88 v -15 q 0 -5 -5 -5 h -10 q -5 0 -5 -5 v -5 q 0 -5 5 -5 h 28"); animation-delay: 4s; animation-duration: 4s; }
+.cpu-line-8 { offset-path: path("M 30 30 h 25 q 5 0 5 5 v 6.5 q 0 5 5 5 h 35"); animation-delay: 3s; animation-duration: 3s; }
+
+@keyframes animation-path {
+  0%   { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+
+/* ── Integration hub animated dots ─────────────────────────── */
+@keyframes dot-travel-1  { 0%{offset-distance:0%} 100%{offset-distance:100%} }
+@keyframes dot-travel-2  { 0%{offset-distance:0%} 100%{offset-distance:100%} }
+@keyframes dot-travel-3  { 0%{offset-distance:0%} 100%{offset-distance:100%} }
+@keyframes dot-travel-4  { 0%{offset-distance:0%} 100%{offset-distance:100%} }
+@keyframes dot-travel-5  { 0%{offset-distance:0%} 100%{offset-distance:100%} }
+@keyframes dot-travel-6  { 0%{offset-distance:0%} 100%{offset-distance:100%} }
+@keyframes dot-travel-7  { 0%{offset-distance:0%} 100%{offset-distance:100%} }
+
+/* ── Kanban scroll ──────────────────────────────────────────── */
 .kanban-scroll {
   display: flex;
-  gap: 12px;
+  gap: 1rem;
   overflow-x: auto;
-  padding-bottom: 12px;
+  padding-bottom: 1rem;
   scrollbar-width: thin;
-  scrollbar-color: #E8E8E8 transparent;
-  -webkit-overflow-scrolling: touch;
+  scrollbar-color: #1E2035 transparent;
 }
-.kanban-scroll::-webkit-scrollbar { height: 5px; }
-.kanban-scroll::-webkit-scrollbar-track { background: transparent; }
-.kanban-scroll::-webkit-scrollbar-thumb { background: #E8E8E8; border-radius: 3px; }
 
-/* ── Timeline connector ────────────────────────── */
+/* ── Activity timeline ──────────────────────────────────────── */
 .timeline-item:not(:last-child)::before {
   content: '';
   position: absolute;
   left: 19px;
   top: 40px;
   bottom: -8px;
-  width: 1px;
-  background: #E8E8E8;
+  width: 2px;
+  background: linear-gradient(to bottom, #1E2035, transparent);
 }
 
-/* ── Scrollbars ─────────────────────────────────── */
-.scrollbar-thin {
-  scrollbar-width: thin;
-  scrollbar-color: #E8E8E8 transparent;
-}
-.scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
-.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-.scrollbar-thin::-webkit-scrollbar-thumb { background: #E8E8E8; border-radius: 3px; }
-
-/* ── Slide-in animation for mobile sidebar ──────── */
-@keyframes slideInLeft {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(0); }
+/* ── Noise texture overlay ──────────────────────────────────── */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px;
+  pointer-events: none;
+  opacity: 0.35;
 }

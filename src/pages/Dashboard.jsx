@@ -4,43 +4,35 @@ import { ArrowRight, Zap, Clock, Users, DollarSign, Calendar } from 'lucide-reac
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
-const font = "system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif"
-const card = { background: '#FFFFFF', border: '1px solid #E8E8E8', borderRadius: 14 }
-
-const STATUS_COLORS = {
-  new:       '#2563EB',
-  contacted: '#0891B2',
-  qualified: '#F59E0B',
-  booked:    '#10B981',
-  lost:      '#9B9B9B',
-}
+const cardStyle = { background: '#111827', border: '1px solid #1F2937', borderRadius: 16 }
 
 function MetricCard({ label, value, icon: Icon, color }) {
   return (
-    <div style={{ ...card, padding: 18, fontFamily: font }}>
+    <div style={{ ...cardStyle, padding: 18 }}>
       <div style={{ width: 36, height: 36, borderRadius: 10, background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
         <Icon size={16} style={{ color }} />
       </div>
-      <div style={{ fontSize: 26, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-0.02em', marginBottom: 3 }}>{value}</div>
-      <div style={{ fontSize: 11, color: '#9B9B9B' }}>{label}</div>
+      <div style={{ fontSize: 26, fontWeight: 900, color: 'white', letterSpacing: '-0.02em', marginBottom: 3 }}>{value}</div>
+      <div style={{ fontSize: 11, color: '#6B7280' }}>{label}</div>
     </div>
   )
 }
 
 function AIStatusBanner() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 20, padding: '12px 16px', borderRadius: 12, background: '#EFF6FF', border: '1px solid #BFDBFE', fontFamily: font }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-        <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(37,99,235,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <Zap size={14} style={{ color: '#2563EB' }} />
+    <div className="flex items-center justify-between gap-3 flex-wrap mb-5 p-3 sm:p-4 rounded-xl"
+      style={{ background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.18)' }}>
+      <div className="flex items-center gap-3 min-w-0">
+        <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Zap size={14} style={{ color: '#818CF8' }} />
         </div>
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A' }}>AI Receptionist + Lead Engine Active</div>
-          <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 2 }}>Automatically responding, qualifying and booking leads 24/7</div>
+        <div className="min-w-0">
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'white' }}>AI Receptionist + Lead Engine Active</div>
+          <div className="hidden sm:block" style={{ fontSize: 11, color: '#4B5563', marginTop: 2 }}>Automatically responding, qualifying and booking leads 24/7</div>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 700, color: '#10B981', flexShrink: 0 }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 700, color: '#34D399', flexShrink: 0 }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#34D399' }} />
         Live
       </div>
     </div>
@@ -49,20 +41,21 @@ function AIStatusBanner() {
 
 function PipelineSummary({ leads }) {
   const cols = [
-    { key: 'new',       label: 'New',       color: STATUS_COLORS.new },
-    { key: 'contacted', label: 'Contacted', color: STATUS_COLORS.contacted },
-    { key: 'qualified', label: 'Qualified', color: STATUS_COLORS.qualified },
-    { key: 'booked',    label: 'Booked',    color: STATUS_COLORS.booked },
-    { key: 'lost',      label: 'Lost',      color: STATUS_COLORS.lost },
+    { key: 'new',       label: 'New',       color: '#818CF8' },
+    { key: 'contacted', label: 'Contacted', color: '#67E8F9' },
+    { key: 'qualified', label: 'Qualified', color: '#A78BFA' },
+    { key: 'booked',    label: 'Booked',    color: '#34D399' },
+    { key: 'lost',      label: 'Lost',      color: '#4B5563' },
   ]
   return (
-    <div style={{ ...card, padding: 18, fontFamily: font }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#0A0A0A' }}>Pipeline Overview</span>
-        <Link to="/app/leads" style={{ fontSize: 11, color: '#2563EB', display: 'flex', alignItems: 'center', gap: 3, textDecoration: 'none' }}>
+    <div style={{ ...cardStyle, padding: 18 }}>
+      <div className="flex items-center justify-between mb-4">
+        <span style={{ fontSize: 13, fontWeight: 700, color: 'white' }}>Pipeline Overview</span>
+        <Link to="/app/leads" style={{ fontSize: 11, color: '#6366F1', display: 'flex', alignItems: 'center', gap: 3, textDecoration: 'none' }}>
           View all <ArrowRight size={11} />
         </Link>
       </div>
+      {/* Scrollable on mobile, grid on larger */}
       <div style={{ overflowX: 'auto', margin: '0 -2px', padding: '0 2px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(72px, 1fr))', gap: 8, minWidth: 360 }}>
           {cols.map(({ key, label, color }) => {
@@ -71,11 +64,11 @@ function PipelineSummary({ leads }) {
             return (
               <div key={key} style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 24, fontWeight: 900, color, marginBottom: 2 }}>{colLeads.length}</div>
-                <div style={{ fontSize: 9, color: '#9B9B9B', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</div>
+                <div style={{ fontSize: 9, color: '#4B5563', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</div>
                 <div style={{ height: 2, borderRadius: 2, background: `${color}20` }}>
                   <div style={{ height: '100%', borderRadius: 2, background: color, width: `${leads.length ? Math.min((colLeads.length / leads.length) * 100, 100) : 0}%` }} />
                 </div>
-                <div style={{ fontSize: 9, color: '#C8C8C8', marginTop: 3 }}>${(val / 1000).toFixed(1)}k</div>
+                <div style={{ fontSize: 9, color: '#374151', marginTop: 3 }}>${(val / 1000).toFixed(1)}k</div>
               </div>
             )
           })}
@@ -88,39 +81,39 @@ function PipelineSummary({ leads }) {
 function RecentLeads({ leads }) {
   const recent = leads.slice(0, 4)
   return (
-    <div style={{ ...card, padding: 18, fontFamily: font }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#0A0A0A' }}>Recent Leads</span>
-        <Link to="/app/leads" style={{ fontSize: 11, color: '#2563EB', display: 'flex', alignItems: 'center', gap: 3, textDecoration: 'none' }}>
+    <div style={{ ...cardStyle, padding: 18 }}>
+      <div className="flex items-center justify-between mb-4">
+        <span style={{ fontSize: 13, fontWeight: 700, color: 'white' }}>Recent Leads</span>
+        <Link to="/app/leads" style={{ fontSize: 11, color: '#6366F1', display: 'flex', alignItems: 'center', gap: 3, textDecoration: 'none' }}>
           Pipeline <ArrowRight size={11} />
         </Link>
       </div>
       {recent.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '32px 0' }}>
-          <div style={{ fontSize: 13, color: '#9B9B9B', marginBottom: 8 }}>No leads yet.</div>
-          <Link to="/app/leads" style={{ fontSize: 12, color: '#2563EB', textDecoration: 'none' }}>Add your first lead →</Link>
+        <div className="text-center py-8">
+          <div style={{ fontSize: 13, color: '#4B5563', marginBottom: 8 }}>No leads yet.</div>
+          <Link to="/app/leads" style={{ fontSize: 12, color: '#6366F1', textDecoration: 'none' }}>Add your first lead →</Link>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {recent.map(lead => (
             <Link key={lead.id} to={`/app/leads/${lead.id}`} style={{ textDecoration: 'none' }}>
               <div
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 10, background: '#FAFAFA', border: '1px solid #E8E8E8', transition: 'border-color 0.15s', minHeight: 44 }}
-                onMouseOver={e => e.currentTarget.style.borderColor = '#D1D5DB'}
-                onMouseOut={e => e.currentTarget.style.borderColor = '#E8E8E8'}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 11, background: 'rgba(255,255,255,0.02)', border: '1px solid #1F2937', transition: 'border-color 0.15s', minHeight: 44 }}
+                onMouseOver={e => e.currentTarget.style.borderColor = '#374151'}
+                onMouseOut={e => e.currentTarget.style.borderColor = '#1F2937'}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#2563EB', flexShrink: 0 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#818CF8', flexShrink: 0 }}>
                     {lead.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || '?'}
                   </div>
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#0A0A0A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lead.name}</div>
-                    <div style={{ fontSize: 10, color: '#9B9B9B' }}>{lead.source || '—'}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lead.name}</div>
+                    <div style={{ fontSize: 10, color: '#4B5563' }}>{lead.source || '—'}</div>
                   </div>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 8 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#10B981' }}>${Number(lead.value || 0).toLocaleString()}</div>
-                  <div style={{ fontSize: 9, color: '#9B9B9B', textTransform: 'capitalize' }}>{lead.status}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#34D399' }}>${Number(lead.value || 0).toLocaleString()}</div>
+                  <div style={{ fontSize: 9, color: '#4B5563', textTransform: 'capitalize' }}>{lead.status}</div>
                 </div>
               </div>
             </Link>
@@ -156,10 +149,10 @@ export default function Dashboard() {
   const newThisWeek = leads.filter(l => (Date.now() - new Date(l.created_at)) < 7 * 86400000).length
 
   return (
-    <div style={{ padding: '16px', maxWidth: 1152, margin: '0 auto', fontFamily: font }} className="md:p-6">
-      <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0A0A0A', letterSpacing: '-0.02em', margin: 0 }}>Dashboard</h1>
-        <p style={{ fontSize: 13, color: '#9B9B9B', marginTop: 4 }}>
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+      <div className="mb-5">
+        <h1 className="text-xl md:text-2xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>Dashboard</h1>
+        <p className="text-xs md:text-sm mt-1" style={{ color: '#6B7280' }}>
           Welcome back{displayName ? `, ${displayName}` : ''}
         </p>
       </div>
@@ -167,16 +160,18 @@ export default function Dashboard() {
       <AIStatusBanner />
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '64px 0', color: '#9B9B9B', fontSize: 13 }}>Loading your pipeline...</div>
+        <div className="text-center py-16" style={{ color: '#4B5563', fontSize: 13 }}>Loading your pipeline...</div>
       ) : (
         <>
+          {/* Metrics — 2 cols on mobile, 4 on desktop */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-            <MetricCard label="Total Leads"   value={leads.length}                           icon={Users}      color="#2563EB" />
-            <MetricCard label="New This Week"  value={newThisWeek}                            icon={Clock}      color="#0891B2" />
-            <MetricCard label="Booking Rate"   value={`${bookingRate}%`}                      icon={Calendar}   color="#10B981" />
-            <MetricCard label="Pipeline Value" value={`$${(totalValue / 1000).toFixed(1)}k`} icon={DollarSign} color="#F59E0B" />
+            <MetricCard label="Total Leads"      value={leads.length}                           icon={Users}     color="#818CF8" />
+            <MetricCard label="New This Week"     value={newThisWeek}                            icon={Clock}     color="#A78BFA" />
+            <MetricCard label="Booking Rate"      value={`${bookingRate}%`}                      icon={Calendar}  color="#34D399" />
+            <MetricCard label="Pipeline Value"    value={`$${(totalValue / 1000).toFixed(1)}k`} icon={DollarSign} color="#FBBF24" />
           </div>
 
+          {/* Main content — 1 col on mobile, 2 on desktop */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <PipelineSummary leads={leads} />
             <RecentLeads leads={leads} />

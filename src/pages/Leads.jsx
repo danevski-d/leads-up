@@ -1,71 +1,72 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Plus, X } from 'lucide-react'
+import { Search, Plus, X, Filter } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
-const font = "system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif"
-
 const COLUMNS = [
-  { key: 'new',       label: 'New',       dot: '#2563EB', badgeBg: 'rgba(37,99,235,0.1)',   badgeColor: '#2563EB',  badgeBorder: 'rgba(37,99,235,0.2)' },
-  { key: 'contacted', label: 'Contacted', dot: '#0891B2', badgeBg: 'rgba(8,145,178,0.1)',   badgeColor: '#0891B2',  badgeBorder: 'rgba(8,145,178,0.2)' },
-  { key: 'qualified', label: 'Qualified', dot: '#F59E0B', badgeBg: 'rgba(245,158,11,0.1)',  badgeColor: '#F59E0B',  badgeBorder: 'rgba(245,158,11,0.2)' },
-  { key: 'booked',    label: 'Booked',    dot: '#10B981', badgeBg: 'rgba(16,185,129,0.1)',  badgeColor: '#10B981',  badgeBorder: 'rgba(16,185,129,0.2)' },
-  { key: 'lost',      label: 'Lost',      dot: '#9B9B9B', badgeBg: 'rgba(155,155,155,0.1)', badgeColor: '#9B9B9B',  badgeBorder: 'rgba(155,155,155,0.2)' },
+  { key: 'new',       label: 'New',       dot: '#6366F1', badge: 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' },
+  { key: 'contacted', label: 'Contacted', dot: '#67E8F9', badge: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' },
+  { key: 'qualified', label: 'Qualified', dot: '#A78BFA', badge: 'bg-purple-500/20 text-purple-400 border border-purple-500/30' },
+  { key: 'booked',    label: 'Booked',    dot: '#34D399', badge: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' },
+  { key: 'lost',      label: 'Lost',      dot: '#6B7280', badge: 'bg-slate-500/20 text-slate-400 border border-slate-500/30' },
 ]
 
-const SOURCE_BADGE = {
-  'Web Form':   { bg: 'rgba(8,145,178,0.08)',   color: '#0891B2' },
-  'Google Ads': { bg: 'rgba(37,99,235,0.08)',   color: '#2563EB' },
-  'Facebook':   { bg: 'rgba(37,99,235,0.08)',   color: '#2563EB' },
-  'Referral':   { bg: 'rgba(16,185,129,0.08)',  color: '#10B981' },
-  'Yelp':       { bg: 'rgba(239,68,68,0.08)',   color: '#EF4444' },
+const SOURCE_COLORS = {
+  'Web Form':   'bg-cyan-500/10 text-cyan-400',
+  'Google Ads': 'bg-blue-500/10 text-blue-400',
+  'Facebook':   'bg-indigo-500/10 text-indigo-400',
+  'Referral':   'bg-emerald-500/10 text-emerald-400',
+  'Yelp':       'bg-red-500/10 text-red-400',
 }
 
+/* ── Lead card ──────────────────────────────────────────────── */
 function LeadCard({ lead }) {
-  const src = SOURCE_BADGE[lead.source] || { bg: 'rgba(155,155,155,0.1)', color: '#9B9B9B' }
   return (
     <Link to={`/app/leads/${lead.id}`}
-      style={{ display: 'block', borderRadius: 12, padding: '12px 14px', border: '1px solid #E8E8E8', background: '#FFFFFF', textDecoration: 'none', transition: 'border-color 0.15s', fontFamily: font }}
-      onMouseOver={e => e.currentTarget.style.borderColor = '#D1D5DB'}
-      onMouseOut={e => e.currentTarget.style.borderColor = '#E8E8E8'}
+      className="block rounded-xl p-3.5 border transition-all group"
+      style={{ background: 'rgba(255,255,255,0.03)', borderColor: '#1F2937' }}
+      onMouseOver={e => e.currentTarget.style.borderColor = '#374151'}
+      onMouseOut={e => e.currentTarget.style.borderColor = '#1F2937'}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 10 }}>
-        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#EFF6FF', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+      <div className="flex items-start gap-2.5 mb-2.5">
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+          style={{ background: 'rgba(99,102,241,0.2)', color: '#818CF8' }}>
           {lead.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || '?'}
         </div>
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-white truncate group-hover:text-indigo-300 transition-colors">
             {lead.name || 'Unnamed Lead'}
           </div>
-          <div style={{ fontSize: 11, color: '#9B9B9B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lead.email || '—'}</div>
+          <div className="text-xs truncate" style={{ color: '#6B7280' }}>{lead.email || '—'}</div>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 99, background: src.bg, color: src.color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 120 }}>
+      <div className="flex items-center justify-between gap-2">
+        <span className={`text-xs px-2 py-0.5 rounded-full truncate max-w-[120px] ${SOURCE_COLORS[lead.source] || 'bg-slate-700/50 text-slate-400'}`}>
           {lead.source || 'Unknown'}
         </span>
         {lead.value ? (
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#10B981', flexShrink: 0 }}>
+          <span className="text-xs font-bold text-emerald-400 flex-shrink-0">
             ${Number(lead.value).toLocaleString()}
           </span>
         ) : null}
       </div>
-      <div style={{ fontSize: 11, marginTop: 8, color: '#C8C8C8' }}>
+      <div className="text-xs mt-2" style={{ color: '#374151' }}>
         {new Date(lead.created_at).toLocaleDateString()}
       </div>
     </Link>
   )
 }
 
+/* ── Add Lead Modal ─────────────────────────────────────────── */
 function AddLeadModal({ onClose, onAdded, userId }) {
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState('')
 
   const inputStyle = {
-    width: '100%', background: '#FFFFFF', border: '1px solid #E8E8E8',
-    borderRadius: 10, padding: '10px 14px', color: '#0A0A0A', fontSize: 14,
-    outline: 'none', transition: 'border-color 0.15s', boxSizing: 'border-box', fontFamily: font,
+    width: '100%', background: '#0D1117', border: '1px solid #1F2937',
+    borderRadius: 12, padding: '10px 14px', color: 'white', fontSize: 14,
+    outline: 'none', transition: 'border-color 0.15s',
   }
 
   const handleSubmit = async (e) => {
@@ -85,50 +86,48 @@ function AddLeadModal({ onClose, onAdded, userId }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)', fontFamily: font }}
-      className="sm:items-center sm:px-4">
-      <div style={{ width: '100%', maxWidth: 448, borderRadius: '16px 16px 0 0', padding: 20, background: '#FFFFFF', border: '1px solid #E8E8E8', maxHeight: '90vh', overflowY: 'auto' }}
-        className="sm:rounded-2xl">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h2 style={{ fontWeight: 700, fontSize: 15, color: '#0A0A0A' }}>Add New Lead</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9B9B9B', padding: 4, minWidth: 36, minHeight: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            onMouseOver={e => e.currentTarget.style.color = '#0A0A0A'}
-            onMouseOut={e => e.currentTarget.style.color = '#9B9B9B'}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-0 sm:px-4"
+      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}>
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-5 sm:p-6"
+        style={{ background: '#111827', border: '1px solid #1F2937', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-white font-bold text-base">Add New Lead</h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors p-1" style={{ minWidth: 36, minHeight: 36 }}>
             <X size={18} />
           </button>
         </div>
 
-        {err && <div style={{ marginBottom: 14, fontSize: 13, borderRadius: 10, padding: '10px 14px', color: '#EF4444', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)' }}>{err}</div>}
+        {err && <div className="mb-4 text-sm rounded-xl px-4 py-3" style={{ color: '#F87171', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}>{err}</div>}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <form onSubmit={handleSubmit} className="space-y-3">
           {[
             { label: 'Full Name', name: 'leadName', type: 'text', required: true },
             { label: 'Email',     name: 'leadEmail', type: 'email', required: true },
           ].map(({ label, name, type, required }) => (
             <div key={name}>
-              <label style={{ fontSize: 12, fontWeight: 500, color: '#6B6B6B', display: 'block', marginBottom: 6 }}>{label}</label>
+              <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>{label}</label>
               <input name={name} type={type} required={required} style={inputStyle}
-                onFocus={e => e.target.style.borderColor = '#2563EB'}
-                onBlur={e => e.target.style.borderColor = '#E8E8E8'} />
+                onFocus={e => e.target.style.borderColor = '#6366F1'}
+                onBlur={e => e.target.style.borderColor = '#1F2937'} />
             </div>
           ))}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 500, color: '#6B6B6B', display: 'block', marginBottom: 6 }}>Source</label>
+            <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Source</label>
             <select name="source" style={{ ...inputStyle, cursor: 'pointer' }}>
               {['Web Form','Google Ads','Facebook','Referral','Yelp','Other'].map(o => <option key={o}>{o}</option>)}
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 500, color: '#6B6B6B', display: 'block', marginBottom: 6 }}>Deal Value ($)</label>
+            <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Deal Value ($)</label>
             <input name="value" type="number" min="0" style={inputStyle}
-              onFocus={e => e.target.style.borderColor = '#2563EB'}
-              onBlur={e => e.target.style.borderColor = '#E8E8E8'} />
+              onFocus={e => e.target.style.borderColor = '#6366F1'}
+              onBlur={e => e.target.style.borderColor = '#1F2937'} />
           </div>
-          <div style={{ display: 'flex', gap: 10, paddingTop: 6 }}>
-            <button type="button" onClick={onClose} style={{ flex: 1, padding: '12px', borderRadius: 10, fontSize: 13, fontWeight: 500, background: '#FAFAFA', border: '1px solid #E8E8E8', color: '#6B6B6B', cursor: 'pointer', minHeight: 44, fontFamily: font }}>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl text-sm font-medium transition-all" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid #1F2937', color: '#6B7280', minHeight: 44 }}>
               Cancel
             </button>
-            <button type="submit" disabled={saving} style={{ flex: 1, padding: '12px', borderRadius: 10, fontSize: 13, fontWeight: 600, color: '#FFFFFF', background: saving ? '#93C5FD' : '#2563EB', border: 'none', cursor: saving ? 'not-allowed' : 'pointer', minHeight: 44, fontFamily: font }}>
+            <button type="submit" disabled={saving} className="flex-1 py-3 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', minHeight: 44 }}>
               {saving ? 'Saving...' : 'Add Lead'}
             </button>
           </div>
@@ -138,6 +137,7 @@ function AddLeadModal({ onClose, onAdded, userId }) {
   )
 }
 
+/* ── Main page ──────────────────────────────────────────────── */
 export default function Leads() {
   const { user } = useAuth()
   const [leads, setLeads] = useState([])
@@ -174,62 +174,68 @@ export default function Leads() {
   const totalValue = leads.reduce((s, l) => s + (Number(l.value) || 0), 0)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '12px 16px', fontFamily: font }} className="sm:p-5 md:p-6">
+    <div className="flex flex-col h-full p-3 sm:p-5 md:p-6">
       {showModal && <AddLeadModal userId={user?.id} onClose={() => setShowModal(false)} onAdded={fetchLeads} />}
 
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 16, flexShrink: 0 }}>
+      {/* Header */}
+      <div className="flex items-start sm:items-center justify-between gap-3 mb-4 flex-shrink-0">
         <div>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#0A0A0A', margin: 0 }}>Pipeline</h1>
-          <p style={{ fontSize: 12, color: '#9B9B9B', marginTop: 4 }}>
+          <h1 className="text-xl font-bold text-white">Pipeline</h1>
+          <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>
             {leads.length} leads ·{' '}
-            <span style={{ color: '#10B981' }}>${(totalValue / 1000).toFixed(1)}k total value</span>
+            <span style={{ color: '#34D399' }}>${(totalValue / 1000).toFixed(1)}k total value</span>
           </p>
         </div>
         <button onClick={() => setShowModal(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: '#FFFFFF', background: '#2563EB', border: 'none', borderRadius: 10, padding: '10px 16px', cursor: 'pointer', flexShrink: 0, minHeight: 44, fontFamily: font, transition: 'background 0.15s' }}
-          onMouseOver={e => e.currentTarget.style.background = '#1D4ED8'}
-          onMouseOut={e => e.currentTarget.style.background = '#2563EB'}>
+          className="flex items-center gap-1.5 text-sm font-medium text-white rounded-xl px-4 py-2.5 flex-shrink-0 transition-all"
+          style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', minHeight: 44 }}>
           <Plus size={15} />
           <span className="hidden sm:inline">Add Lead</span>
           <span className="sm:hidden">Add</span>
         </button>
       </div>
 
-      <div style={{ marginBottom: 16, flexShrink: 0 }}>
-        <div style={{ position: 'relative', maxWidth: 280 }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9B9B9B' }} />
+      {/* Search bar */}
+      <div className="mb-4 flex-shrink-0">
+        <div className="relative max-w-xs">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#6B7280' }} />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search leads..."
-            style={{ width: '100%', borderRadius: 10, paddingLeft: 36, paddingRight: 16, paddingTop: 10, paddingBottom: 10, fontSize: 13, color: '#0A0A0A', background: '#FFFFFF', border: '1px solid #E8E8E8', outline: 'none', boxSizing: 'border-box', minHeight: 44, fontFamily: font, transition: 'border-color 0.15s' }}
-            onFocus={e => e.target.style.borderColor = '#2563EB'}
-            onBlur={e => e.target.style.borderColor = '#E8E8E8'}
+            className="w-full rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none"
+            style={{ background: '#111827', border: '1px solid #1F2937', minHeight: 44 }}
+            onFocus={e => e.target.style.borderColor = '#6366F1'}
+            onBlur={e => e.target.style.borderColor = '#1F2937'}
           />
         </div>
       </div>
 
+      {/* Kanban */}
       {loading ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, fontSize: 13, color: '#9B9B9B' }}>Loading leads...</div>
+        <div className="flex items-center justify-center flex-1 text-sm" style={{ color: '#6B7280' }}>Loading leads...</div>
       ) : (
-        <div style={{ display: 'flex', gap: 12, overflowX: 'auto', flex: 1, paddingBottom: 16, WebkitOverflowScrolling: 'touch', scrollSnapType: 'x mandatory' }}>
+        <div className="flex gap-3 overflow-x-auto flex-1 pb-4" style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x mandatory' }}>
           {COLUMNS.map(col => {
             const colLeads = byStatus(col.key)
             const total = colLeads.reduce((s, l) => s + (Number(l.value) || 0), 0)
             return (
-              <div key={col.key} style={{ display: 'flex', flexDirection: 'column', flexShrink: 0, width: 284, minWidth: 280, scrollSnapAlign: 'start' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, padding: '0 2px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: col.dot }} />
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A' }}>{col.label}</span>
-                    <span style={{ fontSize: 11, padding: '1px 7px', borderRadius: 99, background: col.badgeBg, color: col.badgeColor, border: `1px solid ${col.badgeBorder}` }}>{colLeads.length}</span>
+              <div key={col.key} className="flex flex-col flex-shrink-0" style={{ width: 284, minWidth: 280, scrollSnapAlign: 'start' }}>
+                {/* Column header */}
+                <div className="flex items-center justify-between mb-2.5 px-0.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full" style={{ background: col.dot }} />
+                    <span className="text-sm font-semibold text-white">{col.label}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${col.badge}`}>{colLeads.length}</span>
                   </div>
-                  {total > 0 && <span style={{ fontSize: 11, color: '#9B9B9B' }}>${(total / 1000).toFixed(1)}k</span>}
+                  {total > 0 && <span className="text-xs" style={{ color: '#4B5563' }}>${(total / 1000).toFixed(1)}k</span>}
                 </div>
 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, minHeight: 80 }}>
+                {/* Cards */}
+                <div className="flex-1 space-y-2 min-h-[80px]">
                   {colLeads.length === 0 ? (
-                    <div style={{ height: 80, borderRadius: 12, border: '2px dashed #E8E8E8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#C8C8C8' }}>
+                    <div className="h-20 rounded-xl border-2 border-dashed flex items-center justify-center text-xs"
+                      style={{ borderColor: '#1F2937', color: '#374151' }}>
                       No leads
                     </div>
                   ) : (

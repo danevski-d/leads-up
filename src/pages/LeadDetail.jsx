@@ -4,45 +4,39 @@ import { ArrowLeft, Mail, MessageSquare, Calendar, CheckCircle, FileText, Extern
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
-const font = "system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif"
-const card = { background: '#FFFFFF', border: '1px solid #E8E8E8', borderRadius: 14 }
-
 const STAGES = {
-  new:       { label: 'New',       color: '#2563EB', bg: 'rgba(37,99,235,0.08)',   border: 'rgba(37,99,235,0.2)' },
-  contacted: { label: 'Contacted', color: '#0891B2', bg: 'rgba(8,145,178,0.08)',   border: 'rgba(8,145,178,0.2)' },
-  qualified: { label: 'Qualified', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)',  border: 'rgba(245,158,11,0.2)' },
-  booked:    { label: 'Booked',    color: '#10B981', bg: 'rgba(16,185,129,0.08)',  border: 'rgba(16,185,129,0.2)' },
-  lost:      { label: 'Lost',      color: '#9B9B9B', bg: 'rgba(155,155,155,0.08)', border: 'rgba(155,155,155,0.2)' },
+  new:       { label: 'New',       color: '#818CF8', bg: 'rgba(129,140,248,0.1)',  border: 'rgba(129,140,248,0.25)' },
+  contacted: { label: 'Contacted', color: '#67E8F9', bg: 'rgba(103,232,249,0.1)', border: 'rgba(103,232,249,0.25)' },
+  qualified: { label: 'Qualified', color: '#A78BFA', bg: 'rgba(167,139,250,0.1)', border: 'rgba(167,139,250,0.25)' },
+  booked:    { label: 'Booked',    color: '#34D399', bg: 'rgba(52,211,153,0.1)',  border: 'rgba(52,211,153,0.25)' },
+  lost:      { label: 'Lost',      color: '#6B7280', bg: 'rgba(107,114,128,0.1)', border: 'rgba(107,114,128,0.25)' },
 }
 
 function NoteModal({ onClose, onSave }) {
   const [text, setText] = useState('')
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)', fontFamily: font }}
-      className="sm:items-center sm:px-4">
-      <div style={{ width: '100%', maxWidth: 448, borderRadius: '16px 16px 0 0', padding: 20, background: '#FFFFFF', border: '1px solid #E8E8E8' }}
-        className="sm:rounded-2xl">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h3 style={{ fontWeight: 600, fontSize: 15, color: '#0A0A0A', margin: 0 }}>Add Note</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9B9B9B', padding: 4, minWidth: 36, minHeight: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <X size={17} />
-          </button>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-0 sm:px-4"
+      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}>
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-5"
+        style={{ background: '#111827', border: '1px solid #1F2937' }}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-white font-semibold">Add Note</h3>
+          <button onClick={onClose} className="text-slate-500 hover:text-white p-1" style={{ minWidth: 36, minHeight: 36 }}><X size={17} /></button>
         </div>
         <textarea value={text} onChange={e => setText(e.target.value)} rows={4}
           placeholder="Write a note about this lead..."
-          style={{ width: '100%', borderRadius: 10, padding: '12px 14px', fontSize: 13, color: '#0A0A0A', background: '#FAFAFA', border: '1px solid #E8E8E8', outline: 'none', resize: 'none', minHeight: 100, fontFamily: font, boxSizing: 'border-box', transition: 'border-color 0.15s' }}
-          onFocus={e => e.target.style.borderColor = '#2563EB'}
-          onBlur={e => e.target.style.borderColor = '#E8E8E8'}
+          className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none resize-none"
+          style={{ background: '#0D1117', border: '1px solid #1F2937', minHeight: 100 }}
           autoFocus
         />
-        <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: '12px', borderRadius: 10, fontSize: 13, fontWeight: 500, background: '#FAFAFA', border: '1px solid #E8E8E8', color: '#6B6B6B', cursor: 'pointer', minHeight: 44, fontFamily: font }}>
+        <div className="flex gap-3 mt-4">
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl text-sm font-medium transition-all"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid #1F2937', color: '#6B7280', minHeight: 44 }}>
             Cancel
           </button>
           <button onClick={() => { if (text.trim()) { onSave(text.trim()); onClose() } }}
-            style={{ flex: 1, padding: '12px', borderRadius: 10, fontSize: 13, fontWeight: 600, color: '#FFFFFF', background: '#2563EB', border: 'none', cursor: 'pointer', minHeight: 44, fontFamily: font, transition: 'background 0.15s' }}
-            onMouseOver={e => e.currentTarget.style.background = '#1D4ED8'}
-            onMouseOut={e => e.currentTarget.style.background = '#2563EB'}>
+            className="flex-1 py-3 rounded-xl text-sm font-semibold text-white transition-all"
+            style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', minHeight: 44 }}>
             Save Note
           </button>
         </div>
@@ -86,139 +80,143 @@ export default function LeadDetail() {
     if (!error) setNotes(updated)
   }
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 256, fontSize: 13, color: '#9B9B9B', fontFamily: font }}>Loading...</div>
+  if (loading) return <div className="flex items-center justify-center h-64 text-sm" style={{ color: '#6B7280' }}>Loading...</div>
 
   if (!lead) return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 256, gap: 12, padding: 24, fontFamily: font }}>
-      <p style={{ fontSize: 13, textAlign: 'center', color: '#9B9B9B' }}>Lead not found or access denied.</p>
-      <button onClick={() => navigate('/app/leads')} style={{ fontSize: 13, color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer' }}>← Back to Pipeline</button>
+    <div className="flex flex-col items-center justify-center h-64 gap-3 p-6">
+      <p className="text-sm text-center" style={{ color: '#6B7280' }}>Lead not found or access denied.</p>
+      <button onClick={() => navigate('/app/leads')} className="text-sm" style={{ color: '#6366F1' }}>← Back to Pipeline</button>
     </div>
   )
 
   const cfg = STAGES[lead.status] || STAGES.new
 
   return (
-    <div style={{ padding: '16px', maxWidth: 896, margin: '0 auto', fontFamily: font }} className="sm:p-5 md:p-6">
+    <div className="p-4 sm:p-5 md:p-6 max-w-4xl mx-auto">
       {showNote && <NoteModal onClose={() => setShowNote(false)} onSave={saveNote} />}
 
-      <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, marginBottom: 20, color: '#9B9B9B', background: 'none', border: 'none', cursor: 'pointer', minHeight: 44, fontFamily: font, transition: 'color 0.15s' }}
-        onMouseOver={e => e.currentTarget.style.color = '#0A0A0A'} onMouseOut={e => e.currentTarget.style.color = '#9B9B9B'}>
+      {/* Back button */}
+      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm mb-5 transition-colors" style={{ color: '#6B7280', minHeight: 44 }}
+        onMouseOver={e => e.currentTarget.style.color = '#fff'} onMouseOut={e => e.currentTarget.style.color = '#6B7280'}>
         <ArrowLeft size={15} /> Back to Pipeline
       </button>
 
       {/* Lead header card */}
-      <div style={{ ...card, padding: '20px 24px', marginBottom: 16 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }} className="sm:flex-row sm:items-start sm:justify-between">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: '#EFF6FF', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
+      <div className="rounded-2xl p-4 sm:p-6 mb-4" style={{ background: '#111827', border: '1px solid #1F2937' }}>
+        {/* Name + value row — stack on mobile */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-base flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', fontSize: 16 }}>
               {lead.name?.split(' ').map(n => n[0]).join('').slice(0,2) || '?'}
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0A0A0A', margin: 0 }}>{lead.name}</h1>
-                <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 99, fontWeight: 500, background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-lg sm:text-xl font-bold text-white">{lead.name}</h1>
+                <span className="text-xs px-2.5 py-1 rounded-full font-medium"
+                  style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }}>
                   {cfg.label}
                 </span>
               </div>
-              <div style={{ fontSize: 13, marginTop: 2, color: '#9B9B9B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 200 }} className="sm:max-w-none">{lead.email}</div>
+              <div className="text-sm mt-0.5 truncate max-w-[200px] sm:max-w-none" style={{ color: '#6B7280' }}>{lead.email}</div>
             </div>
           </div>
           <div className="sm:text-right">
-            <div style={{ fontSize: 22, fontWeight: 900, color: '#10B981' }}>
+            <div className="text-xl sm:text-2xl font-black" style={{ color: '#34D399' }}>
               ${Number(lead.value || 0).toLocaleString()}
             </div>
-            <div style={{ fontSize: 11, marginTop: 2, color: '#9B9B9B' }}>Est. value</div>
+            <div className="text-xs mt-0.5" style={{ color: '#4B5563' }}>Est. value</div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10, marginBottom: 16 }} className="sm:grid-cols-2">
+        {/* Contact info — 1 col mobile, 2 col sm+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
           <a href={`mailto:${lead.email}`}
-            style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 10, padding: '12px 14px', background: '#FAFAFA', border: '1px solid #E8E8E8', minHeight: 52, textDecoration: 'none', transition: 'border-color 0.15s' }}
-            onMouseOver={e => e.currentTarget.style.borderColor = '#D1D5DB'}
-            onMouseOut={e => e.currentTarget.style.borderColor = '#E8E8E8'}>
-            <Mail size={14} style={{ color: '#9B9B9B', flexShrink: 0 }} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 11, color: '#9B9B9B' }}>Email</div>
-              <div style={{ fontSize: 13, color: '#0A0A0A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lead.email}</div>
+            className="flex items-center gap-3 rounded-xl px-3 py-3 transition-all"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid #1F2937', minHeight: 52 }}>
+            <Mail size={14} style={{ color: '#4B5563', flexShrink: 0 }} />
+            <div className="min-w-0">
+              <div className="text-xs" style={{ color: '#374151' }}>Email</div>
+              <div className="text-sm text-white truncate">{lead.email}</div>
             </div>
           </a>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 10, padding: '12px 14px', background: '#FAFAFA', border: '1px solid #E8E8E8', minHeight: 52 }}>
-            <ExternalLink size={14} style={{ color: '#9B9B9B', flexShrink: 0 }} />
+          <div className="flex items-center gap-3 rounded-xl px-3 py-3"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid #1F2937', minHeight: 52 }}>
+            <ExternalLink size={14} style={{ color: '#4B5563', flexShrink: 0 }} />
             <div>
-              <div style={{ fontSize: 11, color: '#9B9B9B' }}>Source</div>
-              <div style={{ fontSize: 13, color: '#0A0A0A' }}>{lead.source || '—'}</div>
+              <div className="text-xs" style={{ color: '#374151' }}>Source</div>
+              <div className="text-sm text-white">{lead.source || '—'}</div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {/* Action buttons — wrap on mobile */}
+        <div className="flex flex-wrap gap-2">
           <a href={`mailto:${lead.email}`}
-            style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, padding: '10px 16px', borderRadius: 10, fontWeight: 600, color: '#FFFFFF', background: '#2563EB', textDecoration: 'none', minHeight: 44, transition: 'background 0.15s' }}
-            onMouseOver={e => e.currentTarget.style.background = '#1D4ED8'}
-            onMouseOut={e => e.currentTarget.style.background = '#2563EB'}>
+            className="flex items-center gap-2 text-sm px-4 rounded-xl font-medium text-white transition-all"
+            style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', minHeight: 44, paddingTop: 10, paddingBottom: 10 }}>
             <MessageSquare size={13} /> Send Email
           </a>
           <button onClick={() => updateStatus('booked')} disabled={updating}
-            style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, padding: '10px 16px', borderRadius: 10, fontWeight: 500, background: 'rgba(16,185,129,0.08)', color: '#10B981', border: '1px solid rgba(16,185,129,0.2)', cursor: updating ? 'not-allowed' : 'pointer', minHeight: 44, fontFamily: font, opacity: updating ? 0.5 : 1 }}>
+            className="flex items-center gap-2 text-sm px-4 rounded-xl font-medium transition-all disabled:opacity-50"
+            style={{ background: 'rgba(52,211,153,0.1)', color: '#34D399', border: '1px solid rgba(52,211,153,0.25)', minHeight: 44 }}>
             <Calendar size={13} /> Mark Booked
           </button>
           <button onClick={() => setShowNote(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, padding: '10px 16px', borderRadius: 10, fontWeight: 500, background: '#FAFAFA', border: '1px solid #E8E8E8', color: '#6B6B6B', cursor: 'pointer', minHeight: 44, fontFamily: font, transition: 'border-color 0.15s' }}
-            onMouseOver={e => e.currentTarget.style.borderColor = '#D1D5DB'}
-            onMouseOut={e => e.currentTarget.style.borderColor = '#E8E8E8'}>
+            className="flex items-center gap-2 text-sm px-4 rounded-xl font-medium transition-all"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid #1F2937', color: '#9CA3AF', minHeight: 44 }}>
             <FileText size={13} /> Add Note
           </button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }} className="md:grid-cols-3">
-        {/* Notes */}
-        <div style={{ ...card, padding: '20px 24px' }} className="md:col-span-2">
-          <h3 style={{ fontWeight: 600, fontSize: 14, color: '#0A0A0A', marginBottom: 16, marginTop: 0 }}>Notes</h3>
+      {/* Main content — stacks on mobile, 3-col grid on md+ */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Notes — full width on mobile, 2/3 on desktop */}
+        <div className="md:col-span-2 rounded-2xl p-4 sm:p-5" style={{ background: '#111827', border: '1px solid #1F2937' }}>
+          <h3 className="text-white font-semibold mb-4 text-sm">Notes</h3>
           {notes.length === 0 ? (
-            <div style={{ fontSize: 13, textAlign: 'center', padding: '32px 0', color: '#9B9B9B' }}>
+            <div className="text-sm text-center py-8" style={{ color: '#4B5563' }}>
               No notes yet.{' '}
-              <button onClick={() => setShowNote(true)} style={{ color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13 }}>Add one →</button>
+              <button onClick={() => setShowNote(true)} style={{ color: '#6366F1' }}>Add one →</button>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="space-y-3">
               {[...notes].reverse().map((n, i) => (
-                <div key={i} style={{ padding: '14px 16px', borderRadius: 10, background: '#FAFAFA', border: '1px solid #E8E8E8' }}>
-                  <p style={{ fontSize: 13, color: '#0A0A0A', lineHeight: 1.6, margin: 0 }}>{n.text}</p>
-                  <div style={{ fontSize: 11, marginTop: 8, color: '#C8C8C8' }}>{new Date(n.at).toLocaleString()}</div>
+                <div key={i} className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid #1F2937' }}>
+                  <p className="text-sm text-white leading-relaxed">{n.text}</p>
+                  <div className="text-xs mt-2" style={{ color: '#374151' }}>{new Date(n.at).toLocaleString()}</div>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* Sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ ...card, padding: '20px' }}>
-            <h4 style={{ fontWeight: 600, fontSize: 14, color: '#0A0A0A', marginBottom: 14, marginTop: 0 }}>Move Stage</h4>
-            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }} className="md:flex-col md:overflow-visible md:gap-0 md:space-y-2">
+        {/* Sidebar — stage mover + details */}
+        <div className="space-y-4">
+          <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#111827', border: '1px solid #1F2937' }}>
+            <h4 className="text-white font-semibold mb-3 text-sm">Move Stage</h4>
+            {/* Horizontal scroll on mobile */}
+            <div className="flex gap-2 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:space-y-1.5 md:gap-0">
               {Object.entries(STAGES).map(([key, { label, color, bg, border }]) => (
                 <button key={key} onClick={() => updateStatus(key)} disabled={updating || lead.status === key}
+                  className="flex items-center justify-between rounded-xl text-sm font-medium transition-all disabled:cursor-default flex-shrink-0 md:flex-shrink md:w-full"
                   style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    borderRadius: 10, fontSize: 13, fontWeight: 500, transition: 'all 0.15s',
                     padding: '10px 14px', minHeight: 44, whiteSpace: 'nowrap',
-                    flexShrink: 0, cursor: (updating || lead.status === key) ? 'default' : 'pointer',
-                    fontFamily: font,
                     ...(lead.status === key
                       ? { background: bg, color, border: `1px solid ${border}` }
-                      : { background: '#FAFAFA', border: '1px solid #E8E8E8', color: '#6B6B6B' }),
+                      : { background: 'rgba(255,255,255,0.02)', border: '1px solid #1F2937', color: '#6B7280' }),
                   }}>
                   {label}
-                  {lead.status === key && <CheckCircle size={13} style={{ marginLeft: 8, flexShrink: 0 }} />}
+                  {lead.status === key && <CheckCircle size={13} className="ml-2 flex-shrink-0" />}
                 </button>
               ))}
             </div>
           </div>
 
-          <div style={{ ...card, padding: '20px' }}>
-            <h4 style={{ fontWeight: 600, fontSize: 14, color: '#0A0A0A', marginBottom: 14, marginTop: 0 }}>Details</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#111827', border: '1px solid #1F2937' }}>
+            <h4 className="text-white font-semibold mb-3 text-sm">Details</h4>
+            <div className="space-y-2.5">
               {[
                 { label: 'Name',    value: lead.name },
                 { label: 'Email',   value: lead.email },
@@ -227,9 +225,9 @@ export default function LeadDetail() {
                 { label: 'Status',  value: cfg.label },
                 { label: 'Created', value: new Date(lead.created_at).toLocaleDateString() },
               ].map(({ label, value }) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-                  <span style={{ fontSize: 12, flexShrink: 0, color: '#9B9B9B' }}>{label}</span>
-                  <span style={{ fontSize: 12, fontWeight: 500, color: '#0A0A0A', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value || '—'}</span>
+                <div key={label} className="flex justify-between gap-3">
+                  <span className="text-xs flex-shrink-0" style={{ color: '#6B7280' }}>{label}</span>
+                  <span className="text-xs font-medium text-white text-right truncate">{value || '—'}</span>
                 </div>
               ))}
             </div>
