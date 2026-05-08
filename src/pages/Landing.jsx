@@ -108,12 +108,12 @@ function Navbar() {
   const [open, setOpen] = useState(false)
   const navLinks = [['#system','System'],['#features','Features'],['#pricing','Pricing'],['#faq','FAQ']]
   return (
-    <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font }}>
-      <div style={{ maxWidth:1200, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+    <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         {/* Logo */}
-        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none' }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:28, objectFit:'contain', display:'block' }}/>
-          <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF', letterSpacing:'-0.01em' }}>Leadsup</span>
+        <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent' }}>
+          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:22, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
         </Link>
 
         {/* Center links — desktop */}
@@ -161,7 +161,7 @@ function Navbar() {
 /* ── Hero ───────────────────────────────────────────────────── */
 function Hero() {
   return (
-    <section style={{ background:T.bg, paddingTop:120, paddingBottom:80, fontFamily:font }}>
+    <section className="hero-section" style={{ background:T.bg, paddingTop:120, paddingBottom:80, fontFamily:font }}>
       <div style={{ maxWidth:800, margin:'0 auto', padding:'0 24px', textAlign:'center' }}>
         {/* Badge */}
         <div style={{ display:'inline-flex', alignItems:'center', border:`1px solid ${T.border}`, borderRadius:99, padding:'6px 14px', marginBottom:32, fontSize:12, color:T.sub }}>
@@ -169,20 +169,20 @@ function Hero() {
         </div>
 
         {/* Headline */}
-        <h1 style={{ fontSize:56, fontWeight:700, letterSpacing:'-0.02em', lineHeight:1.1, margin:'0 0 20px', color:T.text }}>
+        <h1 className="hero-headline" style={{ fontSize:56, fontWeight:700, letterSpacing:'-0.02em', lineHeight:1.1, margin:'0 0 20px', color:T.text }}>
           Turn leads into<br/>
           <span style={{ background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>booked revenue</span>
           <span style={{ color:T.text }}>—on autopilot.</span>
         </h1>
 
         {/* Subheadline */}
-        <p style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:560, margin:'0 auto 40px', textAlign:'center' }}>
+        <p className="hero-sub" style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:560, margin:'0 auto 40px', textAlign:'center' }}>
           LeadsUp is the AI revenue infrastructure that follows up, qualifies, and converts every lead into booked calls and paying customers — without human ops.
         </p>
 
         {/* CTAs */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, flexWrap:'wrap' }}>
-          <a href="#cta" style={{ fontSize:15, fontWeight:600, color:'#FFFFFF', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding:'12px 24px', borderRadius:99, textDecoration:'none', transition:'opacity 0.15s' }}
+        <div className="hero-btns" style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, flexWrap:'wrap' }}>
+          <a href="#cta" className="hero-btn-primary" style={{ fontSize:15, fontWeight:600, color:'#FFFFFF', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding:'12px 24px', borderRadius:99, textDecoration:'none', transition:'opacity 0.15s' }}
             onMouseOver={e=>e.currentTarget.style.opacity='0.85'}
             onMouseOut={e=>e.currentTarget.style.opacity='1'}>
             Book a strategy call →
@@ -195,9 +195,11 @@ function Hero() {
         </div>
       </div>
 
-      {/* Integration hub */}
-      <div style={{ maxWidth:1000, margin:'60px auto 0', padding:'0 24px' }}>
-        <IntegrationHub />
+      {/* Integration hub — scaled down on mobile */}
+      <div className="hub-outer" style={{ maxWidth:1000, margin:'60px auto 0', padding:'0 24px' }}>
+        <div className="hub-wrapper">
+          <IntegrationHub />
+        </div>
       </div>
     </section>
   )
