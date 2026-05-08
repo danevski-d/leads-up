@@ -81,7 +81,7 @@ function IntegrationHub() {
       </svg>
       {NODES.map(n => (
         <div key={`node-${n.id}`} className="absolute" style={{ left:`${(n.x/W)*100}%`, top:`${(n.y/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:5 }}>
-          <div style={{ width:54, height:54, borderRadius:'50%', background:'#1a2235', border:`1.5px solid ${n.ring}35`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 6px 20px rgba(0,0,0,0.5), 0 0 16px -4px ${n.ring}30`, padding:10, transition:'box-shadow 0.3s' }}
+          <div className="hub-node" style={{ width:54, height:54, borderRadius:'50%', background:'#1a2235', border:`1.5px solid ${n.ring}35`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 6px 20px rgba(0,0,0,0.5), 0 0 16px -4px ${n.ring}30`, padding:10, transition:'box-shadow 0.3s' }}
             onMouseOver={e=>e.currentTarget.style.boxShadow=`0 0 0 2px ${n.ring}50, 0 6px 24px rgba(0,0,0,0.6), 0 0 24px -4px ${n.ring}55`}
             onMouseOut={e=>e.currentTarget.style.boxShadow=`0 6px 20px rgba(0,0,0,0.5), 0 0 16px -4px ${n.ring}30`}>
             <img src={n.logo} alt="" loading="lazy" style={{ width:'100%', height:'100%', objectFit:'contain', display:'block', borderRadius:4 }} onError={e=>{e.target.style.opacity='0.3'}}/>
@@ -89,12 +89,8 @@ function IntegrationHub() {
         </div>
       ))}
       <div className="absolute" style={{ left:'50%', top:`${(cy/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:10 }}>
-        <div style={{ textAlign:'center' }}>
-          <img src="/leadsup-icon.png" alt="" style={{ width:72, height:72, objectFit:'contain', display:'block', margin:'0 auto', mixBlendMode:'screen', filter:'drop-shadow(0 0 20px rgba(99,102,241,0.6))' }}/>
-          <div style={{ marginTop:6 }}>
-            <img src="/leadsup-text.png" alt="Leads Up" style={{ height:14, objectFit:'contain', display:'block', margin:'0 auto', mixBlendMode:'screen' }}/>
-            <div style={{ fontSize:8.5, fontWeight:700, color:'#6366F1', letterSpacing:'0.14em', textTransform:'uppercase', marginTop:3 }}>AI ENGINE</div>
-          </div>
+        <div style={{ width:72, height:72, borderRadius:'50%', background:'#0D0F18', border:'1px solid #1A1D2E', padding:12, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 4px rgba(99,102,241,0.08), 0 0 32px -8px rgba(99,102,241,0.4)' }}>
+          <img src="/leadsup-icon.png" alt="LeadsUp" style={{ height:48, width:48, background:'transparent', objectFit:'contain', display:'block' }}/>
         </div>
       </div>
     </div>
@@ -109,7 +105,7 @@ function Navbar() {
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent', flexShrink:0 }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <img src="/leadsup-icon.png" alt="" style={{ height:32, width:'auto', display:'inline-block', background:'transparent' }}/>
           <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF', background:'transparent', letterSpacing:'-0.01em' }}>
             Leads <span style={{ color:'#6B8AFF' }}>up</span>
           </span>
@@ -565,9 +561,10 @@ export default function Landing() {
           .hero-btns    { flex-direction: column !important; width: 100% !important; gap: 12px !important; padding: 0 4px !important; }
           .hero-btn-primary { width: 100% !important; text-align: center !important; box-sizing: border-box !important; display: block !important; }
 
-          /* Integration hub — scale to fit small screens */
-          .hub-outer  { padding: 0 !important; overflow: hidden !important; max-height: 210px !important; }
-          .hub-wrapper { transform: scale(0.50) !important; transform-origin: top center !important; margin-bottom: -27% !important; }
+          /* Integration hub — natural size, smaller icons, no overlap */
+          .hub-outer   { padding: 0 4px !important; overflow: visible !important; max-height: none !important; }
+          .hub-wrapper { transform: none !important; margin-bottom: 0 !important; padding-top: 8px !important; padding-bottom: 32px !important; }
+          .hub-node    { width: 40px !important; height: 40px !important; padding: 8px !important; }
 
           /* Stats 2-column */
           .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
