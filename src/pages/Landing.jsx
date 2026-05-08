@@ -109,8 +109,10 @@ function Navbar() {
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent', flexShrink:0 }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
-          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:22, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
+          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF', background:'transparent', letterSpacing:'-0.01em' }}>
+            Leads <span style={{ color:'#6B8AFF' }}>up</span>
+          </span>
         </Link>
 
         <div className="hidden md:flex" style={{ alignItems:'center', gap:32 }}>
@@ -155,7 +157,7 @@ function Navbar() {
 function Hero() {
   return (
     <section className="hero-section" style={{ paddingTop:120, paddingBottom:60, fontFamily:font }}>
-      <div style={{ maxWidth:820, margin:'0 auto', padding:'0 24px', textAlign:'center' }}>
+      <div className="hero-inner" style={{ maxWidth:820, margin:'0 auto', padding:'0 24px', textAlign:'center' }}>
         <div style={{ display:'inline-flex', alignItems:'center', border:`1px solid ${T.border}`, borderRadius:99, padding:'6px 14px', marginBottom:28, fontSize:12, color:T.sub }}>
           AI Revenue System · Now booking Q2 deployments
         </div>
@@ -218,7 +220,7 @@ function Stats() {
         <div className="stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)' }}>
           {metrics.map((m, i) => (
             <div key={m.num} className="stat-col" style={{ padding:'48px 40px', textAlign:'center', borderRight: i < 3 ? `1px solid ${T.border}` : 'none', borderLeft: i === 0 ? `1px solid ${T.border}` : 'none' }}>
-              <div style={{ fontSize:52, fontWeight:700, color:T.blue, letterSpacing:'-2px', lineHeight:1 }}>{m.num}</div>
+              <div className="stat-num" style={{ fontSize:52, fontWeight:700, color:T.blue, letterSpacing:'-2px', lineHeight:1 }}>{m.num}</div>
               <div style={{ fontSize:15, fontWeight:600, color:T.text, marginTop:10 }}>{m.label}</div>
               <div style={{ fontSize:13, color:T.sub, marginTop:4 }}>{m.sub}</div>
             </div>
@@ -238,7 +240,7 @@ function System() {
     { num:'04', title:'Book',    desc:'Calls land directly on your calendar. Reminders, reschedules, and no-show recovery run automatically.' },
   ]
   return (
-    <section id="system" style={{ padding:'100px 40px', fontFamily:font }}>
+    <section id="system" className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>The System</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:16, lineHeight:1.12, maxWidth:640 }}>
@@ -296,7 +298,7 @@ function Features() {
     },
   ]
   return (
-    <section id="features" style={{ padding:'100px 40px', fontFamily:font }}>
+    <section id="features" className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>Platform</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:56, lineHeight:1.12 }}>
@@ -316,7 +318,7 @@ function Features() {
         </div>
 
         {/* Testimonial */}
-        <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:20, padding:'48px 56px', position:'relative', overflow:'hidden' }}>
+        <div className="testimonial-block" style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:20, padding:'48px 56px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${T.blue}, ${T.purple})` }}/>
           <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:24 }}>Customer Story</div>
           <blockquote style={{ fontSize:'clamp(16px,2vw,22px)', fontWeight:500, color:T.text, lineHeight:1.6, margin:0, maxWidth:800, letterSpacing:'-0.01em' }}>
@@ -387,7 +389,7 @@ function Pricing() {
     },
   ]
   return (
-    <section id="pricing" style={{ padding:'100px 40px', fontFamily:font }}>
+    <section id="pricing" className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>Pricing</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:56, lineHeight:1.12 }}>
@@ -460,7 +462,7 @@ function FAQ() {
     { q: 'Do you offer a guarantee?',                             a: '' },
   ]
   return (
-    <section id="faq" style={{ padding:'100px 40px', fontFamily:font }}>
+    <section id="faq" className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:760, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>FAQ</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:48, lineHeight:1.12 }}>
@@ -493,8 +495,8 @@ function FAQ() {
 /* ── CTA section ────────────────────────────────────────────── */
 function CTASection() {
   return (
-    <section id="cta" style={{ padding:'100px 40px', fontFamily:font }}>
-      <div style={{ maxWidth:860, margin:'0 auto', background:'linear-gradient(135deg, #0D0F24, #13162A)', border:`1px solid ${T.border}`, borderRadius:24, padding:'80px 60px', textAlign:'center', position:'relative', overflow:'hidden' }}>
+    <section id="cta" className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
+      <div className="cta-card" style={{ maxWidth:860, margin:'0 auto', background:'linear-gradient(135deg, #0D0F24, #13162A)', border:`1px solid ${T.border}`, borderRadius:24, padding:'80px 60px', textAlign:'center', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${T.blue}, ${T.purple})` }}/>
         <h2 style={{ fontSize:'clamp(32px,5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, lineHeight:1.1, margin:0 }}>
           Stop losing leads.
@@ -521,13 +523,15 @@ function CTASection() {
 function Footer() {
   return (
     <footer style={{ borderTop:`1px solid ${T.border}`, padding:'36px 40px', fontFamily:font }}>
-      <div style={{ maxWidth:1280, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10, background:'transparent' }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
-          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:18, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
+      <div className="footer-inner" style={{ maxWidth:1280, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, background:'transparent' }}>
+          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <span style={{ fontSize:15, fontWeight:700, color:'#FFFFFF', background:'transparent' }}>
+            Leads <span style={{ color:'#6B8AFF' }}>up</span>
+          </span>
           <span style={{ fontSize:13, color:T.sub, marginLeft:8 }}>© 2026 · AI Revenue System</span>
         </div>
-        <div style={{ display:'flex', alignItems:'center', gap:24 }}>
+        <div className="footer-links" style={{ display:'flex', alignItems:'center', gap:24 }}>
           {['Privacy','Terms','Security','Contact'].map(l => (
             <a key={l} href="#" style={{ fontSize:13, color:T.sub, textDecoration:'none', transition:'color 0.15s' }}
               onMouseOver={e=>e.currentTarget.style.color=T.text}
@@ -545,28 +549,66 @@ export default function Landing() {
     <div style={{ minHeight:'100vh', fontFamily:font, backgroundImage:'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize:'60px 60px', position:'relative' }}>
       <BackgroundGradient />
       <style>{`
+        /* ── Burger: desktop hide ───────────── */
         .nav-burger { display: none; }
+
+        /* ── Mobile ≤ 767px ─────────────────── */
         @media (max-width: 767px) {
+          /* Nav */
           .nav-burger { display: flex !important; }
-          .hero-section { padding-top: 90px !important; padding-bottom: 40px !important; }
-          .hero-headline { font-size: 36px !important; white-space: normal !important; }
-          .hero-sub { font-size: 16px !important; }
-          .hero-btns { flex-direction: column !important; width: 100% !important; }
-          .hero-btn-primary { width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
-          .hub-outer { padding: 0 8px !important; }
-          .hub-wrapper { transform: scale(0.55) !important; transform-origin: top center !important; margin-bottom: -24% !important; }
+
+          /* Hero */
+          .hero-section { padding-top: 76px !important; padding-bottom: 20px !important; }
+          .hero-inner   { padding: 0 20px !important; }
+          .hero-headline { font-size: 30px !important; line-height: 1.18 !important; white-space: normal !important; }
+          .hero-sub     { font-size: 15px !important; margin-bottom: 28px !important; }
+          .hero-btns    { flex-direction: column !important; width: 100% !important; gap: 12px !important; padding: 0 4px !important; }
+          .hero-btn-primary { width: 100% !important; text-align: center !important; box-sizing: border-box !important; display: block !important; }
+
+          /* Integration hub — scale to fit small screens */
+          .hub-outer  { padding: 0 !important; overflow: hidden !important; max-height: 210px !important; }
+          .hub-wrapper { transform: scale(0.50) !important; transform-origin: top center !important; margin-bottom: -27% !important; }
+
+          /* Stats 2-column */
           .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .stat-col { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E !important; padding: 28px 20px !important; }
-          .system-cards { grid-template-columns: 1fr !important; }
-          .platform-cards { grid-template-columns: 1fr !important; }
-          .pricing-cards { grid-template-columns: 1fr !important; }
+          .stat-col   { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E !important; padding: 24px 16px !important; }
+          .stat-num   { font-size: 36px !important; }
+
+          /* Section vertical padding */
+          .section-pad { padding-top: 60px !important; padding-bottom: 60px !important; padding-left: 20px !important; padding-right: 20px !important; }
+
+          /* Cards */
+          .system-cards   { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .platform-cards { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .pricing-cards  { grid-template-columns: 1fr !important; gap: 16px !important; }
+
+          /* Testimonial */
+          .testimonial-block { padding: 28px 20px !important; }
+
+          /* CTA */
+          .cta-card { padding: 44px 24px !important; border-radius: 16px !important; }
+
+          /* Footer stacks */
+          .footer-inner { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
+          .footer-links { flex-wrap: wrap !important; gap: 14px !important; }
         }
+
+        /* ── Tablet 768px – 1024px ───────────── */
         @media (min-width: 768px) and (max-width: 1024px) {
-          .system-cards { grid-template-columns: repeat(2,1fr) !important; }
+          .system-cards   { grid-template-columns: repeat(2,1fr) !important; }
           .platform-cards { grid-template-columns: repeat(2,1fr) !important; }
-          .pricing-cards { grid-template-columns: repeat(2,1fr) !important; }
-          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .stat-col { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E; }
+          .pricing-cards  { grid-template-columns: repeat(2,1fr) !important; }
+          .stats-grid     { grid-template-columns: repeat(2,1fr) !important; }
+          .stat-col       { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E; }
+          .section-pad    { padding-left: 32px !important; padding-right: 32px !important; }
+          .cta-card       { padding: 60px 40px !important; }
+          .testimonial-block { padding: 36px 36px !important; }
+        }
+
+        /* ── Large desktop ≥ 1440px ─────────── */
+        @media (min-width: 1440px) {
+          .hero-headline { font-size: 64px !important; }
+          .section-pad   { padding-left: 60px !important; padding-right: 60px !important; }
         }
       `}</style>
       <Navbar />
