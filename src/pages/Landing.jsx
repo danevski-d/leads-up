@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X, ChevronDown } from 'lucide-react'
+import BackgroundGradient from '../components/ui/background-gradient'
 
 const font = "system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif"
 
@@ -89,11 +90,9 @@ function IntegrationHub() {
       ))}
       <div className="absolute" style={{ left:'50%', top:`${(cy/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:10 }}>
         <div style={{ textAlign:'center' }}>
-          <div style={{ width:72, height:72, borderRadius:'50%', margin:'0 auto', background:'linear-gradient(135deg, #6366F1, #7C3AED)', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 3px rgba(99,102,241,0.2), 0 0 50px -8px rgba(99,102,241,0.55), 0 0 0 6px rgba(99,102,241,0.06)' }}>
-            <img src="/leadsup-icon.png" alt="" style={{ height:40, width:40, objectFit:'contain', mixBlendMode:'lighten' }}/>
-          </div>
-          <div style={{ marginTop:8 }}>
-            <img src="/leadsup-text.png" alt="Leads Up" style={{ height:14, objectFit:'contain', mixBlendMode:'lighten', display:'block', margin:'0 auto' }}/>
+          <img src="/leadsup-icon.png" alt="" style={{ width:72, height:72, objectFit:'contain', display:'block', margin:'0 auto', mixBlendMode:'screen', filter:'drop-shadow(0 0 20px rgba(99,102,241,0.6))' }}/>
+          <div style={{ marginTop:6 }}>
+            <img src="/leadsup-text.png" alt="Leads Up" style={{ height:14, objectFit:'contain', display:'block', margin:'0 auto', mixBlendMode:'screen' }}/>
             <div style={{ fontSize:8.5, fontWeight:700, color:'#6366F1', letterSpacing:'0.14em', textTransform:'uppercase', marginTop:3 }}>AI ENGINE</div>
           </div>
         </div>
@@ -110,8 +109,8 @@ function Navbar() {
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <Link to="/" style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', background:'transparent', flexShrink:0 }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
-          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:22, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <img src="/leadsup-icon.png" alt="" style={{ height:36, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
+          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:22, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
         </Link>
 
         <div className="hidden md:flex" style={{ alignItems:'center', gap:32 }}>
@@ -155,7 +154,7 @@ function Navbar() {
 /* ── Hero ───────────────────────────────────────────────────── */
 function Hero() {
   return (
-    <section className="hero-section" style={{ background:T.bg, paddingTop:120, paddingBottom:60, fontFamily:font }}>
+    <section className="hero-section" style={{ paddingTop:120, paddingBottom:60, fontFamily:font }}>
       <div style={{ maxWidth:820, margin:'0 auto', padding:'0 24px', textAlign:'center' }}>
         <div style={{ display:'inline-flex', alignItems:'center', border:`1px solid ${T.border}`, borderRadius:99, padding:'6px 14px', marginBottom:28, fontSize:12, color:T.sub }}>
           AI Revenue System · Now booking Q2 deployments
@@ -204,7 +203,7 @@ function Stats() {
   ]
   const brands = ['NORTHWIND','ACME','LINEAR','LY','QUANTUM','PARALLAX','VERTEX']
   return (
-    <section style={{ background:T.bg, fontFamily:font }}>
+    <section style={{ fontFamily:font }}>
       <div style={{ borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:'32px 0' }}>
         <p style={{ fontSize:11, letterSpacing:'0.15em', color:T.sub, textAlign:'center', marginBottom:20 }}>
           TRUSTED BY REVENUE TEAMS AT
@@ -239,7 +238,7 @@ function System() {
     { num:'04', title:'Book',    desc:'Calls land directly on your calendar. Reminders, reschedules, and no-show recovery run automatically.' },
   ]
   return (
-    <section id="system" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+    <section id="system" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>The System</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:16, lineHeight:1.12, maxWidth:640 }}>
@@ -297,7 +296,7 @@ function Features() {
     },
   ]
   return (
-    <section id="features" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+    <section id="features" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>Platform</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:56, lineHeight:1.12 }}>
@@ -388,7 +387,7 @@ function Pricing() {
     },
   ]
   return (
-    <section id="pricing" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+    <section id="pricing" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>Pricing</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:56, lineHeight:1.12 }}>
@@ -461,7 +460,7 @@ function FAQ() {
     { q: 'Do you offer a guarantee?',                             a: '' },
   ]
   return (
-    <section id="faq" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+    <section id="faq" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:760, margin:'0 auto' }}>
         <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>FAQ</div>
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:48, lineHeight:1.12 }}>
@@ -494,7 +493,7 @@ function FAQ() {
 /* ── CTA section ────────────────────────────────────────────── */
 function CTASection() {
   return (
-    <section id="cta" style={{ background:T.bg, padding:'100px 40px', fontFamily:font }}>
+    <section id="cta" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:860, margin:'0 auto', background:'linear-gradient(135deg, #0D0F24, #13162A)', border:`1px solid ${T.border}`, borderRadius:24, padding:'80px 60px', textAlign:'center', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${T.blue}, ${T.purple})` }}/>
         <h2 style={{ fontSize:'clamp(32px,5vw,52px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, lineHeight:1.1, margin:0 }}>
@@ -521,11 +520,11 @@ function CTASection() {
 /* ── Footer ─────────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer style={{ background:T.bg, borderTop:`1px solid ${T.border}`, padding:'36px 40px', fontFamily:font }}>
+    <footer style={{ borderTop:`1px solid ${T.border}`, padding:'36px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
         <div style={{ display:'flex', alignItems:'center', gap:10, background:'transparent' }}>
-          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
-          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:18, objectFit:'contain', display:'block', background:'transparent', mixBlendMode:'normal' }}/>
+          <img src="/leadsup-icon.png" alt="" style={{ height:24, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
+          <img src="/leadsup-text.png" alt="Leadsup" style={{ height:18, objectFit:'contain', display:'block', mixBlendMode:'screen' }}/>
           <span style={{ fontSize:13, color:T.sub, marginLeft:8 }}>© 2026 · AI Revenue System</span>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:24 }}>
@@ -543,7 +542,8 @@ function Footer() {
 /* ── Root ───────────────────────────────────────────────────── */
 export default function Landing() {
   return (
-    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:font, backgroundImage:'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize:'60px 60px' }}>
+    <div style={{ minHeight:'100vh', fontFamily:font, backgroundImage:'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize:'60px 60px', position:'relative' }}>
+      <BackgroundGradient />
       <style>{`
         .nav-burger { display: none; }
         @media (max-width: 767px) {
