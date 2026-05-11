@@ -1,16 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { fileURLToPath } from 'url'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+import PrerenderPlugin from 'vite-plugin-prerender'
 
 export default defineConfig({
-  plugins: [react()],
-  server: { port: 3000 },
+  plugins: [
+    react(),
+    PrerenderPlugin({
+      staticDir: path.join(__dirname, 'dist'),
+      routes: ['/'],
+    }),
+  ],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+    alias: { '@': path.join(__dirname, 'src') },
   },
 })
