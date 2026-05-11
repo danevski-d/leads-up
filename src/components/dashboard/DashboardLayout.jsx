@@ -1,5 +1,7 @@
+'use client'
 import { useState } from 'react'
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
 import { Zap, LayoutDashboard, Users, BarChart2, Settings, LogOut, Menu, X, Bell, ChevronDown } from 'lucide-react'
 
@@ -17,6 +19,7 @@ const SB = {
 }
 
 function Sidebar({ collapsed, mobile, onClose, onLogout, avatarInitials, displayName, userEmail }) {
+  const pathname = usePathname()
   const width = collapsed && !mobile ? 64 : 232
   return (
     <aside style={{
@@ -48,7 +51,6 @@ function Sidebar({ collapsed, mobile, onClose, onLogout, avatarInitials, display
             </div>
           )}
         </div>
-        {/* Close button on mobile only */}
         {mobile && (
           <button onClick={onClose} style={{ color: SB.text, background: 'none', border: 'none', cursor: 'pointer', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <X size={18} />
@@ -58,26 +60,29 @@ function Sidebar({ collapsed, mobile, onClose, onLogout, avatarInitials, display
 
       {/* Nav links */}
       <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-        {nav.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} onClick={onClose}
-            style={({ isActive }) => ({
-              display: 'flex', alignItems: 'center', gap: 10,
-              padding: '11px 12px', borderRadius: 12, marginBottom: 2,
-              fontSize: 13, fontWeight: 500, textDecoration: 'none',
-              minHeight: 44,
-              justifyContent: collapsed && !mobile ? 'center' : 'flex-start',
-              background: isActive ? SB.activeBg : 'transparent',
-              border: `1px solid ${isActive ? SB.activeBorder : 'transparent'}`,
-              color: isActive ? SB.activeText : SB.text,
-              transition: 'all 0.15s',
-            })}
-            onMouseOver={e => { if (!e.currentTarget.style.background.includes('rgba(129')) e.currentTarget.style.color = SB.textHover }}
-            onMouseOut={e => { if (!e.currentTarget.style.background.includes('rgba(129')) e.currentTarget.style.color = SB.text }}
-          >
-            <Icon size={16} style={{ flexShrink: 0 }} />
-            {(!collapsed || mobile) && label}
-          </NavLink>
-        ))}
+        {nav.map(({ to, icon: Icon, label }) => {
+          const isActive = pathname === to
+          return (
+            <Link key={to} href={to} onClick={onClose}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '11px 12px', borderRadius: 12, marginBottom: 2,
+                fontSize: 13, fontWeight: 500, textDecoration: 'none',
+                minHeight: 44,
+                justifyContent: collapsed && !mobile ? 'center' : 'flex-start',
+                background: isActive ? SB.activeBg : 'transparent',
+                border: `1px solid ${isActive ? SB.activeBorder : 'transparent'}`,
+                color: isActive ? SB.activeText : SB.text,
+                transition: 'all 0.15s',
+              }}
+              onMouseOver={e => { if (!e.currentTarget.style.background.includes('rgba(129')) e.currentTarget.style.color = SB.textHover }}
+              onMouseOut={e => { if (!e.currentTarget.style.background.includes('rgba(129')) e.currentTarget.style.color = isActive ? SB.activeText : SB.text }}
+            >
+              <Icon size={16} style={{ flexShrink: 0 }} />
+              {(!collapsed || mobile) && label}
+            </Link>
+          )
+        })}
       </nav>
 
       {/* User footer */}
@@ -109,13 +114,13 @@ function Sidebar({ collapsed, mobile, onClose, onLogout, avatarInitials, display
   )
 }
 
-export default function DashboardLayout() {
+export default function DashboardLayout({ children }) {
   const { user, logout, displayName, avatarInitials } = useAuth()
-  const navigate = useNavigate()
+  const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const handleLogout = () => { logout(); navigate('/') }
+  const handleLogout = () => { logout(); router.push('/') }
   const closeMobile = () => setMobileOpen(false)
 
   const sidebarProps = {
@@ -136,13 +141,11 @@ export default function DashboardLayout() {
       {/* Mobile sidebar overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden" style={{ display: 'flex' }}>
-          {/* Backdrop */}
           <div
             className="absolute inset-0"
             style={{ background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(4px)' }}
             onClick={closeMobile}
           />
-          {/* Drawer */}
           <div style={{
             position: 'relative', height: '100%', width: 260,
             animation: 'slideInLeft 0.22s ease-out',
@@ -161,7 +164,6 @@ export default function DashboardLayout() {
           display: 'flex', alignItems: 'center', padding: '0 16px',
           gap: 8, flexShrink: 0, zIndex: 40,
         }}>
-          {/* Mobile hamburger */}
           <button
             className="md:hidden"
             onClick={() => setMobileOpen(true)}
@@ -169,7 +171,6 @@ export default function DashboardLayout() {
           >
             <Menu size={20} />
           </button>
-          {/* Desktop collapse toggle */}
           <button
             className="hidden md:flex"
             onClick={() => setCollapsed(!collapsed)}
@@ -180,13 +181,11 @@ export default function DashboardLayout() {
 
           <div style={{ flex: 1 }} />
 
-          {/* Bell */}
           <button style={{ position: 'relative', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
             <Bell size={18} />
             <span style={{ position: 'absolute', top: 8, right: 8, width: 7, height: 7, borderRadius: '50%', background: '#6366F1', border: '1.5px solid #0D1117' }} />
           </button>
 
-          {/* User chip */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #6366F1, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
               {avatarInitials}
@@ -198,11 +197,10 @@ export default function DashboardLayout() {
 
         {/* Page content */}
         <main style={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: '#1F2937 transparent' }}>
-          <Outlet />
+          {children}
         </main>
       </div>
 
-      {/* Slide-in animation */}
       <style>{`
         @keyframes slideInLeft {
           from { transform: translateX(-100%); opacity: 0.6; }
