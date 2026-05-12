@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import SiteNav from './_components/SiteNav'
 import SiteFooter from './_components/SiteFooter'
-import FAQAccordion from './_components/FAQAccordion'
 import IntegrationHub from './_components/IntegrationHub'
 import BackgroundGradient from '@/components/ui/background-gradient'
 import { T, font } from './_components/constants'
@@ -153,6 +152,15 @@ export default function Page() {
           .hero-headline { font-size: 64px !important; }
           .section-pad   { padding-left: 60px !important; padding-right: 60px !important; }
         }
+
+        /* Native details/summary accordion */
+        details { border-bottom: 1px solid #1A1D2E; }
+        details summary { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; cursor: pointer; font-size: 16px; font-weight: 500; color: #FFFFFF; list-style: none; }
+        details summary::-webkit-details-marker { display: none; }
+        details summary::marker { content: ''; display: none; }
+        details summary::after { content: '+'; font-size: 20px; font-weight: 300; color: #94A3B8; flex-shrink: 0; transition: transform 0.2s; }
+        details[open] summary::after { transform: rotate(45deg); }
+        details p { font-size: 15px; color: #94A3B8; line-height: 1.75; padding-bottom: 22px; margin: 0; }
       `}</style>
 
       <SiteNav />
@@ -400,7 +408,34 @@ export default function Page() {
             <h2 id="faq-heading" style={{ fontSize: 'clamp(30px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.02em', color: T.text, marginBottom: 48, lineHeight: 1.12 }}>
               Questions, answered.
             </h2>
-            <FAQAccordion />
+            <details>
+              <summary>What exactly does LeadsUp do?</summary>
+              <p>Leads Up is an AI-powered lead conversion system. When a potential customer reaches out — by phone, text, web form, or email — Leads Up responds instantly, qualifies the lead, and either books them or routes them to your team. It works 24/7 so you never miss an opportunity.</p>
+            </details>
+            <details>
+              <summary>How is this different from a marketing agency?</summary>
+              <p>A marketing agency brings leads to your door. Leads Up makes sure those leads actually turn into paying customers. We do not run ads — we convert the leads you are already getting but losing to slow response times or missed calls.</p>
+            </details>
+            <details>
+              <summary>How fast can we go live?</summary>
+              <p>Most businesses are fully set up within 48 hours. Our team handles the configuration, connects your existing tools, and trains the AI on your business before going live.</p>
+            </details>
+            <details>
+              <summary>What tools do you integrate with?</summary>
+              <p>Leads Up integrates with Google Calendar, HubSpot, Salesforce, GoHighLevel, Jobber, ServiceTitan, and more. If you use a CRM or scheduling tool, we almost certainly connect to it.</p>
+            </details>
+            <details>
+              <summary>Is my data secure?</summary>
+              <p>Yes. All data is encrypted in transit and at rest. We follow SOC 2 security standards and never share your customer data with third parties.</p>
+            </details>
+            <details>
+              <summary>What if AI replies do not sound like our brand?</summary>
+              <p>We train the AI on your tone, your services, and your business before going live. You review and approve the response templates and can edit them anytime from your dashboard.</p>
+            </details>
+            <details>
+              <summary>Do you offer a guarantee?</summary>
+              <p>Yes. If you do not see measurable improvement in lead response rate within the first 30 days, we will work with you for free until you do.</p>
+            </details>
           </div>
         </section>
 
@@ -425,6 +460,23 @@ export default function Page() {
           </div>
         </section>
 
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Leads Up",
+              "description": "AI-powered inbound lead conversion for service businesses",
+              "applicationCategory": "BusinessApplication",
+              "url": "https://useleadsup.com",
+              "offers": {
+                "@type": "Offer",
+                "availability": "https://schema.org/InStock"
+              }
+            })
+          }}
+        />
       </main>
 
       <SiteFooter />
