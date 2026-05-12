@@ -1,6 +1,8 @@
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import NavMobile from './NavMobile'
 import { T, font } from './constants'
+
+const NavMobile = dynamic(() => import('./NavMobile'), { ssr: false })
 
 const navLinks = [
   ['#system', 'System'],

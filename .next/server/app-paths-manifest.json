@@ -3,13 +3,13 @@
   "/cpu-demo/page": "app/cpu-demo/page.js",
   "/login/page": "app/login/page.js",
   "/page": "app/page.js",
-  "/security/page": "app/security/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/terms/page": "app/terms/page.js",
+  "/security/page": "app/security/page.js",
   "/app/leads/page": "app/app/leads/page.js",
-  "/app/settings/page": "app/app/settings/page.js",
-  "/app/leads/[id]/page": "app/app/leads/[id]/page.js",
-  "/app/dashboard/page": "app/app/dashboard/page.js",
   "/app/page": "app/app/page.js",
-  "/app/reports/page": "app/app/reports/page.js"
+  "/app/reports/page": "app/app/reports/page.js",
+  "/app/dashboard/page": "app/app/dashboard/page.js",
+  "/app/leads/[id]/page": "app/app/leads/[id]/page.js",
+  "/app/settings/page": "app/app/settings/page.js"
 }

@@ -1,9 +1,11 @@
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import SiteNav from './_components/SiteNav'
 import SiteFooter from './_components/SiteFooter'
-import IntegrationHub from './_components/IntegrationHub'
 import BackgroundGradient from '@/components/ui/background-gradient'
 import { T, font } from './_components/constants'
+
+const IntegrationHub = dynamic(() => import('./_components/IntegrationHub'), { ssr: false })
 
 export async function generateMetadata() {
   return {
