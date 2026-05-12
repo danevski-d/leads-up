@@ -1,0 +1,14 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-img-element": "off"
+  },
+  "ignorePatterns": [
+    "src/routes/**",
+    "src/components/site/**",
+    "src/server.ts",
+    "src/start.ts",
+    "revenue-flow/**"
+  ]
+}
