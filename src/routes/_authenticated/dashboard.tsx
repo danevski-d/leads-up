@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
-  head: () => ({ meta: [{ title: "Pipeline · LeadsUp" }] }),
+  head: () => ({ meta: [{ title: "Pipeline · Leads Up" }] }),
 });
 
 type Stage = "new" | "contacted" | "qualified" | "booked" | "won";

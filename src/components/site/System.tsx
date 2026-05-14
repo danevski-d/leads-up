@@ -32,7 +32,7 @@ export function System() {
             Replacing your entire follow-up stack.
           </h2>
           <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-            LeadsUp connects to your existing tools and runs your pipeline like a top-performing SDR team — at 1/10th the cost.
+            Leads Up connects to your existing tools and runs your pipeline like a top-performing SDR team — at 1/10th the cost.
           </p>
         </div>
 

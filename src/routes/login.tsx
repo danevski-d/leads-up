@@ -13,8 +13,8 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
   head: () => ({
     meta: [
-      { title: "Sign in · LeadsUp" },
-      { name: "description", content: "Sign in to your LeadsUp dashboard." },
+      { title: "Sign in · Leads Up" },
+      { name: "description", content: "Sign in to your Leads Up dashboard." },
     ],
   }),
 });
@@ -92,7 +92,7 @@ function LoginPage() {
               {isSignup ? "Create your account" : "Welcome back"}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              {isSignup ? "Start booking more revenue in minutes." : "Sign in to your LeadsUp dashboard."}
+              {isSignup ? "Start booking more revenue in minutes." : "Sign in to your Leads Up dashboard."}
             </p>
 
             <button
@@ -146,7 +146,7 @@ function LoginPage() {
             </form>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
-              {isSignup ? "Already have an account?" : "New to LeadsUp?"}{" "}
+              {isSignup ? "Already have an account?" : "New to Leads Up?"}{" "}
               <button
                 onClick={() => setIsSignup(!isSignup)}
                 className="text-foreground hover:text-primary transition-colors font-medium"

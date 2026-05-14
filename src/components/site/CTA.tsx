@@ -11,7 +11,7 @@ export function CTA() {
               <span className="text-gradient-brand">Start compounding revenue.</span>
             </h2>
             <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
-              See exactly how LeadsUp would convert your pipeline. 30 minutes, no pitch.
+              See exactly how Leads Up would convert your pipeline. 30 minutes, no pitch.
             </p>
             <a
               href="#"

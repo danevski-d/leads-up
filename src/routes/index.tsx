@@ -14,13 +14,13 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "LeadsUp — AI Revenue System for Modern Sales Teams" },
+      { title: "Leads Up — AI Revenue System for Modern Sales Teams" },
       {
         name: "description",
         content:
-          "LeadsUp is the AI revenue infrastructure that converts leads into booked calls and customers — automatically. Replace your follow-up stack with one intelligent system.",
+          "Leads Up is the AI revenue infrastructure that converts leads into booked calls and customers — automatically. Replace your follow-up stack with one intelligent system.",
       },
-      { property: "og:title", content: "LeadsUp — AI Revenue System" },
+      { property: "og:title", content: "Leads Up — AI Revenue System" },
       {
         property: "og:description",
         content: "Turn leads into booked revenue on autopilot. AI follow-up, qualification, and booking — built like infrastructure.",

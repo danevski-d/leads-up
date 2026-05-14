@@ -149,7 +149,7 @@ export function IntegrationHub() {
               boxShadow: `0 0 0 3px rgba(99,102,241,0.2), 0 0 50px -8px ${PRIMARY_GLOW}, 0 0 0 6px rgba(99,102,241,0.06)`,
             }}
           >
-            <img src={typeof logo === 'string' ? logo : (logo as { src: string }).src} alt="LeadsUp" style={{ width: 40, height: 40, objectFit: "contain", mixBlendMode: "luminosity", filter: "brightness(10)" }} />
+            <img src={typeof logo === 'string' ? logo : (logo as { src: string }).src} alt="Leads Up" style={{ width: 40, height: 40, objectFit: "contain", mixBlendMode: "luminosity", filter: "brightness(10)" }} />
           </div>
           <div style={{ marginTop: 8, fontSize: 9, fontWeight: 700, color: PRIMARY, letterSpacing: "0.14em", textTransform: "uppercase" }}>
             AI ENGINE

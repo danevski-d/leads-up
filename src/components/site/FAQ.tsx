@@ -2,12 +2,12 @@ import { useState } from "react";
 
 const faqs = [
   {
-    q: "What exactly does LeadsUp do?",
-    a: "LeadsUp is an AI revenue system that follows up with every lead instantly across SMS, email and chat — qualifying intent and booking calls directly on your calendar. It replaces your follow-up stack and operates 24/7.",
+    q: "What exactly does Leads Up do?",
+    a: "Leads Up is an AI revenue system that follows up with every lead instantly across SMS, email and chat — qualifying intent and booking calls directly on your calendar. It replaces your follow-up stack and operates 24/7.",
   },
   {
     q: "How is this different from a marketing agency?",
-    a: "We are not an agency. LeadsUp is software infrastructure. There are no media buyers, no creative reviews — just an AI revenue layer running in the background that converts leads you already paid for.",
+    a: "We are not an agency. Leads Up is software infrastructure. There are no media buyers, no creative reviews — just an AI revenue layer running in the background that converts leads you already paid for.",
   },
   {
     q: "How fast can we go live?",
@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: "Do you offer a guarantee?",
-    a: "If LeadsUp doesn't increase your booked calls in the first 30 days, we keep working for free until it does.",
+    a: "If Leads Up doesn't increase your booked calls in the first 30 days, we keep working for free until it does.",
   },
 ];
 

@@ -6,7 +6,7 @@ export function Logo({ size = 28, withText = true, textClassName = "" }: { size?
     <span className="inline-flex items-center gap-2">
       <img
         src={logo}
-        alt="LeadsUp"
+        alt="Leads Up"
         width={size}
         height={size}
         className="rounded-md object-contain"

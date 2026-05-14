@@ -30,7 +30,7 @@ export function Hero() {
           className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed opacity-0"
           style={{ animation: "var(--animate-fade-up)", animationDelay: "0.3s" }}
         >
-          LeadsUp is the AI revenue infrastructure that follows up, qualifies, and converts every lead into booked calls and paying customers — without human ops.
+          Leads Up is the AI revenue infrastructure that follows up, qualifies, and converts every lead into booked calls and paying customers — without human ops.
         </p>
 
         <div

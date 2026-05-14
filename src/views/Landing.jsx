@@ -16,29 +16,33 @@ const T = {
   purple: '#A78BFA',
 }
 
-/* ── IntegrationHub — preserved exactly ────────────────────── */
+/* ── IntegrationHub ─────────────────────────────────────────── */
 const NODES = [
-  { id:'hubspot',  logo:'https://assets.findstack.com/vdaa5x4wgysdzradrjabipgw14y6', ring:'#FF7A59', x:450, y:50  },
-  { id:'airtable', logo:'https://play-lh.googleusercontent.com/Kv6IIya1TLiCSQCHOz1ihsxuBfSeriuVd8Qpsgby6RFjiWzIJeTnoOWEzHwzttHlhmGM', ring:'#FCB400', x:585, y:99  },
-  { id:'gmail',    logo:'https://cdn.worldvectorlogo.com/logos/gmail-icon.svg', ring:'#EA4335', x:657, y:224 },
-  { id:'zapier',   logo:'https://cdn.worldvectorlogo.com/logos/zapier.svg', ring:'#FF4A00', x:632, y:365 },
-  { id:'openai',   logo:'https://cdn.worldvectorlogo.com/logos/openai-2.svg', ring:'#10A37F', x:522, y:457 },
-  { id:'n8n',      logo:'https://play-lh.googleusercontent.com/NIYvBq4mqSvkoYyObM_bJL5c_q5yrmBLQKBGXn-tlidUYkoz2vnGwS0wWz6Knl4lJ54NWjzFwbrRp1vNfNaG', ring:'#E7498F', x:378, y:457 },
-  { id:'linkedin', logo:'https://cdn.worldvectorlogo.com/logos/linkedin-icon-2.svg', ring:'#0A66C2', x:268, y:365 },
-  { id:'outlook',  logo:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnX6Hykqg5uXM3ZgQDOSVspShRrKgUV93yiA&s', ring:'#0078D4', x:243, y:224 },
-  { id:'clay',     logo:'https://s3.amazonaws.com/media.mixrank.com/hero-img/84ec813883cb09c8c7f8737ec57faf6d', ring:'#6B7EE0', x:315, y:99  },
+  { id:'hubspot',  logo:'https://cdn.simpleicons.org/hubspot/ffffff',     ring:'#FF7A59', x:450, y:50  },
+  { id:'slack',    logo:'https://cdn.simpleicons.org/slack/ffffff',       ring:'#4A154B', x:585, y:99  },
+  { id:'gmail',    logo:'https://cdn.simpleicons.org/gmail/ffffff',       ring:'#EA4335', x:657, y:224 },
+  { id:'zapier',   logo:'https://cdn.simpleicons.org/zapier/ffffff',      ring:'#FF4A00', x:632, y:365 },
+  { id:'openai',   logo:'https://cdn.simpleicons.org/openai/ffffff',      ring:'#10A37F', x:522, y:457 },
+  { id:'n8n',      logo:'https://cdn.simpleicons.org/n8n/ffffff',         ring:'#EA4B71', x:378, y:457 },
+  { id:'clay',     logo:'https://cdn.simpleicons.org/clay/ffffff',        ring:'#6B7EE0', x:268, y:365 },
+  { id:'ghl',      logo:'https://cdn.simpleicons.org/gohighlevel/ffffff', ring:'#F27B50', x:243, y:224 },
+  { id:'calendly', logo:'https://cdn.simpleicons.org/calendly/ffffff',    ring:'#006BFF', x:315, y:99  },
 ]
 
 const PATHS = {
-  hubspot:'M 450 50  Q 500 152 450 260', airtable:'M 585 99  Q 558 182 450 260',
-  gmail:'M 657 224 Q 567 240 450 260',   zapier:'M 632 365 Q 555 322 450 260',
-  openai:'M 522 457 Q 494 368 450 260',  n8n:'M 378 457 Q 406 368 450 260',
-  linkedin:'M 268 365 Q 345 322 450 260',outlook:'M 243 224 Q 333 240 450 260',
-  clay:'M 315 99  Q 342 182 450 260',
+  hubspot: 'M 450 50  Q 500 152 450 260',
+  slack:   'M 585 99  Q 558 182 450 260',
+  gmail:   'M 657 224 Q 567 240 450 260',
+  zapier:  'M 632 365 Q 555 322 450 260',
+  openai:  'M 522 457 Q 494 368 450 260',
+  n8n:     'M 378 457 Q 406 368 450 260',
+  clay:    'M 268 365 Q 345 322 450 260',
+  ghl:     'M 243 224 Q 333 240 450 260',
+  calendly:'M 315 99  Q 342 182 450 260',
 }
 
-const DUR = { hubspot:3.2, airtable:2.6, gmail:3.5, zapier:2.3, openai:3.0, n8n:3.8, linkedin:2.7, outlook:3.1, clay:3.4 }
-const DEL = { hubspot:0, airtable:0.9, gmail:0.4, zapier:1.7, openai:2.4, n8n:1.1, linkedin:0.7, outlook:0.5, clay:2.2 }
+const DUR = { hubspot:3.2, slack:2.6, gmail:3.5, zapier:2.3, openai:3.0, n8n:3.8, clay:2.7, ghl:3.1, calendly:3.4 }
+const DEL = { hubspot:0,   slack:0.9, gmail:0.4, zapier:1.7, openai:2.4, n8n:1.1, clay:0.7, ghl:0.5, calendly:2.2 }
 
 function IntegrationHub() {
   const W = 900, H = 520, cx = 450, cy = 260
@@ -91,7 +95,7 @@ function IntegrationHub() {
       ))}
       <div className="absolute" style={{ left:'50%', top:`${(cy/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:10 }}>
         <div style={{ width:80, height:80, borderRadius:'50%', background:'#0D0F18', border:'1px solid #1A1D2E', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 4px rgba(99,102,241,0.08), 0 0 32px -8px rgba(99,102,241,0.4)' }}>
-          <img src="/leadsup-icon.png.png" alt="LeadsUp" width="48" height="48" style={{ background:'transparent', objectFit:'contain' }}/>
+          <img src="/leadsup-icon.png.png" alt="Leads Up" width="48" height="48" style={{ background:'transparent', objectFit:'contain' }}/>
         </div>
       </div>
     </div>
@@ -106,7 +110,7 @@ function Navbar() {
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <Link href="/" style={{ textDecoration:'none', flexShrink:0, display:'flex', alignItems:'center', gap:8, background:'transparent' }}>
-          <img src="/leadsup-icon.png.png" style={{ height:32, width:'auto', background:'transparent', objectFit:'contain' }} alt="LeadsUp" />
+          <img src="/leadsup-icon.png.png" style={{ height:32, width:'auto', background:'transparent', objectFit:'contain' }} alt="Leads Up" />
           <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF' }}>Leads <span style={{ color:'#6B8AFF' }}>up</span></span>
         </Link>
 
@@ -164,7 +168,7 @@ function Hero() {
         </h1>
 
         <p className="hero-sub" style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:560, margin:'0 auto 36px', textAlign:'center' }}>
-          LeadsUp is the AI revenue infrastructure that follows up, qualifies, and converts every lead into booked calls and paying customers — without human ops.
+          Leads Up is the AI revenue infrastructure that follows up, qualifies, and converts every lead into booked calls and paying customers — without human ops.
         </p>
 
         <div className="hero-btns" style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, flexWrap:'wrap' }}>
@@ -193,31 +197,58 @@ function Hero() {
 /* ── Stats bar ──────────────────────────────────────────────── */
 function Stats() {
   const metrics = [
-    { num:'3.4x',   label:'More booked calls',  sub:'vs. manual follow-up' },
-    { num:'<60s',   label:'Lead response time',  sub:'24/7, every channel' },
-    { num:'92%',    label:'Reply rate lift',      sub:'AI-personalized' },
-    { num:'$1.2M+', label:'Pipeline generated',  sub:'in last 90 days' },
+    { num:'< 60s', label:'First response time',  sub:'AI replies before a human could pick up the phone' },
+    { num:'24/7',  label:'Always on',             sub:'No human ops required — nights, weekends, holidays' },
+    { num:'100%',  label:'Lead coverage',         sub:'Every inbound lead gets a response, every time' },
   ]
-  const brands = ['NORTHWIND','ACME','LINEAR','LY','QUANTUM','PARALLAX','VERTEX']
   return (
     <section style={{ fontFamily:font }}>
-      <div style={{ borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:'32px 0' }}>
-        <p style={{ fontSize:11, letterSpacing:'0.15em', color:T.sub, textAlign:'center', marginBottom:20 }}>
-          TRUSTED BY REVENUE TEAMS AT
-        </p>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:40, flexWrap:'wrap', padding:'0 24px' }}>
-          {brands.map(b => (
-            <span key={b} style={{ fontSize:13, fontWeight:600, letterSpacing:'0.1em', color:'#3A4060' }}>{b}</span>
-          ))}
+      <div style={{ borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}` }}>
+        <div style={{ maxWidth:1280, margin:'0 auto' }}>
+          <div className="stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)' }}>
+            {metrics.map((m, i) => (
+              <div key={m.num} className="stat-col" style={{ padding:'48px 40px', textAlign:'center', borderRight: i < 2 ? `1px solid ${T.border}` : 'none', borderLeft: i === 0 ? `1px solid ${T.border}` : 'none' }}>
+                <div className="stat-num" style={{ fontSize:52, fontWeight:700, color:T.blue, letterSpacing:'-2px', lineHeight:1 }}>{m.num}</div>
+                <div style={{ fontSize:15, fontWeight:600, color:T.text, marginTop:10 }}>{m.label}</div>
+                <div style={{ fontSize:13, color:T.sub, marginTop:4 }}>{m.sub}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+    </section>
+  )
+}
+
+/* ── Why 48 hours ───────────────────────────────────────────── */
+function Why48Hours() {
+  const steps = [
+    { hour:'Hour 0',  title:'Connect',  desc:'Link your CRM, calendar, and lead sources. Takes about 15 minutes.' },
+    { hour:'Hour 4',  title:'Train',    desc:'Your AI is trained on your offer, tone, objections, and ideal customer profile.' },
+    { hour:'Hour 24', title:'Test',     desc:'Live test run on real leads. You watch it qualify and book in real time.' },
+    { hour:'Hour 48', title:'Live',     desc:"Your AI is responding, qualifying, and booking 24/7. Your team does nothing." },
+  ]
+  return (
+    <section className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
-        <div className="stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)' }}>
-          {metrics.map((m, i) => (
-            <div key={m.num} className="stat-col" style={{ padding:'48px 40px', textAlign:'center', borderRight: i < 3 ? `1px solid ${T.border}` : 'none', borderLeft: i === 0 ? `1px solid ${T.border}` : 'none' }}>
-              <div className="stat-num" style={{ fontSize:52, fontWeight:700, color:T.blue, letterSpacing:'-2px', lineHeight:1 }}>{m.num}</div>
-              <div style={{ fontSize:15, fontWeight:600, color:T.text, marginTop:10 }}>{m.label}</div>
-              <div style={{ fontSize:13, color:T.sub, marginTop:4 }}>{m.sub}</div>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:16 }}>Setup</div>
+        <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:16, lineHeight:1.12, maxWidth:600 }}>
+          Why 48 hours?
+        </h2>
+        <p style={{ fontSize:16, color:T.sub, maxWidth:560, lineHeight:1.7, marginBottom:56 }}>
+          Most revenue automation tools take 6 weeks to deploy. Leads Up goes live in 48 hours — then works around the clock without your team lifting a finger.
+        </p>
+        <div className="why-cards" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+          {steps.map((s, i) => (
+            <div key={s.hour} style={{ position:'relative' }}>
+              {i < steps.length - 1 && (
+                <div style={{ position:'absolute', top:32, left:'calc(100% + 8px)', width:'calc(100% - 32px)', height:1, background:`linear-gradient(to right, ${T.border}, transparent)`, zIndex:1 }} className="why-connector"/>
+              )}
+              <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:'28px 24px' }}>
+                <div style={{ fontSize:11, fontWeight:700, color:T.blue, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:16 }}>{s.hour}</div>
+                <div style={{ fontSize:20, fontWeight:700, color:T.text, marginBottom:10, letterSpacing:'-0.02em' }}>{s.title}</div>
+                <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{s.desc}</div>
+              </div>
             </div>
           ))}
         </div>
@@ -229,10 +260,11 @@ function Stats() {
 /* ── System section ─────────────────────────────────────────── */
 function System() {
   const steps = [
-    { num:'01', title:'Capture', desc:'Every form, ad, DM, and inbound source is unified into one revenue stream — instantly enriched and scored.' },
-    { num:'02', title:'Engage',  desc:'AI agents reply in under 60 seconds across SMS, email, and chat — with brand-perfect tone and full context.' },
-    { num:'03', title:'Qualify', desc:'Multi-turn conversations qualify intent, budget, and timing — then hand off only sales-ready leads.' },
-    { num:'04', title:'Book',    desc:'Calls land directly on your calendar. Reminders, reschedules, and no-show recovery run automatically.' },
+    { num:'01', title:'Capture',     desc:'Every form, ad, DM, and inbound source is unified into one revenue stream — instantly enriched and scored.' },
+    { num:'02', title:'Qualify',     desc:'Multi-turn conversations detect intent, budget, and timeline — filtering out tyre-kickers automatically.' },
+    { num:'03', title:'Personalize', desc:"The AI crafts a contextually accurate, brand-perfect reply — tailored to each lead's specific situation and objections." },
+    { num:'04', title:'Book',        desc:'Qualified leads self-select a time on your calendar — no back-and-forth, no manual scheduling required.' },
+    { num:'05', title:'Confirm',     desc:'Automated confirmations, pre-call reminders, and no-show recovery sequences run without any human intervention.' },
   ]
   return (
     <section id="system" className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
@@ -242,14 +274,14 @@ function System() {
           A single revenue layer. Replacing your entire follow-up stack.
         </h2>
         <p style={{ fontSize:16, color:T.sub, maxWidth:560, lineHeight:1.7, marginBottom:56 }}>
-          LeadsUp connects to your existing tools and runs your pipeline like a top-performing SDR team — at 1/10th the cost.
+          Leads Up connects to your existing tools and runs your pipeline like a top-performing SDR team — at 1/10th the cost.
         </p>
-        <div className="system-cards" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+        <div className="system-cards" style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:16 }}>
           {steps.map(s => (
-            <div key={s.num} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:'32px 28px' }}>
-              <div style={{ fontSize:13, fontWeight:700, color:T.blue, marginBottom:40, letterSpacing:'0.05em' }}>{s.num}</div>
-              <div style={{ fontSize:20, fontWeight:700, color:T.text, marginBottom:12, letterSpacing:'-0.02em' }}>{s.title}</div>
-              <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{s.desc}</div>
+            <div key={s.num} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:'28px 20px' }}>
+              <div style={{ fontSize:13, fontWeight:700, color:T.blue, marginBottom:32, letterSpacing:'0.05em' }}>{s.num}</div>
+              <div style={{ fontSize:18, fontWeight:700, color:T.text, marginBottom:10, letterSpacing:'-0.02em' }}>{s.title}</div>
+              <div style={{ fontSize:13, color:T.sub, lineHeight:1.7 }}>{s.desc}</div>
             </div>
           ))}
         </div>
@@ -279,7 +311,7 @@ function Features() {
     {
       icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
       title:'Plug into your stack',
-      desc:'Native integrations with HubSpot, Salesforce, Pipedrive, GHL, Calendly, Slack, Stripe — and 1,000+ via API.',
+      desc:'Native integrations with HubSpot, GoHighLevel, Calendly, Slack, Zapier, Gmail — and 1,000+ via API.',
     },
     {
       icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
@@ -300,7 +332,7 @@ function Features() {
           Built like infrastructure.<br/>Used like magic.
         </h2>
 
-        <div className="platform-cards" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, marginBottom:48 }}>
+        <div className="platform-cards" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
           {cards.map((c, i) => (
             <div key={i} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:'28px 28px 32px' }}>
               <div style={{ background:'#13162A', border:`1px solid ${T.border}`, borderRadius:12, width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20 }}>
@@ -310,22 +342,6 @@ function Features() {
               <div style={{ fontSize:14, color:T.sub, lineHeight:1.7 }}>{c.desc}</div>
             </div>
           ))}
-        </div>
-
-        {/* Testimonial */}
-        <div className="testimonial-block" style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:20, padding:'48px 56px', position:'relative', overflow:'hidden' }}>
-          <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${T.blue}, ${T.purple})` }}/>
-          <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', color:T.blue, textTransform:'uppercase', marginBottom:24 }}>Customer Story</div>
-          <blockquote style={{ fontSize:'clamp(16px,2vw,22px)', fontWeight:500, color:T.text, lineHeight:1.6, margin:0, maxWidth:800, letterSpacing:'-0.01em' }}>
-            "We replaced two SDRs and a follow-up agency with LeadsUp. Booked calls went up 312% in the first 60 days — and our team finally stopped chasing cold leads."
-          </blockquote>
-          <div style={{ marginTop:28, display:'flex', alignItems:'center', gap:14 }}>
-            <div style={{ width:40, height:40, borderRadius:'50%', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:700, color:'#fff', flexShrink:0 }}>MR</div>
-            <div>
-              <div style={{ fontSize:14, fontWeight:600, color:T.text }}>Marcus Reyes</div>
-              <div style={{ fontSize:13, color:T.sub, marginTop:2 }}>VP Revenue, Northwind Capital</div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -390,7 +406,6 @@ function Pricing() {
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:56, lineHeight:1.12 }}>
           Priced like a system.<br/>Pays for itself in week one.
         </h2>
-
         <div className="pricing-cards" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, alignItems:'start' }}>
           {plans.map(p => (
             <div key={p.name} style={{
@@ -446,15 +461,15 @@ function FAQ() {
   const [openIdx, setOpenIdx] = useState(null)
   const items = [
     {
-      q: 'What exactly does LeadsUp do?',
-      a: 'LeadsUp is an AI revenue system that follows up with every lead instantly across SMS, email and chat — qualifying intent and booking calls directly on your calendar. It replaces your follow-up stack and operates 24/7.',
+      q: 'What exactly does Leads Up do?',
+      a: 'Leads Up is an AI revenue system that follows up with every lead instantly across SMS, email and chat — qualifying intent and booking calls directly on your calendar. It replaces your follow-up stack and operates 24/7.',
     },
-    { q: 'How is this different from a marketing agency?',       a: '' },
-    { q: 'How fast can we go live?',                              a: '' },
-    { q: 'What tools do you integrate with?',                    a: '' },
-    { q: 'Is my data secure?',                                    a: '' },
-    { q: "What if AI replies don't sound like our brand?",        a: '' },
-    { q: 'Do you offer a guarantee?',                             a: '' },
+    { q: 'How is this different from a marketing agency?',  a: 'We are not an agency. Leads Up is software infrastructure. There are no media buyers or creative reviews — just an AI revenue layer running in the background that converts leads you already paid for.' },
+    { q: 'How fast can we go live?',                        a: '48 hours. Connect your CRM and calendar, we train the AI on your offer and tone, then you go live. Most clients are booking calls before the end of the first week.' },
+    { q: 'What tools do you integrate with?',               a: 'HubSpot, GoHighLevel, Salesforce, Pipedrive, Calendly, Google Calendar, Gmail, Slack, Zapier, n8n, Clay — and 1,000+ more via API or Zapier.' },
+    { q: 'Is my data secure?',                              a: '' },
+    { q: "What if AI replies don't sound like our brand?",  a: '' },
+    { q: 'Do you offer a guarantee?',                       a: '' },
   ]
   return (
     <section id="faq" className="section-pad" style={{ padding:'100px 40px', fontFamily:font }}>
@@ -463,7 +478,6 @@ function FAQ() {
         <h2 style={{ fontSize:'clamp(30px,4vw,48px)', fontWeight:700, letterSpacing:'-0.02em', color:T.text, marginBottom:48, lineHeight:1.12 }}>
           Questions, answered.
         </h2>
-
         <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
           {items.map((item, i) => (
             <div key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
@@ -500,7 +514,7 @@ function CTASection() {
           Start compounding revenue.
         </h2>
         <p style={{ fontSize:18, color:T.sub, lineHeight:1.7, maxWidth:520, margin:'0 auto 40px' }}>
-          See exactly how LeadsUp would convert your pipeline. 30 minutes, no pitch.
+          See exactly how Leads Up would convert your pipeline. 30 minutes, no pitch.
         </p>
         <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer"
           style={{ display:'inline-block', fontSize:16, fontWeight:600, color:'#FFFFFF', background:`linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding:'14px 32px', borderRadius:99, textDecoration:'none', transition:'opacity 0.15s' }}
@@ -520,7 +534,7 @@ function Footer() {
     <footer style={{ borderTop:`1px solid ${T.border}`, padding:'36px 40px', fontFamily:font }}>
       <div className="footer-inner" style={{ maxWidth:1280, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
         <div style={{ display:'flex', alignItems:'center', gap:6, background:'transparent' }}>
-          <img src="/leadsup-icon.png.png" alt="LeadsUp" style={{ height:20, width:'auto', background:'transparent', objectFit:'contain' }}/>
+          <img src="/leadsup-icon.png.png" alt="Leads Up" style={{ height:20, width:'auto', background:'transparent', objectFit:'contain' }}/>
           <span style={{ fontSize:14, fontWeight:700, color:'#FFFFFF' }}>Leads <span style={{ color:'#6B8AFF' }}>up</span></span>
           <span style={{ fontSize:13, color:T.sub, marginLeft:8 }}>© 2026 · AI Revenue System</span>
         </div>
@@ -547,56 +561,40 @@ export default function Landing() {
 
         /* ── Mobile ≤ 767px ─────────────────── */
         @media (max-width: 767px) {
-          /* Nav */
           .nav-burger { display: flex !important; }
-
-          /* Hero */
           .hero-section { padding-top: 76px !important; padding-bottom: 20px !important; }
           .hero-inner   { padding: 0 20px !important; }
           .hero-headline { font-size: 30px !important; line-height: 1.18 !important; white-space: normal !important; }
           .hero-sub     { font-size: 15px !important; margin-bottom: 28px !important; }
           .hero-btns    { flex-direction: column !important; width: 100% !important; gap: 12px !important; padding: 0 4px !important; }
           .hero-btn-primary { width: 100% !important; text-align: center !important; box-sizing: border-box !important; display: block !important; }
-
-          /* Integration hub — natural size, smaller icons, no overlap */
           .hub-outer   { padding: 0 4px !important; overflow: visible !important; max-height: none !important; }
           .hub-wrapper { transform: none !important; margin-bottom: 0 !important; padding-top: 8px !important; padding-bottom: 32px !important; }
           .hub-node    { width: 40px !important; height: 40px !important; padding: 8px !important; }
-
-          /* Stats 2-column */
-          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .stat-col   { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E !important; padding: 24px 16px !important; }
-          .stat-num   { font-size: 36px !important; }
-
-          /* Section vertical padding */
+          .stats-grid  { grid-template-columns: 1fr !important; }
+          .stat-col    { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E !important; padding: 24px 20px !important; }
+          .stat-num    { font-size: 36px !important; }
           .section-pad { padding-top: 60px !important; padding-bottom: 60px !important; padding-left: 20px !important; padding-right: 20px !important; }
-
-          /* Cards */
           .system-cards   { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .why-cards      { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .why-connector  { display: none !important; }
           .platform-cards { grid-template-columns: 1fr !important; gap: 12px !important; }
           .pricing-cards  { grid-template-columns: 1fr !important; gap: 16px !important; }
-
-          /* Testimonial */
-          .testimonial-block { padding: 28px 20px !important; }
-
-          /* CTA */
-          .cta-card { padding: 44px 24px !important; border-radius: 16px !important; }
-
-          /* Footer stacks */
-          .footer-inner { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
-          .footer-links { flex-wrap: wrap !important; gap: 14px !important; }
+          .cta-card       { padding: 44px 24px !important; border-radius: 16px !important; }
+          .footer-inner   { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
+          .footer-links   { flex-wrap: wrap !important; gap: 14px !important; }
         }
 
         /* ── Tablet 768px – 1024px ───────────── */
         @media (min-width: 768px) and (max-width: 1024px) {
-          .system-cards   { grid-template-columns: repeat(2,1fr) !important; }
+          .system-cards   { grid-template-columns: repeat(3,1fr) !important; }
+          .why-cards      { grid-template-columns: repeat(2,1fr) !important; }
+          .why-connector  { display: none !important; }
           .platform-cards { grid-template-columns: repeat(2,1fr) !important; }
           .pricing-cards  { grid-template-columns: repeat(2,1fr) !important; }
-          .stats-grid     { grid-template-columns: repeat(2,1fr) !important; }
-          .stat-col       { border-right: none !important; border-left: none !important; border-bottom: 1px solid #1A1D2E; }
+          .stats-grid     { grid-template-columns: repeat(3,1fr) !important; }
           .section-pad    { padding-left: 32px !important; padding-right: 32px !important; }
           .cta-card       { padding: 60px 40px !important; }
-          .testimonial-block { padding: 36px 36px !important; }
         }
 
         /* ── Large desktop ≥ 1440px ─────────── */
@@ -609,6 +607,7 @@ export default function Landing() {
       <main style={{ paddingTop:60 }}>
         <Hero />
         <Stats />
+        <Why48Hours />
         <System />
         <Features />
         <Pricing />
