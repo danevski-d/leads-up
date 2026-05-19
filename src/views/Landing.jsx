@@ -21,15 +21,15 @@ const T = {
 
 /* ── IntegrationHub ─────────────────────────────────────────── */
 const NODES = [
-  { id:'hubspot',    logo:'https://cdn.simpleicons.org/hubspot/FF7A59',        ring:'#FF7A59', x:450, y:50  },
-  { id:'salesforce', logo:'https://cdn.simpleicons.org/salesforce/00A1E0',     ring:'#00A1E0', x:585, y:99  },
-  { id:'gmail',      logo:'https://cdn.simpleicons.org/gmail/EA4335',          ring:'#EA4335', x:657, y:224 },
-  { id:'zapier',     logo:'https://cdn.simpleicons.org/zapier/FF4A00',         ring:'#FF4A00', x:632, y:365 },
-  { id:'openai',     logo:'https://cdn.simpleicons.org/openai/ffffff',         ring:'#10A37F', x:522, y:457 },
-  { id:'slack',      logo:'https://cdn.simpleicons.org/slack/4A154B',          ring:'#4A154B', x:378, y:457 },
-  { id:'stripe',     logo:'https://cdn.simpleicons.org/stripe/635BFF',         ring:'#635BFF', x:268, y:365 },
-  { id:'n8n',        logo:'https://cdn.simpleicons.org/n8n/EA4B71',            ring:'#EA4B71', x:315, y:99  },
-  { id:'clay', logo:'https://www.getclay.com/apple-touch-icon.png', ring:'#6B7EE0', x:268, y:365 },
+  { id:'hubspot',  logo:'https://cdn.simpleicons.org/hubspot/FF7A59',   ring:'#FF7A59', x:450, y:50  },
+  { id:'slack',    logo:'https://cdn.simpleicons.org/slack/ffffff',     ring:'#E01E5A', x:585, y:99  },
+  { id:'gmail',    logo:'https://cdn.simpleicons.org/gmail/EA4335',     ring:'#EA4335', x:657, y:224 },
+  { id:'zapier',   logo:'https://cdn.simpleicons.org/zapier/FF4A00',    ring:'#FF4A00', x:632, y:365 },
+  { id:'openai',   logo:'https://cdn.simpleicons.org/openai/ffffff',    ring:'#10A37F', x:522, y:457 },
+  { id:'n8n',      logo:'https://cdn.simpleicons.org/n8n/EA4B71',       ring:'#EA4B71', x:378, y:457 },
+  { id:'clay',     logo:'https://logo.clearbit.com/clay.com',           ring:'#6B7EE0', x:268, y:365 },
+  { id:'ghl',      logo:'https://logo.clearbit.com/gohighlevel.com',    ring:'#F27B50', x:243, y:224 },
+  { id:'calendly', logo:'https://cdn.simpleicons.org/calendly/006BFF',  ring:'#006BFF', x:315, y:99  },
 ]
 
 const PATHS = {
