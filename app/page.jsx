@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import SiteNav from './_components/SiteNav'
+import ChatWidget from '../src/components/ChatWidget'
 import SiteFooter from './_components/SiteFooter'
 import BackgroundGradient from '@/components/ui/background-gradient'
 import { T, font } from './_components/constants'
@@ -482,6 +483,9 @@ export default function Page() {
       </main>
 
       <SiteFooter />
+      <ChatWidget />
     </div>
   )
 }
+
+
