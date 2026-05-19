@@ -79,6 +79,7 @@ export default function ChatWidget() {
         current_tools: d.current_tools || null,
         notes: `Business: ${d.business_type || '-'} | Leads/mo: ${d.monthly_leads || '-'} | Challenge: ${d.challenge || '-'} | Tools: ${d.current_tools || '-'}`,
         chat_source: 'website_chat',
+        user_id: 'af90ab79-739c-4483-9cf3-d6ffbdd67fa1',
       }])
     } catch(e) { console.error('Lead save failed:', e) }
   }
@@ -219,6 +220,7 @@ export default function ChatWidget() {
     </>
   )
 }
+
 
 
 
