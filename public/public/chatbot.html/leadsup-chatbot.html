@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Leads Up — AI Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24; --surface3: #22222e;
+  --accent: #7c6ef7; --accent2: #a594f9;
+  --text: #f0eeff; --text-muted: #8b88a8; --text-dim: #5a5870;
+  --border: rgba(124,110,247,0.18); --border-subtle: rgba(255,255,255,0.07);
+  --success: #4ade80;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
+}
+#chat {
+  width: 100%; max-width: 440px; height: 680px;
+  display: flex; flex-direction: column;
+  border-radius: 16px; border: 1px solid var(--border);
+  background: var(--surface); overflow: hidden;
+}
+#header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(124,110,247,0.07) 0%, transparent 100%);
+}
+.logo-mark {
+  width: 40px; height: 40px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--accent), #5b4fd4);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 18px; color: #fff; flex-shrink: 0;
+}
+.h-name { font-size: 15px; font-weight: 600; }
+.h-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+
+#progress-wrap { padding: 10px 20px 8px; flex-shrink: 0; border-bottom: 1px solid var(--border-subtle); }
+.p-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+.p-track { height: 2px; background: var(--surface3); border-radius: 2px; }
+.p-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; width: 0%; transition: width 0.5s ease; }
+
+#messages {
+  flex: 1; overflow-y: auto; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth;
+}
+#messages::-webkit-scrollbar { width: 3px; }
+#messages::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+.row { display: flex; gap: 8px; align-items: flex-end; animation: up 0.25s ease; }
+.row.user { flex-direction: row-reverse; }
+@keyframes up { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+.av {
+  width: 27px; height: 27px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), #5b4fd4);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 12px; color: #fff;
+  flex-shrink: 0; margin-bottom: 2px;
+}
+.bubble { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.6; word-break: break-word; }
+.row.bot .bubble { background: var(--surface2); border: 1px solid var(--border-subtle); color: var(--text); border-bottom-left-radius: 4px; }
+.row.user .bubble { background: linear-gradient(135deg, var(--accent), #5b4fd4); color: #fff; border-bottom-right-radius: 4px; }
+
+.typing { display: flex; gap: 4px; padding: 2px 0; align-items: center; }
+.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); animation: blink 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,60%,100%{opacity:0.3} 30%{opacity:1} }
+
+.book-card {
+  background: linear-gradient(135deg, rgba(124,110,247,0.1), rgba(91,79,212,0.08));
+  border: 1px solid rgba(124,110,247,0.3); border-radius: 12px; padding: 14px 16px; margin-top: 6px;
+}
+.book-title { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--text); margin-bottom: 4px; }
+.book-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.book-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, var(--accent), #5b4fd4); color: #fff; text-decoration: none;
+  padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; transition: opacity 0.15s;
+}
+.book-btn:hover { opacity: 0.85; }
+
+.sum-card { background: var(--surface3); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 12px 14px; margin-top: 6px; }
+.sum-title { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px; }
+.sum-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 4px 0; border-bottom: 1px solid var(--border-subtle); }
+.sum-row:last-child { border-bottom: none; }
+.sum-k { color: var(--text-muted); } .sum-v { color: var(--text); font-weight: 500; }
+
+#quick-area { padding: 8px 18px 10px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; min-height: 0; }
+.qbtn {
+  font-size: 12.5px; padding: 6px 13px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--accent2);
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all 0.15s;
+}
+.qbtn:hover { background: rgba(124,110,247,0.15); border-color: var(--accent); color: var(--text); }
+
+#input-area { padding: 10px 16px 14px; display: flex; gap: 9px; flex-shrink: 0; border-top: 1px solid var(--border-subtle); }
+#msg-input {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border-subtle); border-radius: 12px;
+  padding: 10px 15px; font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border-color 0.2s;
+}
+#msg-input::placeholder { color: var(--text-dim); }
+#msg-input:focus { border-color: var(--accent); }
+#send-btn {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #5b4fd4);
+  border: none; color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s;
+}
+#send-btn:hover { opacity: 0.85; }
+#send-btn svg { width: 17px; height: 17px; }
+#powered { text-align: center; padding: 5px 0 10px; font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+#powered span { color: var(--accent2); }
+</style>
+</head>
+<body>
+<div id="chat">
+  <div id="header">
+    <div class="logo-mark">L</div>
+    <div>
+      <div class="h-name">Leads Up — AI Advisor</div>
+      <div class="h-sub"><span class="dot"></span> Online · Replies instantly</div>
+    </div>
+  </div>
+  <div id="progress-wrap">
+    <div class="p-labels"><span id="p-label">Getting started</span><span id="p-pct">0%</span></div>
+    <div class="p-track"><div class="p-fill" id="p-fill"></div></div>
+  </div>
+  <div id="messages"></div>
+  <div id="quick-area"></div>
+  <div id="input-area">
+    <input id="msg-input" type="text" placeholder="Type a message…" autocomplete="off"/>
+    <button id="send-btn" aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+  <div id="powered">Powered by <span>Leads Up AI</span></div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────
+const STEPS = [
+  { key:'name',      ask:"What's your first name?" },
+  { key:'business',  ask:"What kind of business do you run?" },
+  { key:'leads',     ask:"Roughly how many inbound leads do you get per month?" },
+  { key:'challenge', ask:"What's your biggest challenge right now — slow follow-up, missed calls, no-shows, or something else?" },
+  { key:'tools',     ask:"What tools are you currently using to manage leads or bookings?" },
+  { key:'contact',   ask:"Last thing — what's the best email or phone number to reach you?" }
+];
+
+const SYSTEM = `You are the AI advisor for Leads Up — a premium AI revenue system that converts inbound leads automatically for service businesses.
+
+ABOUT LEADS UP:
+- We respond to every inbound lead in under 60 seconds, 24/7, via SMS, email, and chat
+- We qualify leads, book appointments, and recover lost revenue automatically
+- We integrate with HubSpot, Salesforce, GoHighLevel, Jobber, ServiceTitan, Calendly, Stripe and 1000+ others
+- Most clients go live within 48 hours
+- 30-day guarantee: measurable improvement in lead response rate or we work free until you see results
+
+WHO WE ARE: An AI revenue system built specifically for service businesses — HVAC, plumbing, cleaning, landscaping, legal, dental, agencies. We replace slow manual follow-up with instant, intelligent AI engagement so no lead is ever lost to a slow response.
+
+WHY US: The average service business loses 78% of leads due to slow follow-up. We eliminate that problem. Our AI is trained specifically on your business, your tone, your offer — not generic. Clients have seen 3x more booked calls within 60 days.
+
+PRICING: Never mention specific prices. Always say pricing depends on the complexity of the setup and the premium tier selected. We have packages tailored to different business sizes and lead volumes. The strategy call is the right place to get a custom quote.
+
+TONE: Warm, confident, professional. Like a trusted advisor — not a salesperson. Keep replies to 2-3 sentences. If you don't know something, say the team will cover it on the strategy call.`;
+
+const lead = {};
+let step = 0;
+let phase = 'intro';   // intro | collect | done
+let history = [];
+let busy = false;
+
+// ── DOM ────────────────────────────────────────────────────────────────
+const msgsEl  = document.getElementById('messages');
+const inputEl = document.getElementById('msg-input');
+const qaEl    = document.getElementById('quick-area');
+const pFill   = document.getElementById('p-fill');
+const pLabel  = document.getElementById('p-label');
+const pPct    = document.getElementById('p-pct');
+
+const PLABELS = [[0,'Getting started'],[15,'Qualifying'],[35,'Learning your needs'],[55,'Collecting info'],[80,'Almost done'],[100,'Ready to connect!']];
+function setProgress(n) {
+  pFill.style.width = n + '%';
+  pPct.textContent = n + '%';
+  pLabel.textContent = PLABELS.filter(x => x[0] <= n).pop()[1];
+}
+
+function scroll() { msgsEl.scrollTop = msgsEl.scrollHeight; }
+
+function addBubble(role, html) {
+  const row = document.createElement('div');
+  row.className = 'row ' + (role === 'user' ? 'user' : 'bot');
+  row.innerHTML = role === 'bot'
+    ? `<div class="av">L</div><div class="bubble">${html}</div>`
+    : `<div class="bubble">${html}</div>`;
+  msgsEl.appendChild(row);
+  scroll();
+}
+
+function showTyping() {
+  const row = document.createElement('div');
+  row.className = 'row bot'; row.id = 'typing';
+  row.innerHTML = `<div class="av">L</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  msgsEl.appendChild(row); scroll();
+}
+function hideTyping() { const el = document.getElementById('typing'); if (el) el.remove(); }
+
+function setQR(list) {
+  qaEl.innerHTML = '';
+  list.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'qbtn'; b.textContent = t;
+    b.onclick = () => send(t);
+    qaEl.appendChild(b);
+  });
+}
+
+function safe(t) { return t.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function summaryHTML() {
+  const map = {name:'Name',business:'Business',leads:'Monthly leads',challenge:'Main challenge',tools:'Current tools',contact:'Contact'};
+  const rows = Object.entries(map).filter(([k]) => lead[k])
+    .map(([k,l]) => `<div class="sum-row"><span class="sum-k">${l}</span><span class="sum-v">${lead[k]}</span></div>`).join('');
+  return `<div class="sum-card"><div class="sum-title">Your profile</div>${rows}</div>`;
+}
+
+function bookingHTML() {
+  return `<div class="book-card">
+    <div class="book-title">You're a great fit</div>
+    <div class="book-sub">Book a free 30-minute strategy call. We'll walk you through exactly how Leads Up would work for your business — no commitment required.</div>
+    <a class="book-btn" href="https://cal.com/leads-up" target="_blank">Book your strategy call →</a>
+  </div>`;
+}
+
+// ── Is this a question / freeform? ─────────────────────────────────────
+function isQuestion(t) {
+  return /\?|who are you|what (do|is|are|does)|how (do|does|can|it)|why |pricing|price|cost|guarantee|integrat|tell me|explain/i.test(t);
+}
+
+// ── Call AI for freeform answers ───────────────────────────────────────
+async function askAI(userText) {
+  history.push({ role:'user', content: userText });
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:300,
+      system: SYSTEM,
+      messages: history
+    })
+  });
+  const data = await res.json();
+  const reply = data.content?.[0]?.text || "Our team will cover that on the strategy call — they'll have all the answers.";
+  history.push({ role:'assistant', content: reply });
+  return reply;
+}
+
+// ── Main send ──────────────────────────────────────────────────────────
+async function send(text) {
+  text = text.trim();
+  if (!text || busy) return;
+  busy = true;
+  inputEl.value = '';
+  qaEl.innerHTML = '';
+  addBubble('user', safe(text));
+
+  // ── INTRO phase ────────────────────────────────────────────────────
+  if (phase === 'intro') {
+    phase = 'collect';
+    if (isQuestion(text)) {
+      // Answer the question, then start collection
+      showTyping();
+      await delay(800);
+      hideTyping();
+      const answer = await askAI(text);
+      addBubble('bot', safe(answer).replace(/\n/g,'<br>'));
+      await delay(500);
+      addBubble('bot', "Now let me ask you a few quick questions so I can show you exactly how we'd help. " + STEPS[0].ask);
+      setProgress(10);
+    } else {
+      // "Let's do it" or similar — jump straight to collection
+      await delay(400);
+      addBubble('bot', STEPS[0].ask);
+      setProgress(10);
+    }
+    busy = false;
+    return;
+  }
+
+  // ── COLLECT phase ──────────────────────────────────────────────────
+  if (phase === 'collect') {
+    if (isQuestion(text)) {
+      // They asked a question mid-flow — answer it then resume
+      showTyping();
+      await delay(800);
+      hideTyping();
+      try {
+        const answer = await askAI(text);
+        addBubble('bot', safe(answer).replace(/\n/g,'<br>'));
+      } catch(e) {
+        addBubble('bot', "Our team will cover that in detail on the strategy call.");
+      }
+      await delay(500);
+      // Resume from where we left off
+      if (step < STEPS.length) {
+        addBubble('bot', STEPS[step].ask);
+      }
+      busy = false;
+      return;
+    }
+
+    // Store answer for current step
+    lead[STEPS[step].key] = text;
+    step++;
+    setProgress(Math.round(10 + (step / STEPS.length) * 80));
+
+    if (step < STEPS.length) {
+      showTyping();
+      await delay(600);
+      hideTyping();
+      addBubble('bot', STEPS[step].ask);
+    } else {
+      // All collected — show summary and booking
+      phase = 'done';
+      setProgress(100);
+      showTyping();
+      await delay(1000);
+      hideTyping();
+      const name = lead.name ? lead.name : 'there';
+      addBubble('bot', `Thanks ${name}. Here's a summary of what you've shared:${summaryHTML()}<br>Based on this, you're a strong fit for Leads Up. Here's how to get started:${bookingHTML()}`);
+      setQR(["What happens on the call?", "I have another question"]);
+    }
+    busy = false;
+    return;
+  }
+
+  // ── DONE phase — answer any follow-up questions ────────────────────
+  if (phase === 'done') {
+    showTyping();
+    await delay(800);
+    hideTyping();
+    try {
+      const answer = await askAI(text);
+      addBubble('bot', safe(answer).replace(/\n/g,'<br>'));
+    } catch(e) {
+      addBubble('bot', "Our team will walk you through everything on the strategy call.");
+    }
+    setQR(["Book a call now", "I have another question"]);
+    busy = false;
+  }
+}
+
+// ── Keyboard / button ──────────────────────────────────────────────────
+inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') send(inputEl.value); });
+document.getElementById('send-btn').onclick = () => send(inputEl.value);
+
+// ── Opening message ────────────────────────────────────────────────────
+setTimeout(() => {
+  addBubble('bot', "Welcome. I'm the AI advisor for Leads Up — we help service businesses convert more inbound leads automatically, without hiring more staff.<br><br>I'll ask you a few quick questions to see if we're a good fit. Ready?");
+  setQR(["Let's go", "Tell me about Leads Up first", "What's the pricing like?"]);
+}, 600);
+</script>
+</body>
+</html>
