@@ -1,4 +1,5 @@
 'use client'
+
 import dynamic from 'next/dynamic'
 const ChatWidget = dynamic(() => import('../components/ChatWidget'), { ssr: false })
 import { useState } from 'react'
@@ -619,6 +620,7 @@ export default function Landing() {
       </main>
       <Footer />
       
+      <ChatWidget />
     </div>
   )
 }
