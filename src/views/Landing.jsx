@@ -1,9 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
+const ChatWidget = dynamic(() => import('../components/ChatWidget'), { ssr: false })
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import BackgroundGradient from '../components/ui/background-gradient'
-import ChatWidget from '../components/ChatWidget'
+
 
 const font = "system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif"
 
@@ -616,7 +618,7 @@ export default function Landing() {
         <CTASection />
       </main>
       <Footer />
-      <ChatWidget />
+      
     </div>
   )
 }
