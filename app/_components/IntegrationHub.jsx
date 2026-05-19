@@ -2,14 +2,14 @@
 
 const NODES = [
   { id: 'hubspot',  logo: 'https://assets.findstack.com/vdaa5x4wgysdzradrjabipgw14y6',                                                                                    ring: '#FF7A59', x: 450, y: 50  },
-  { id: 'airtable', logo: 'https://play-lh.googleusercontent.com/Kv6IIya1TLiCSQCHOz1ihsxuBfSeriuVd8Qpsgby6RFjiWzIJeTnoOWEzHwzttHlhmGM',                                ring: '#FCB400', x: 585, y: 99  },
+  { id: 'airtable', logo: 'https://cdn.worldvectorlogo.com/logos/airtable.svg',                                ring: '#FCB400', x: 585, y: 99  },
   { id: 'gmail',    logo: 'https://cdn.worldvectorlogo.com/logos/gmail-icon.svg',                                                                                          ring: '#EA4335', x: 657, y: 224 },
   { id: 'zapier',   logo: 'https://cdn.worldvectorlogo.com/logos/zapier.svg',                                                                                              ring: '#FF4A00', x: 632, y: 365 },
   { id: 'openai',   logo: 'https://cdn.worldvectorlogo.com/logos/openai-2.svg',                                                                                            ring: '#10A37F', x: 522, y: 457 },
-  { id: 'n8n',      logo: 'https://play-lh.googleusercontent.com/NIYvBq4mqSvkoYyObM_bJL5c_q5yrmBLQKBGXn-tlidUYkoz2vnGwS0wWz6Knl4lJ54NWjzFwbrRp1vNfNaG',               ring: '#E7498F', x: 378, y: 457 },
+  { id: 'n8n',      logo: 'https://cdn.worldvectorlogo.com/logos/n8n.svg',               ring: '#E7498F', x: 378, y: 457 },
   { id: 'linkedin', logo: 'https://cdn.worldvectorlogo.com/logos/linkedin-icon-2.svg',                                                                                    ring: '#0A66C2', x: 268, y: 365 },
-  { id: 'outlook',  logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnX6Hykqg5uXM3ZgQDOSVspShRrKgUV93yiA&s',                                               ring: '#0078D4', x: 243, y: 224 },
-  { id: 'clay',     logo: 'https://s3.amazonaws.com/media.mixrank.com/hero-img/84ec813883cb09c8c7f8737ec57faf6d',                                                         ring: '#6B7EE0', x: 315, y: 99  },
+  { id: 'outlook',  logo: 'https://cdn.worldvectorlogo.com/logos/outlook-1.svg',                                               ring: '#0078D4', x: 243, y: 224 },
+  { id: 'clay',     logo: 'https://cdn.worldvectorlogo.com/logos/clay-1.svg',                                                         ring: '#6B7EE0', x: 315, y: 99  },
 ]
 
 const PATHS = {
@@ -87,3 +87,7 @@ export default function IntegrationHub() {
     </div>
   )
 }
+
+
+
+
