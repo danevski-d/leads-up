@@ -5,11 +5,11 @@ const NODES = [
   { id: 'airtable', logo: 'https://cdn.simpleicons.org/airtable/18BFFF',       ring: '#FCB400', x: 585, y: 99  },
   { id: 'gmail',    logo: 'https://cdn.simpleicons.org/gmail/EA4335',           ring: '#EA4335', x: 657, y: 224 },
   { id: 'zapier',   logo: 'https://cdn.simpleicons.org/zapier/FF4A00',          ring: '#FF4A00', x: 632, y: 365 },
-  { id: 'openai',   logo: 'https://cdn.simpleicons.org/openai/10A37F',          ring: '#10A37F', x: 522, y: 457 },
+  { id: 'openai',   logo: 'https://cdn.brandfetch.io/microsoft.com/w/400/h/400/icon', ring: '#0078D4', x: 243, y: 224 },
   { id: 'n8n',      logo: 'https://cdn.simpleicons.org/n8n/EA4B71',             ring: '#E7498F', x: 378, y: 457 },
   { id: 'linkedin', logo: 'https://cdn.simpleicons.org/linkedin/0A66C2',        ring: '#0A66C2', x: 268, y: 365 },
-  { id: 'outlook',  logo: 'https://cdn.simpleicons.org/microsoftoutlook/0078D4',ring: '#0078D4', x: 243, y: 224 },
-  { id: 'clay',     logo: 'https://cdn.simpleicons.org/clay/ffffff',            ring: '#6B7EE0', x: 315, y: 99  },
+  { id: 'outlook',  logo: 'https://cdn.brandfetch.io/microsoft.com/w/400/h/400/icon', ring: '#0078D4', x: 243, y: 224 },
+  { id: 'clay',     logo: 'https://cdn.brandfetch.io/clay.com/w/400/h/400',     ring: '#6B7EE0', x: 315, y: 99  },
 ]
 
 const PATHS = {
