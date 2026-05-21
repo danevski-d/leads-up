@@ -98,7 +98,7 @@ function IntegrationHub() {
       ))}
       <div className="absolute" style={{ left:'50%', top:`${(cy/H)*100}%`, transform:'translate(-50%,-50%)', zIndex:10 }}>
         <div style={{ width:80, height:80, borderRadius:'50%', background:'#0D0F18', border:'1px solid #1A1D2E', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 4px rgba(99,102,241,0.08), 0 0 32px -8px rgba(99,102,241,0.4)' }}>
-          <img src="/leadsup-icon.png.png" alt="Leads Up" width="48" height="48" style={{ background:'transparent', objectFit:'contain' }}/>
+          <img src="/leadsup-icon.png" alt="Leads Up" width="48" height="48" style={{ background:'transparent', objectFit:'contain' }}/>
         </div>
       </div>
     </div>
@@ -113,7 +113,7 @@ function Navbar() {
     <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:50, background:T.bg, borderBottom:`1px solid ${T.border}`, height:60, display:'flex', alignItems:'center', fontFamily:font, width:'100%' }}>
       <div style={{ maxWidth:1280, margin:'0 auto', width:'100%', padding:'0 40px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <Link href="/" style={{ textDecoration:'none', flexShrink:0, display:'flex', alignItems:'center', gap:8, background:'transparent' }}>
-          <img src="/leadsup-icon.png.png" style={{ height:32, width:'auto', background:'transparent', objectFit:'contain' }} alt="Leads Up" />
+          <img src="/leadsup-icon.png" style={{ height:32, width:'auto', background:'transparent', objectFit:'contain' }} alt="Leads Up" />
           <span style={{ fontSize:18, fontWeight:700, color:'#FFFFFF' }}>Leads <span style={{ color:'#6B8AFF' }}>up</span></span>
         </Link>
 
@@ -537,7 +537,7 @@ function Footer() {
     <footer style={{ borderTop:`1px solid ${T.border}`, padding:'36px 40px', fontFamily:font }}>
       <div className="footer-inner" style={{ maxWidth:1280, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
         <div style={{ display:'flex', alignItems:'center', gap:6, background:'transparent' }}>
-          <img src="/leadsup-icon.png.png" alt="Leads Up" style={{ height:20, width:'auto', background:'transparent', objectFit:'contain' }}/>
+          <img src="/leadsup-icon.png" alt="Leads Up" style={{ height:20, width:'auto', background:'transparent', objectFit:'contain' }}/>
           <span style={{ fontSize:14, fontWeight:700, color:'#FFFFFF' }}>Leads <span style={{ color:'#6B8AFF' }}>up</span></span>
           <span style={{ fontSize:13, color:T.sub, marginLeft:8 }}>© 2026 · AI Revenue System</span>
         </div>
@@ -550,6 +550,43 @@ function Footer() {
         </div>
       </div>
     </footer>
+  )
+}
+
+/* ── Integration logos row ──────────────────────────────────── */
+function IntegrationRow() {
+  const badges = ['HubSpot','Salesforce','GoHighLevel','Calendly','Zapier','Slack','Stripe']
+  return (
+    <div style={{ padding:'20px 24px', fontFamily:font }}>
+      <div style={{ maxWidth:860, margin:'0 auto', textAlign:'center' }}>
+        <p style={{ fontSize:13, color:T.sub, opacity:0.5, marginBottom:12 }}>Works with your existing stack:</p>
+        <div style={{ display:'flex', flexWrap:'wrap', gap:8, justifyContent:'center' }}>
+          {badges.map(b => (
+            <span key={b} style={{ border:'1px solid rgba(255,255,255,0.1)', borderRadius:99, padding:'4px 12px', fontSize:12, color:'rgba(255,255,255,0.6)', background:'rgba(255,255,255,0.05)' }}>{b}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Trust bar ───────────────────────────────────────────────── */
+function TrustBar() {
+  const brands = ['NORTHWIND','ACME','LINEAR','LY','QUANTUM','PARALLAX','VERTEX']
+  return (
+    <div style={{ padding:'24px 40px', fontFamily:font, borderBottom:`1px solid ${T.border}` }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', textAlign:'center' }}>
+        <p style={{ fontSize:11, color:T.sub, opacity:0.4, marginBottom:16, letterSpacing:'0.1em', textTransform:'uppercase', fontWeight:600 }}>Trusted by revenue teams at</p>
+        <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'center', rowGap:8 }}>
+          {brands.map((b, i) => (
+            <span key={b}>
+              <span style={{ color:'rgba(255,255,255,0.3)', fontSize:12, fontWeight:600, letterSpacing:'0.15em', textTransform:'uppercase', margin:'0 12px' }}>{b}</span>
+              {i < brands.length - 1 && <span style={{ color:'rgba(255,255,255,0.15)' }}>·</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -607,9 +644,11 @@ export default function Landing() {
         }
       `}</style>
       <Navbar />
-      <main style={{ paddingTop:60 }}>
+      <main style={{ paddingTop:60 }} className="pb-20 sm:pb-0">
         <Hero />
         <Stats />
+        <IntegrationRow />
+        <TrustBar />
         <Why48Hours />
         <System />
         <Features />
@@ -620,6 +659,17 @@ export default function Landing() {
       <Footer />
       
       <ChatWidget />
+
+      <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden" style={{ background:'rgba(8,10,15,0.95)', backdropFilter:'blur(12px)', borderTop:'1px solid rgba(255,255,255,0.1)', padding:'12px 16px' }}>
+        <a
+          href="https://cal.com/leads-up"
+          style={{ display:'block', width:'100%', textAlign:'center', background:'#6B8AFF', color:'#ffffff', fontWeight:600, fontSize:14, borderRadius:12, padding:'12px 0', textDecoration:'none', transition:'background 0.15s' }}
+          onMouseOver={e=>e.currentTarget.style.background='#5a79ee'}
+          onMouseOut={e=>e.currentTarget.style.background='#6B8AFF'}
+        >
+          Book a Free Demo
+        </a>
+      </div>
     </div>
   )
 }
