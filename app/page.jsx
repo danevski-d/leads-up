@@ -168,7 +168,7 @@ export default function Page() {
 
       <SiteNav />
 
-      <main style={{ paddingTop: 60 }}>
+      <main style={{ paddingTop: 60 }} className="pb-20 sm:pb-0">
 
         {/* ── Hero ───────────────────────────────────────────── */}
         <section className="hero-section" aria-labelledby="hero-heading" style={{ paddingTop: 120, paddingBottom: 60, fontFamily: font }}>
@@ -218,6 +218,18 @@ export default function Page() {
             ))}
           </div>
         </section>
+
+        {/* ── Integration logos row ───────────────────────── */}
+        <div style={{ padding: '20px 24px', fontFamily: font }}>
+          <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
+            <p className="text-xs text-white/40 uppercase tracking-widest" style={{ marginBottom: 12 }}>Works with your existing stack</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {['HubSpot','Salesforce','GoHighLevel','Calendly','Zapier','Slack','Stripe'].map(name => (
+                <span key={name} className="border border-white/10 rounded-full px-3 py-1 text-xs text-white/50 bg-white/5">{name}</span>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* ── Benefit features (new SEO section) ──────────── */}
         <section aria-labelledby="benefits-heading" className="section-pad" style={{ padding: '100px 40px', fontFamily: font }}>
@@ -341,9 +353,12 @@ export default function Page() {
         <section aria-label="Performance metrics" style={{ fontFamily: font }}>
           <div style={{ borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: '32px 0' }}>
             <p style={{ fontSize: 11, letterSpacing: '0.15em', color: T.sub, textAlign: 'center', marginBottom: 20 }}>TRUSTED BY REVENUE TEAMS AT</p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 40, flexWrap: 'wrap', padding: '0 24px' }}>
-              {['NORTHWIND', 'ACME', 'LINEAR', 'LY', 'QUANTUM', 'PARALLAX', 'VERTEX'].map(b => (
-                <span key={b} style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', color: '#3A4060' }}>{b}</span>
+            <div className="flex flex-wrap items-center justify-center gap-y-2">
+              {['NORTHWIND', 'ACME', 'LINEAR', 'LY', 'QUANTUM', 'PARALLAX', 'VERTEX'].map((b, i, arr) => (
+                <span key={b}>
+                  <span className="text-white/30 text-xs font-semibold tracking-widest uppercase mx-3">{b}</span>
+                  {i < arr.length - 1 && <span className="text-white/15 mx-1">·</span>}
+                </span>
               ))}
             </div>
           </div>
@@ -484,6 +499,15 @@ export default function Page() {
 
       <SiteFooter />
       <ChatWidget />
+
+      <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden bg-[#080A0F]/95 backdrop-blur border-t border-white/10 px-4 py-3">
+        <a
+          href="https://cal.com/leads-up"
+          className="block w-full text-center bg-[#6B8AFF] hover:bg-[#5a79ee] text-white font-semibold text-sm rounded-xl py-3 transition-colors"
+        >
+          Book a Free Demo
+        </a>
+      </div>
     </div>
   )
 }
