@@ -1,15 +1,15 @@
 'use client'
 
 const NODES = [
-  { id: 'hubspot',  logo: 'https://assets.findstack.com/vdaa5x4wgysdzradrjabipgw14y6',                                                                                    ring: '#FF7A59', x: 450, y: 50  },
-  { id: 'airtable', logo: 'https://logo.clearbit.com/airtable.com',                                ring: '#FCB400', x: 585, y: 99  },
-  { id: 'gmail',    logo: 'https://cdn.worldvectorlogo.com/logos/gmail-icon.svg',                                                                                          ring: '#EA4335', x: 657, y: 224 },
-  { id: 'zapier',   logo: 'https://cdn.worldvectorlogo.com/logos/zapier.svg',                                                                                              ring: '#FF4A00', x: 632, y: 365 },
-  { id: 'openai',   logo: 'https://cdn.worldvectorlogo.com/logos/openai-2.svg',                                                                                            ring: '#10A37F', x: 522, y: 457 },
-  { id: 'n8n',      logo: 'https://logo.clearbit.com/n8n.io',               ring: '#E7498F', x: 378, y: 457 },
-  { id: 'linkedin', logo: 'https://cdn.worldvectorlogo.com/logos/linkedin-icon-2.svg',                                                                                    ring: '#0A66C2', x: 268, y: 365 },
-  { id: 'outlook',  logo: 'https://logo.clearbit.com/microsoft.com',                                               ring: '#0078D4', x: 243, y: 224 },
-  { id: 'clay',     logo: 'https://logo.clearbit.com/clay.com',                                                         ring: '#6B7EE0', x: 315, y: 99  },
+  { id: 'hubspot',  logo: 'https://cdn.simpleicons.org/hubspot/FF7A59',          ring: '#FF7A59', x: 450, y: 50  },
+  { id: 'airtable', logo: 'https://cdn.simpleicons.org/airtable/18BFFF',         ring: '#FCB400', x: 585, y: 99  },
+  { id: 'gmail',    logo: 'https://cdn.simpleicons.org/gmail/EA4335',             ring: '#EA4335', x: 657, y: 224 },
+  { id: 'zapier',   logo: 'https://cdn.simpleicons.org/zapier/FF4A00',            ring: '#FF4A00', x: 632, y: 365 },
+  { id: 'openai',   logo: 'https://cdn.simpleicons.org/openai/ffffff',            ring: '#10A37F', x: 522, y: 457 },
+  { id: 'n8n',      logo: 'https://cdn.simpleicons.org/n8n/EA4B71',               ring: '#E7498F', x: 378, y: 457 },
+  { id: 'linkedin', logo: 'https://cdn.simpleicons.org/linkedin/0A66C2',          ring: '#0A66C2', x: 268, y: 365 },
+  { id: 'outlook',  logo: 'https://cdn.simpleicons.org/microsoftoutlook/0078D4',  ring: '#0078D4', x: 243, y: 224 },
+  { id: 'clay',     logo: 'https://cdn.simpleicons.org/clay/6B7EE0',              ring: '#6B7EE0', x: 315, y: 99  },
 ]
 
 const PATHS = {
@@ -81,18 +81,9 @@ export default function IntegrationHub() {
       ))}
       <div className="absolute" style={{ left: '50%', top: `${(cy / H) * 100}%`, transform: 'translate(-50%,-50%)', zIndex: 10 }}>
         <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#0D0F18', border: '1px solid #1A1D2E', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 0 4px rgba(99,102,241,0.08), 0 0 32px -8px rgba(99,102,241,0.4)' }}>
-          <img src="/leadsup-icon.png.png" alt="LeadsUp" width="48" height="48" style={{ background: 'transparent', objectFit: 'contain' }} />
+          <img src="/leadsup-icon.png" alt="LeadsUp" width="48" height="48" style={{ background: 'transparent', objectFit: 'contain' }} />
         </div>
       </div>
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
