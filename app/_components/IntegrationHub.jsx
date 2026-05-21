@@ -1,15 +1,15 @@
 'use client'
 
 const NODES = [
-  { id: 'hubspot',  logo: 'https://cdn.simpleicons.org/hubspot/FF7A59',          ring: '#FF7A59', x: 450, y: 50  },
-  { id: 'airtable', logo: 'https://cdn.simpleicons.org/airtable/18BFFF',         ring: '#FCB400', x: 585, y: 99  },
-  { id: 'gmail',    logo: 'https://cdn.simpleicons.org/gmail/EA4335',             ring: '#EA4335', x: 657, y: 224 },
-  { id: 'zapier',   logo: 'https://cdn.simpleicons.org/zapier/FF4A00',            ring: '#FF4A00', x: 632, y: 365 },
-  { id: 'openai',   logo: 'https://cdn.simpleicons.org/openai/ffffff',            ring: '#10A37F', x: 522, y: 457 },
-  { id: 'n8n',      logo: 'https://cdn.simpleicons.org/n8n/EA4B71',               ring: '#E7498F', x: 378, y: 457 },
-  { id: 'linkedin', logo: 'https://cdn.simpleicons.org/linkedin/0A66C2',          ring: '#0A66C2', x: 268, y: 365 },
-  { id: 'outlook',  logo: 'https://cdn.simpleicons.org/microsoftoutlook/0078D4',  ring: '#0078D4', x: 243, y: 224 },
-  { id: 'clay',     logo: 'https://cdn.simpleicons.org/clay/6B7EE0',              ring: '#6B7EE0', x: 315, y: 99  },
+  { id: 'hubspot',  logo: 'https://cdn.simpleicons.org/hubspot/FF7A59',        ring: '#FF7A59', x: 450, y: 50  },
+  { id: 'airtable', logo: 'https://cdn.simpleicons.org/airtable/18BFFF',       ring: '#FCB400', x: 585, y: 99  },
+  { id: 'gmail',    logo: 'https://cdn.simpleicons.org/gmail/EA4335',           ring: '#EA4335', x: 657, y: 224 },
+  { id: 'zapier',   logo: 'https://cdn.simpleicons.org/zapier/FF4A00',          ring: '#FF4A00', x: 632, y: 365 },
+  { id: 'openai',   logo: 'https://cdn.simpleicons.org/openai/10A37F',          ring: '#10A37F', x: 522, y: 457 },
+  { id: 'n8n',      logo: 'https://cdn.simpleicons.org/n8n/EA4B71',             ring: '#E7498F', x: 378, y: 457 },
+  { id: 'linkedin', logo: 'https://cdn.simpleicons.org/linkedin/0A66C2',        ring: '#0A66C2', x: 268, y: 365 },
+  { id: 'outlook',  logo: 'https://cdn.simpleicons.org/microsoftoutlook/0078D4',ring: '#0078D4', x: 243, y: 224 },
+  { id: 'clay',     logo: 'https://cdn.simpleicons.org/clay/ffffff',            ring: '#6B7EE0', x: 315, y: 99  },
 ]
 
 const PATHS = {
@@ -29,6 +29,31 @@ const DEL = { hubspot: 0, airtable: 0.9, gmail: 0.4, zapier: 1.7, openai: 2.4, n
 
 export default function IntegrationHub() {
   const W = 900, H = 520, cx = 450, cy = 260
+
+  function NodeIcon({ n }) {
+    const fallbacks = {
+      clay:    'https://framerusercontent.com/images/AzMiXeQCDMeUNqaflFPYWAiHY.png',
+      outlook: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg',
+      linkedin: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png',
+      openai:  'https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg',
+    }
+    return (
+      <img
+        src={n.logo}
+        alt={n.id}
+        loading="lazy"
+        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', borderRadius: 4 }}
+        onError={e => {
+          if (fallbacks[n.id] && e.target.src !== fallbacks[n.id]) {
+            e.target.src = fallbacks[n.id]
+          } else {
+            e.target.style.opacity = '0.3'
+          }
+        }}
+      />
+    )
+  }
+
   return (
     <div className="relative w-full max-w-5xl mx-auto select-none" style={{ paddingBottom: '54%' }}>
       <div className="absolute" style={{ left: '50%', top: `${(cy / H) * 100}%`, transform: 'translate(-50%,-50%)', width: '340px', height: '340px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
@@ -75,7 +100,7 @@ export default function IntegrationHub() {
             onMouseOver={e => e.currentTarget.style.boxShadow = `0 0 0 2px ${n.ring}50, 0 6px 24px rgba(0,0,0,0.6), 0 0 24px -4px ${n.ring}55`}
             onMouseOut={e => e.currentTarget.style.boxShadow = `0 6px 20px rgba(0,0,0,0.5), 0 0 16px -4px ${n.ring}30`}
           >
-            <img src={n.logo} alt={n.id} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', borderRadius: 4 }} onError={e => { e.target.style.opacity = '0.3' }} />
+            <NodeIcon n={n} />
           </div>
         </div>
       ))}
