@@ -9,7 +9,7 @@ const NODES = [
   { id: 'n8n',      logo: 'https://cdn.simpleicons.org/n8n/EA4B71',      ring: '#E7498F', x: 378, y: 457 },
   { id: 'linkedin', logo: null,                                          ring: '#0A66C2', x: 268, y: 365 },
   { id: 'outlook',  logo: null,                                          ring: '#0078D4', x: 243, y: 224 },
-  { id: 'clay',     logo: 'https://cdn.simpleicons.org/clay/ffffff',     ring: '#6B7EE0', x: 315, y: 99  },
+  { id: 'clay',     logo: null,                                          ring: '#6B7EE0', x: 315, y: 99  },
 ]
 
 const PATHS = {
@@ -42,7 +42,14 @@ function NodeIcon({ n }) {
 
   if (n.id === 'outlook') return (
     <svg viewBox="0 0 24 24" fill="#0078D4" style={{ width: '100%', height: '100%' }}>
-      <path d="M14.594 0v.005l-3.73 3.73H7.125v2.132L0 9.403v12.574L14.594 24V0zM7.125 5.866h3.74L7.125 9.6V5.866zm0 4.91l4.302-4.3 3.167 3.167-4.3 4.3-3.169-3.167zm-5.6.899l4.075-2.713v8.3L1.525 15.55V11.675zm5.6 7.98v-2.758l3.169 3.169-3.17-.41zM24 7.387v9.227l-7.88 7.38V0l7.88 7.387z"/>
+      <path d="M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5v.55l-10 6.25L2 7.05V6.5zm0 2.17V17.5A2.5 2.5 0 0 0 4.5 20h15a2.5 2.5 0 0 0 2.5-2.5V8.67l-10 6.25-10-6.25z"/>
+    </svg>
+  )
+
+  if (n.id === 'clay') return (
+    <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+      <circle cx="50" cy="50" r="50" fill="#6B7EE0"/>
+      <text x="50" y="67" textAnchor="middle" fill="white" fontSize="55" fontWeight="800" fontFamily="system-ui,sans-serif">c</text>
     </svg>
   )
 
