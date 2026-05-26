@@ -7,6 +7,8 @@ import BackgroundGradient from '@/components/ui/background-gradient'
 import { T, font } from './_components/constants'
 
 const IntegrationHub = dynamic(() => import('./_components/IntegrationHub'), { ssr: false })
+const GetStartedClient = dynamic(() => import('./_components/GetStartedClient'), { ssr: false })
+const OpenFormButton = dynamic(() => import('./_components/OpenFormButton'), { ssr: false })
 
 export async function generateMetadata() {
   return {
@@ -187,9 +189,9 @@ export default function Page() {
             </p>
 
             <div className="hero-btns" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-              <a href="#cta" className="hero-btn-primary lp-btn-fade" style={{ fontSize: 15, fontWeight: 600, color: '#FFFFFF', background: `linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding: '12px 24px', borderRadius: 99, textDecoration: 'none' }}>
-                Book a strategy call
-              </a>
+              <OpenFormButton className="hero-btn-primary lp-btn-fade" style={{ fontSize: 15, fontWeight: 600, color: '#FFFFFF', background: `linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding: '12px 24px', borderRadius: 99, border: 'none', cursor: 'pointer' }}>
+                Get started free →
+              </OpenFormButton>
               <a href="#how-it-works" className="lp-link-inv" style={{ fontSize: 15 }}>
                 See how it works
               </a>
@@ -470,10 +472,10 @@ export default function Page() {
             <p style={{ fontSize: 18, color: T.sub, lineHeight: 1.7, maxWidth: 520, margin: '0 auto 40px' }}>
               See exactly how Leads Up would convert your pipeline. 30 minutes, no pitch.
             </p>
-            <a href="https://cal.com/leads-up" target="_blank" rel="noopener noreferrer" className="lp-btn-fade"
-              style={{ display: 'inline-block', fontSize: 16, fontWeight: 600, color: '#FFFFFF', background: `linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding: '14px 32px', borderRadius: 99, textDecoration: 'none' }}>
+            <OpenFormButton className="lp-btn-fade"
+              style={{ display: 'inline-block', fontSize: 16, fontWeight: 600, color: '#FFFFFF', background: `linear-gradient(135deg, ${T.blue}, ${T.purple})`, padding: '14px 32px', borderRadius: 99, border: 'none', cursor: 'pointer' }}>
               Book your strategy call
-            </a>
+            </OpenFormButton>
             <p style={{ fontSize: 13, color: T.sub, marginTop: 16 }}>No credit card · No commitment · Real revenue audit</p>
           </div>
         </section>
@@ -500,14 +502,7 @@ export default function Page() {
       <SiteFooter />
       <ChatWidget />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden bg-[#080A0F]/95 backdrop-blur border-t border-white/10 px-4 py-3">
-        <a
-          href="https://cal.com/leads-up"
-          className="block w-full text-center bg-[#6B8AFF] hover:bg-[#5a79ee] text-white font-semibold text-sm rounded-xl py-3 transition-colors"
-        >
-          Book a Free Demo
-        </a>
-      </div>
+      <GetStartedClient />
     </div>
   )
 }

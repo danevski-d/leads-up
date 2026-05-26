@@ -1,3 +1,4 @@
+'use client'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { T, font } from './constants'
@@ -29,9 +30,13 @@ export default function SiteNav() {
 
           <div className="hidden md:flex" style={{ alignItems: 'center', gap: 20 }}>
             <Link href="/login" className="lp-nav-link" style={{ fontSize: 14 }}>Sign in</Link>
-            <Link href="/login?mode=signup" className="lp-btn-fade" style={{ fontSize: 14, fontWeight: 600, color: '#080A0F', background: '#FFFFFF', padding: '8px 18px', borderRadius: 99, textDecoration: 'none', fontFamily: font }}>
+            <button
+              onClick={() => window.__openLeadForm && window.__openLeadForm()}
+              className="lp-btn-fade"
+              style={{ fontSize: 14, fontWeight: 600, color: '#080A0F', background: '#FFFFFF', padding: '8px 18px', borderRadius: 99, border: 'none', cursor: 'pointer', fontFamily: font }}
+            >
               Get started
-            </Link>
+            </button>
           </div>
 
           <NavMobile />
