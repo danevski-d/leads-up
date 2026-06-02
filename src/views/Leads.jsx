@@ -1,5 +1,4 @@
-@'
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Search, Plus, X } from 'lucide-react'
@@ -9,24 +8,24 @@ import { useAuth } from '../context/AuthContext'
 const WORKSPACE_ID = '8c00a710-b9c3-4b96-98d5-1bddb32b1e24'
 
 const COLUMNS = [
-  { key: 'New',            label: 'New',          dot: '#6366F1', badge: 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' },
-  { key: 'Contacted',      label: 'Contacted',    dot: '#67E8F9', badge: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' },
-  { key: 'Qualified',      label: 'Qualified',    dot: '#A78BFA', badge: 'bg-purple-500/20 text-purple-400 border border-purple-500/30' },
-  { key: 'Meeting Booked', label: 'Booked',       dot: '#34D399', badge: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' },
-  { key: 'Re-engaged',     label: 'Re-engaged',   dot: '#F59E0B', badge: 'bg-amber-500/20 text-amber-400 border border-amber-500/30' },
-  { key: 'lost',           label: 'Lost',         dot: '#6B7280', badge: 'bg-slate-500/20 text-slate-400 border border-slate-500/30' },
+  { key: 'New',            label: 'New',            dot: '#6366F1', badge: 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' },
+  { key: 'Contacted',      label: 'Contacted',      dot: '#67E8F9', badge: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' },
+  { key: 'Qualified',      label: 'Qualified',      dot: '#A78BFA', badge: 'bg-purple-500/20 text-purple-400 border border-purple-500/30' },
+  { key: 'Meeting Booked', label: 'Meeting Booked', dot: '#34D399', badge: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' },
+  { key: 'Booked',         label: 'Booked',         dot: '#10B981', badge: 'bg-green-500/20 text-green-400 border border-green-500/30' },
+  { key: 'Lost',           label: 'Lost',           dot: '#6B7280', badge: 'bg-slate-500/20 text-slate-400 border border-slate-500/30' },
 ]
 
 const SOURCE_COLORS = {
-  'retell':       'bg-purple-500/10 text-purple-400',
-  'gmail':        'bg-red-500/10 text-red-400',
-  'live_chat':    'bg-cyan-500/10 text-cyan-400',
-  'form':         'bg-blue-500/10 text-blue-400',
-  'website_chat': 'bg-cyan-500/10 text-cyan-400',
-  'Web Form':     'bg-cyan-500/10 text-cyan-400',
-  'Google Ads':   'bg-blue-500/10 text-blue-400',
-  'Facebook':     'bg-indigo-500/10 text-indigo-400',
-  'Referral':     'bg-emerald-500/10 text-emerald-400',
+  retell:       'bg-purple-500/10 text-purple-400',
+  gmail:        'bg-red-500/10 text-red-400',
+  live_chat:    'bg-cyan-500/10 text-cyan-400',
+  form:         'bg-blue-500/10 text-blue-400',
+  website_chat: 'bg-cyan-500/10 text-cyan-400',
+  'Web Form':   'bg-cyan-500/10 text-cyan-400',
+  'Google Ads': 'bg-blue-500/10 text-blue-400',
+  Facebook:     'bg-indigo-500/10 text-indigo-400',
+  Referral:     'bg-emerald-500/10 text-emerald-400',
 }
 
 function LeadCard({ lead }) {
@@ -40,13 +39,13 @@ function LeadCard({ lead }) {
       <div className="flex items-start gap-2.5 mb-2.5">
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
           style={{ background: 'rgba(99,102,241,0.2)', color: '#818CF8' }}>
-          {lead.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
+          {lead.name ? lead.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : '?'}
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-white truncate group-hover:text-indigo-300 transition-colors">
             {lead.name || 'Unnamed Lead'}
           </div>
-          <div className="text-xs truncate" style={{ color: '#6B7280' }}>{lead.email || lead.phone || '—'}</div>
+          <div className="text-xs truncate" style={{ color: '#6B7280' }}>{lead.email || lead.phone || '-'}</div>
         </div>
       </div>
       <div className="flex items-center justify-between gap-2">
@@ -109,17 +108,18 @@ function AddLeadModal({ onClose, onAdded, userId }) {
         </div>
         {err && <div className="mb-4 text-sm rounded-xl px-4 py-3" style={{ color: '#F87171', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}>{err}</div>}
         <form onSubmit={handleSubmit} className="space-y-3">
-          {[
-            { label: 'Full Name', name: 'leadName', type: 'text', required: true },
-            { label: 'Email', name: 'leadEmail', type: 'email', required: true },
-          ].map(({ label, name, type, required }) => (
-            <div key={name}>
-              <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>{label}</label>
-              <input name={name} type={type} required={required} style={inputStyle}
-                onFocus={e => e.target.style.borderColor = '#6366F1'}
-                onBlur={e => e.target.style.borderColor = '#1F2937'} />
-            </div>
-          ))}
+          <div>
+            <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Full Name</label>
+            <input name="leadName" type="text" required style={inputStyle}
+              onFocus={e => e.target.style.borderColor = '#6366F1'}
+              onBlur={e => e.target.style.borderColor = '#1F2937'} />
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Email</label>
+            <input name="leadEmail" type="email" required style={inputStyle}
+              onFocus={e => e.target.style.borderColor = '#6366F1'}
+              onBlur={e => e.target.style.borderColor = '#1F2937'} />
+          </div>
           <div>
             <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Source</label>
             <select name="source" style={{ ...inputStyle, cursor: 'pointer' }}>
@@ -167,14 +167,14 @@ export default function Leads() {
   }
 
   const byStatus = (statusKey) => {
-    let list = leads.filter(l => l.status?.toLowerCase() === statusKey.toLowerCase())
+    const list = leads.filter(l => (l.status || '').toLowerCase() === statusKey.toLowerCase())
     if (!search) return list
     const q = search.toLowerCase()
     return list.filter(l =>
-      l.name?.toLowerCase().includes(q) ||
-      l.email?.toLowerCase().includes(q) ||
-      l.phone?.toLowerCase().includes(q) ||
-      l.source?.toLowerCase().includes(q)
+      (l.name || '').toLowerCase().includes(q) ||
+      (l.email || '').toLowerCase().includes(q) ||
+      (l.phone || '').toLowerCase().includes(q) ||
+      (l.source || '').toLowerCase().includes(q)
     )
   }
 
@@ -187,8 +187,7 @@ export default function Leads() {
         <div>
           <h1 className="text-xl font-bold text-white">Pipeline</h1>
           <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>
-            {leads.length} leads ·{' '}
-            <span style={{ color: '#34D399' }}>${(totalValue / 1000).toFixed(1)}k total value</span>
+            {leads.length} leads · <span style={{ color: '#34D399' }}>${(totalValue / 1000).toFixed(1)}k total value</span>
           </p>
         </div>
         <button onClick={() => setShowModal(true)}
@@ -242,4 +241,3 @@ export default function Leads() {
     </div>
   )
 }
-'@ | Set-Content src\views\Leads.jsx -Encoding UTF8
