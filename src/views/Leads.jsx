@@ -75,12 +75,13 @@ function AddLeadModal({ onClose, onAdded, userId }) {
     setErr(''); setSaving(true)
     const fd = new FormData(e.target)
     const { error } = await supabase.from('leads').insert({
-      user_id: userId,
-      name:    fd.get('leadName'),
-      email:   fd.get('leadEmail'),
-      source:  fd.get('source'),
-      value:   fd.get('value') ? Number(fd.get('value')) : null,
-      status:  'new',
+      user_id:      userId,
+      workspace_id: '8c00a710-b9c3-4b96-98d5-1bddb32b1e24',
+      name:         fd.get('leadName'),
+      email:        fd.get('leadEmail'),
+      source:       fd.get('source'),
+      value:        fd.get('value') ? Number(fd.get('value')) : null,
+      status:       'new',
     })
     if (error) { setErr(error.message); setSaving(false) }
     else { onAdded(); onClose() }

@@ -1,0 +1,1 @@
+"use strict";exports.id=662,exports.ids=[662],exports.modules={662:(e,t,s)=>{s.r(t),s.d(t,{default:()=>r});let r=(0,s(8570).createProxy)(String.raw`C:\Users\DESKTOP\Downloads\Demo1\app\_components\GetStartedClient.jsx#default`)}};

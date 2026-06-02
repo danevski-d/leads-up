@@ -1,0 +1,1450 @@
+{
+  "workflow": {
+    "id": "Y8addhiWa8ujdV6b",
+    "name": "Inbound Revenue Engine",
+    "active": true,
+    "isArchived": false,
+    "versionId": "45680a86-dd04-4b9d-8b65-089fdde4d082",
+    "activeVersionId": "20d95cbc-e756-4c57-9514-7281a71303cc",
+    "triggerCount": 3,
+    "createdAt": "2026-05-26T13:05:38.357Z",
+    "updatedAt": "2026-05-28T18:04:59.685Z",
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate",
+      "availableInMCP": true
+    },
+    "connections": {
+      "Normalize: Form": {
+        "main": [
+          [
+            {
+              "node": "HTTP: Fetch Workspace",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP: Fetch Workspace": {
+        "main": [
+          [
+            {
+              "node": "Merge Workspace",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Trigger: Gmail Inbox": {
+        "main": [
+          [
+            {
+              "node": "Normalize: Gmail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize: Gmail": {
+        "main": [
+          [
+            {
+              "node": "HTTP: Fetch Workspace",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Trigger: Retell Call": {
+        "main": [
+          [
+            {
+              "node": "Normalize: Retell",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize: Retell": {
+        "main": [
+          [
+            {
+              "node": "HTTP: Fetch Workspace",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge Workspace": {
+        "main": [
+          [
+            {
+              "node": "HTTP: Check Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP: Check Lead": {
+        "main": [
+          [
+            {
+              "node": "Evaluate Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Evaluate Lead": {
+        "main": [
+          [
+            {
+              "node": "Message a model",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse BANT": {
+        "main": [
+          [
+            {
+              "node": "Existing or New?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Existing or New?": {
+        "main": [
+          [
+            {
+              "node": "Supabase: Update Lead",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Supabase: Insert Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase: Update Lead": {
+        "main": [
+          [
+            {
+              "node": "Attach Lead ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase: Insert Lead": {
+        "main": [
+          [
+            {
+              "node": "Attach Lead ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Attach Lead ID": {
+        "main": [
+          [
+            {
+              "node": "Has Email?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Email?": {
+        "main": [
+          [
+            {
+              "node": "Gmail: Send Reply",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gmail: Send Reply": {
+        "main": [
+          [
+            {
+              "node": "Is Qualified?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Qualified?": {
+        "main": [
+          [
+            {
+              "node": "Gmail: Notify Owner",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "On form submission": {
+        "main": [
+          [
+            {
+              "node": "Normalize: Form",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Message a model": {
+        "main": [
+          [
+            {
+              "node": "Parse BANT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "parameters": {
+          "jsCode": "const raw = $input.first()?.json || {};\nlet ws = {};\n\nif (typeof raw.data === 'string') {\n  try {\n    const arr = JSON.parse(raw.data);\n    if (Array.isArray(arr) && arr.length > 0) ws = arr[0];\n  } catch(e) {}\n} else if (raw.id) {\n  ws = raw;\n}\n\n// Safely get lead from whichever normalize node actually ran\nlet lead = {};\nconst nodeNames = ['Normalize: Form', 'Normalize: Gmail', 'Normalize: Retell'];\nfor (const nn of nodeNames) {\n  try {\n    const item = $(nn).first();\n    if (item && item.json && (item.json.email || item.json.source)) {\n      lead = item.json;\n      break;\n    }\n  } catch(e) {\n    // Node didn't run on this path — skip it\n    continue;\n  }\n}\n\n// Guard: fail loudly if no workspace resolved\nif (!ws.id) {\n  const token = lead.workspace_token || 'unknown';\n  return [{ json: { __error: true, error_reason: `No workspace found for token: \"${token}\"`, ...lead } }];\n}\n\nreturn [{\n  json: {\n    ...lead,\n    workspace_id: ws.id || null,\n    owner_user_id: ws.owner_user_id || null,\n    owner_email: ws.owner_email || '',\n    notification_email: ws.notification_email || ws.owner_email || '',\n    calendly_link: ws.calendly_link || '',\n    reply_from_name: ws.reply_from_name || 'Maya',\n    workspace_name: ws.name || ''\n  }\n}];"
+        },
+        "id": "acdd3831-0f5e-4e39-8f4f-0e25bce65e1d",
+        "name": "Normalize: Form",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://xayroatliafknstvekcv.supabase.co/rest/v1/workspaces?webhook_token=eq.{{ $json.workspace_token }}&select=id,owner_user_id,owner_email,notification_email,calendly_link,reply_from_name,name&limit=1",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true,
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "id": "76468dc4-8701-4098-930e-21585f302b6a",
+        "name": "HTTP: Fetch Workspace",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          448,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "filters": {
+            "labelIds": [
+              "INBOX"
+            ],
+            "q": "is:unread -from:me"
+          }
+        },
+        "id": "60acf5c9-19c4-404b-8d76-0f6f346e81ca",
+        "name": "Trigger: Gmail Inbox",
+        "type": "n8n-nodes-base.gmailTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const email=$input.first().json;let fromRaw=email.from||'';let subject=email.subject||'';let bodyText=email.text||email.snippet||'';if(email.payload){const headers=email.payload.headers||[];if(!fromRaw){const h=headers.find(h=>h.name==='From'||h.name==='from');if(h)fromRaw=h.value;}if(!subject){const h=headers.find(h=>h.name==='Subject'||h.name==='subject');if(h)subject=h.value;}if(!bodyText&&email.payload.body&&email.payload.body.data){try{bodyText=Buffer.from(email.payload.body.data,'base64').toString('utf8');}catch(e){}}}const nameMatch=fromRaw.match(/^([^<]+)/);const emailMatch=fromRaw.match(/<([^>]+)>/)||fromRaw.match(/([\\w.-]+@[\\w.-]+\\.[\\w]+)/);const senderName=nameMatch?nameMatch[1].trim():'';const senderEmail=emailMatch?emailMatch[1].trim().toLowerCase():fromRaw.toLowerCase().trim();if(!senderEmail||senderEmail.includes('noreply')||senderEmail.includes('no-reply')||senderEmail.includes('mailer-daemon'))return[];return[{json:{workspace_token:'',source:'gmail',name:senderName,email:senderEmail,phone:'',message:'Subject: '+subject+'\\n\\n'+bodyText,email_thread_id:email.threadId||'',email_message_id:email.id||''}}];"
+        },
+        "id": "6c223d88-85c9-4dcb-8141-57e7929cb703",
+        "name": "Normalize: Gmail",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "retell-call-ended",
+          "options": {}
+        },
+        "id": "47ece44e-4bb7-44b2-875c-a9bf6a18ef41",
+        "name": "Trigger: Retell Call",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          384
+        ],
+        "webhookId": "retell-call-ended"
+      },
+      {
+        "parameters": {
+          "jsCode": "const body=$input.first().json;const call=body.call||body;const wt=(body.workspace_token||call.workspace_token||'').trim();const transcript=call.transcript||call.full_transcript||'';const callId=call.call_id||call.id||'';const callerNumber=call.from_number||call.caller_id||'';const emailMatch=transcript.match(/([\\w.-]+@[\\w.-]+\\.[\\w]{2,})/i);const namePatterns=[/my name is ([A-Z][a-z]+ ?[A-Z]?[a-z]*)/i,/i(?:'m| am) ([A-Z][a-z]+ ?[A-Z]?[a-z]*)/i,/this is ([A-Z][a-z]+ ?[A-Z]?[a-z]*)/i];let callerName='';for(const pat of namePatterns){const m=transcript.match(pat);if(m){callerName=m[1];break;}}return[{json:{workspace_token:wt,source:'retell_call',name:callerName,email:emailMatch?emailMatch[0].toLowerCase():'',phone:callerNumber,message:transcript,call_id:callId,call_duration:call.call_length||call.duration||0,call_summary:(call.call_analysis&&call.call_analysis.call_summary)?call.call_analysis.call_summary:''}}];"
+        },
+        "id": "99103e14-69bf-443a-9a9a-4e2248916689",
+        "name": "Normalize: Retell",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw=$input.first()?.json||{};let ws={};if(typeof raw.data==='string'){try{const arr=JSON.parse(raw.data);if(Array.isArray(arr)&&arr.length>0)ws=arr[0];}catch(e){}}else if(raw.id){ws=raw;}let lead={};const nodeNames=['Normalize: Form','Normalize: Gmail','Normalize: Retell'];for(const nn of nodeNames){try{const item=$(nn).first();if(item&&item.json&&(item.json.email||item.json.source)){lead=item.json;break;}}catch(e){}}return[{json:{...lead,workspace_id:ws.id||null,owner_user_id:ws.owner_user_id||null,owner_email:ws.owner_email||'',notification_email:ws.notification_email||ws.owner_email||'',calendly_link:ws.calendly_link||'',reply_from_name:ws.reply_from_name||'Maya',workspace_name:ws.name||''}}];"
+        },
+        "id": "587d28df-f9ba-41ab-97d2-35b64920c9b6",
+        "name": "Merge Workspace",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          672,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ \"https://xayroatliafknstvekcv.supabase.co/rest/v1/leads?email=eq.\" + encodeURIComponent($json.email||\"\") + \"&select=id,status,email,phone&limit=1\" }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true,
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "id": "287522c7-1faf-40f5-aa45-54cf7dcf8ac7",
+        "name": "HTTP: Check Lead",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          896,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw=$input.first()?.json||{};let existing=null;if(typeof raw.data==='string'){try{const arr=JSON.parse(raw.data);if(Array.isArray(arr)&&arr.length>0)existing=arr[0];}catch(e){}}else if(raw.id){existing=raw;}let lead={};try{lead=$('Merge Workspace').first()?.json||{};}catch(e){}return[{json:{...lead,is_existing_lead:existing!==null,existing_lead_id:existing?existing.id:null,existing_stage:existing?existing.status:null}}];"
+        },
+        "id": "c318de87-c702-4db1-8039-5c63e6f69a85",
+        "name": "Evaluate Lead",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const r=$input.first().json;let aiText='';if(typeof r.output==='string')aiText=r.output;else if(Array.isArray(r.output))aiText=r.output[0]?.content?.[0]?.text||r.output[0]?.text||JSON.stringify(r.output);else if(r.message?.content)aiText=r.message.content;else if(r.choices?.[0])aiText=r.choices[0].message?.content||'';else aiText=JSON.stringify(r);let ai;try{const cleaned=aiText.replace(/```json|```/g,'').trim();ai=JSON.parse(cleaned);}catch(e){ai={lead_score:0,is_qualified:false,qualification_notes:'Parse error: '+e.message,ai_reply_email:'Thank you for reaching out. We will review your details and be in touch shortly.',ai_reply_subject:'Thanks for reaching out',extracted_name:'',extracted_email:'',extracted_phone:'',extracted_company:''};}const lead=$('Evaluate Lead').first().json;const score=typeof ai.lead_score==='number'?ai.lead_score:0;const isQual=score>=7;const stage=isQual?'qualified':'contacted';const name=lead.name||ai.extracted_name||'there';const email=lead.email||ai.extracted_email||'';const phone=lead.phone||ai.extracted_phone||'';const company=lead.company||ai.extracted_company||'';const calendlyLink=lead.calendly_link||'';const replyFrom=lead.reply_from_name||'Maya';const ownerEmail=lead.notification_email||lead.owner_email||'';let emailBody,emailSubject;if(isQual){emailSubject='You qualify -- book your strategy call';emailBody='Hi '+name+',\\n\\nGreat news -- based on your submission you are a strong fit for what we do.\\n\\n'+(calendlyLink?'Book your free 30-minute strategy call here:\\n'+calendlyLink+'\\n\\nLooking forward to it.':'Our team will reach out within 24 hours to schedule a call.')+'\\n\\nBest,\\n'+replyFrom;}else{emailSubject=ai.ai_reply_subject||'Thanks for reaching out';emailBody=ai.ai_reply_email||'Thank you for reaching out. We will review your details and be in touch soon.';}const now=new Date().toISOString();const nextFollowup=isQual?null:new Date(Date.now()+86400000).toISOString();const notifyBody='New qualified lead!\\n\\nName: '+name+'\\nEmail: '+email+'\\nPhone: '+phone+'\\nBANT Score: '+score+'/10\\nCompany: '+company+'\\n\\nView in dashboard:\\nhttps://useleadsup.com/app/leads';return[{json:{name,email,phone,company,source:lead.source,message:lead.message,lead_score:score,is_qualified:isQual,lead_stage:stage,qualification_notes:ai.qualification_notes||'',ai_reply_email:emailBody,ai_reply_subject:emailSubject,notification_email:ownerEmail,notification_body:notifyBody,workspace_id:lead.workspace_id||null,owner_user_id:lead.owner_user_id||null,nurture_step:isQual?0:1,next_followup_at:nextFollowup,last_contacted_at:now,is_existing_lead:lead.is_existing_lead,existing_lead_id:lead.existing_lead_id,existing_stage:lead.existing_stage,email_thread_id:lead.email_thread_id||'',call_id:lead.call_id||'',call_duration:lead.call_duration||0,call_summary:lead.call_summary||'',created_at:now}}];"
+        },
+        "id": "f592af2c-faae-4031-892f-c8e4aa9bf363",
+        "name": "Parse BANT",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1712,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.is_existing_lead }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                },
+                "id": "5c31548b-8f89-4aef-99b0-c1eaa045efcd"
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "09a399cf-393a-4ef9-a49d-1075936442de",
+        "name": "Existing or New?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2160,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://xayroatliafknstvekcv.supabase.co/rest/v1/leads?id=eq.{{ $json.existing_lead_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Prefer",
+                "value": "return=representation"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ name: $json.name, email: $json.email, phone: $json.phone, company: $json.company, source: $json.source, notes: $json.message, call_duration: $json.call_duration, call_summary: $json.call_summary, call_id: $json.call_id, email_thread_id: $json.email_thread_id, qualified: $json.is_qualified, status: $json.lead_stage, lead_score: $json.lead_score, qualification_notes: $json.qualification_notes, nurture_step: $json.nurture_step, next_followup_at: $json.next_followup_at, last_contacted_at: $json.last_contacted_at, workspace_id: $json.workspace_id, user_id: $json.owner_user_id }) }}",
+          "options": {}
+        },
+        "id": "5bd748f1-078d-4c72-a905-224bfd9e3157",
+        "name": "Supabase: Update Lead",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          2384,
+          96
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://xayroatliafknstvekcv.supabase.co/rest/v1/leads",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Prefer",
+                "value": "return=representation"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ name: $json.name, email: $json.email, phone: $json.phone, company: $json.company, source: $json.source, notes: $json.message, call_duration: $json.call_duration, call_summary: $json.call_summary, call_id: $json.call_id, email_thread_id: $json.email_thread_id, qualified: $json.is_qualified, status: $json.lead_stage, lead_score: $json.lead_score, qualification_notes: $json.qualification_notes, nurture_step: $json.nurture_step, next_followup_at: $json.next_followup_at, last_contacted_at: $json.last_contacted_at, workspace_id: $json.workspace_id, user_id: $json.owner_user_id, created_at: $json.created_at }) }}",
+          "options": {}
+        },
+        "id": "9bce9565-7aef-42e4-a7e7-bf0c1cd8163e",
+        "name": "Supabase: Insert Lead",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          2384,
+          288
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const supaResp=$input.first().json;const prev=$('Parse BANT').first().json;const record=Array.isArray(supaResp)?supaResp[0]:supaResp;return[{json:{...prev,supabase_lead_id:record?.id||prev.existing_lead_id||null}}];"
+        },
+        "id": "193fda8f-b5b6-408a-9b21-a7cb36daef85",
+        "name": "Attach Lead ID",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2608,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.email }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                },
+                "id": "983ab36f-fa13-461c-8983-2871638eec97"
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "152c2c0d-dfcb-465f-af11-95818c94adbf",
+        "name": "Has Email?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2832,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $json.email }}",
+          "subject": "={{ $json.ai_reply_subject }}",
+          "emailType": "text",
+          "message": "={{ $json.ai_reply_email }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "4c9642d1-44d3-457f-8e0a-7f15fdb2a683",
+        "name": "Gmail: Send Reply",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2,
+        "position": [
+          3056,
+          192
+        ],
+        "webhookId": "b7771688-0baf-47e7-a39c-e1949583a11f"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": false,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.is_qualified }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "61b83727-5ba0-4d32-939e-8b29c56fbfb0",
+        "name": "Is Qualified?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          3280,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $json.notification_email }}",
+          "subject": "={{ \"New qualified lead: \" + $json.name }}",
+          "emailType": "text",
+          "message": "={{ $json.notification_body }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "ea2b2ff3-757a-4ece-ab72-6e1855958bfe",
+        "name": "Gmail: Notify Owner",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2,
+        "position": [
+          3504,
+          192
+        ],
+        "webhookId": "0b32c8f2-031f-44fa-8074-132828984d1b"
+      },
+      {
+        "parameters": {
+          "formTitle": "Info",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Name"
+              },
+              {
+                "fieldLabel": "Company name"
+              },
+              {
+                "fieldLabel": "Email",
+                "fieldType": "email"
+              },
+              {
+                "fieldLabel": "Phone Number",
+                "fieldType": "number"
+              },
+              {
+                "fieldLabel": "Question"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.5,
+        "position": [
+          0,
+          0
+        ],
+        "id": "683abbe2-6619-4cfd-8e20-ceef27b3c832",
+        "name": "On form submission",
+        "webhookId": "ded227da-feff-4159-b0d8-83893d946900"
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-4o-mini",
+            "mode": "list",
+            "cachedResultName": "GPT-4O-MINI"
+          },
+          "responses": {
+            "values": [
+              {
+                "content": "you are virtual assistant and qualify leads"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 2.3,
+        "position": [
+          1328,
+          192
+        ],
+        "id": "942d8445-e209-4b36-b306-bd180c361217",
+        "name": "Message a model"
+      }
+    ],
+    "activeVersion": {
+      "nodes": [
+        {
+          "id": "4d350ffd-bdb2-4b6e-862a-1dfe74833f13",
+          "name": "Trigger: Website Form",
+          "type": "n8n-nodes-base.webhook",
+          "typeVersion": 2,
+          "position": [
+            0,
+            0
+          ],
+          "parameters": {
+            "httpMethod": "POST",
+            "path": "lead-form-intake",
+            "responseMode": "onReceived",
+            "options": {}
+          },
+          "webhookId": "lead-form-intake"
+        },
+        {
+          "id": "acdd3831-0f5e-4e39-8f4f-0e25bce65e1d",
+          "name": "Normalize: Form",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            224,
+            0
+          ],
+          "parameters": {
+            "jsCode": "const raw=$input.first().json;const body=raw.body||raw;const q=raw.query||{};const wt=(body.workspace_token||body.wt||q.token||'').trim();return[{json:{workspace_token:wt,source:'website_form',name:body.name||body.full_name||body.firstName||'',email:(body.email||body.email_address||'').toLowerCase().trim(),phone:body.phone||body.phone_number||'',message:body.message||body.notes||'',company:body.company||body.business_name||'',budget:body.budget||'',timeline:body.timeline||'',service_interest:body.service||body.service_interest||''}}];"
+          }
+        },
+        {
+          "id": "76468dc4-8701-4098-930e-21585f302b6a",
+          "name": "HTTP: Fetch Workspace",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4,
+          "position": [
+            448,
+            192
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "=https://xayroatliafknstvekcv.supabase.co/rest/v1/workspaces?webhook_token=eq.{{ $json.workspace_token }}&select=id,owner_user_id,owner_email,notification_email,calendly_link,reply_from_name,name&limit=1",
+            "sendHeaders": true,
+            "headerParameters": {
+              "parameters": [
+                {
+                  "name": "apikey",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Authorization",
+                  "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            },
+            "options": {
+              "response": {
+                "response": {
+                  "responseFormat": "text",
+                  "neverError": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "60acf5c9-19c4-404b-8d76-0f6f346e81ca",
+          "name": "Trigger: Gmail Inbox",
+          "type": "n8n-nodes-base.gmailTrigger",
+          "typeVersion": 1,
+          "position": [
+            0,
+            192
+          ],
+          "parameters": {
+            "pollTimes": {
+              "item": [
+                {
+                  "mode": "everyMinute"
+                }
+              ]
+            },
+            "filters": {
+              "labelIds": [
+                "INBOX"
+              ],
+              "q": "is:unread -from:me"
+            }
+          }
+        },
+        {
+          "id": "6c223d88-85c9-4dcb-8141-57e7929cb703",
+          "name": "Normalize: Gmail",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            224,
+            192
+          ],
+          "parameters": {
+            "jsCode": "const email=$input.first().json;let fromRaw=email.from||'';let subject=email.subject||'';let bodyText=email.text||email.snippet||'';if(email.payload){const headers=email.payload.headers||[];if(!fromRaw){const h=headers.find(h=>h.name==='From'||h.name==='from');if(h)fromRaw=h.value;}if(!subject){const h=headers.find(h=>h.name==='Subject'||h.name==='subject');if(h)subject=h.value;}if(!bodyText&&email.payload.body&&email.payload.body.data){try{bodyText=Buffer.from(email.payload.body.data,'base64').toString('utf8');}catch(e){}}}const nameMatch=fromRaw.match(/^([^<]+)/);const emailMatch=fromRaw.match(/<([^>]+)>/)||fromRaw.match(/([\\w.-]+@[\\w.-]+\\.[\\w]+)/);const senderName=nameMatch?nameMatch[1].trim():'';const senderEmail=emailMatch?emailMatch[1].trim().toLowerCase():fromRaw.toLowerCase().trim();if(!senderEmail||senderEmail.includes('noreply')||senderEmail.includes('no-reply')||senderEmail.includes('mailer-daemon'))return[];return[{json:{workspace_token:'',source:'gmail',name:senderName,email:senderEmail,phone:'',message:'Subject: '+subject+'\\n\\n'+bodyText,email_thread_id:email.threadId||'',email_message_id:email.id||''}}];"
+          }
+        },
+        {
+          "id": "47ece44e-4bb7-44b2-875c-a9bf6a18ef41",
+          "name": "Trigger: Retell Call",
+          "type": "n8n-nodes-base.webhook",
+          "typeVersion": 2,
+          "position": [
+            0,
+            384
+          ],
+          "parameters": {
+            "httpMethod": "POST",
+            "path": "retell-call-ended",
+            "responseMode": "onReceived",
+            "options": {}
+          },
+          "webhookId": "retell-call-ended"
+        },
+        {
+          "id": "99103e14-69bf-443a-9a9a-4e2248916689",
+          "name": "Normalize: Retell",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            224,
+            384
+          ],
+          "parameters": {
+            "jsCode": "const body=$input.first().json;const call=body.call||body;const wt=(body.workspace_token||call.workspace_token||'').trim();const transcript=call.transcript||call.full_transcript||'';const callId=call.call_id||call.id||'';const callerNumber=call.from_number||call.caller_id||'';const emailMatch=transcript.match(/([\\w.-]+@[\\w.-]+\\.[\\w]{2,})/i);const namePatterns=[/my name is ([A-Z][a-z]+ ?[A-Z]?[a-z]*)/i,/i(?:'m| am) ([A-Z][a-z]+ ?[A-Z]?[a-z]*)/i,/this is ([A-Z][a-z]+ ?[A-Z]?[a-z]*)/i];let callerName='';for(const pat of namePatterns){const m=transcript.match(pat);if(m){callerName=m[1];break;}}return[{json:{workspace_token:wt,source:'retell_call',name:callerName,email:emailMatch?emailMatch[0].toLowerCase():'',phone:callerNumber,message:transcript,call_id:callId,call_duration:call.call_length||call.duration||0,call_summary:(call.call_analysis&&call.call_analysis.call_summary)?call.call_analysis.call_summary:''}}];"
+          }
+        },
+        {
+          "id": "587d28df-f9ba-41ab-97d2-35b64920c9b6",
+          "name": "Merge Workspace",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            672,
+            192
+          ],
+          "parameters": {
+            "jsCode": "const raw=$input.first()?.json||{};let ws={};if(typeof raw.data==='string'){try{const arr=JSON.parse(raw.data);if(Array.isArray(arr)&&arr.length>0)ws=arr[0];}catch(e){}}else if(raw.id){ws=raw;}let lead={};const nodeNames=['Normalize: Form','Normalize: Gmail','Normalize: Retell'];for(const nn of nodeNames){try{const item=$(nn).first();if(item&&item.json&&(item.json.email||item.json.source)){lead=item.json;break;}}catch(e){}}return[{json:{...lead,workspace_id:ws.id||null,owner_user_id:ws.owner_user_id||null,owner_email:ws.owner_email||'',notification_email:ws.notification_email||ws.owner_email||'',calendly_link:ws.calendly_link||'',reply_from_name:ws.reply_from_name||'Maya',workspace_name:ws.name||''}}];"
+          }
+        },
+        {
+          "id": "287522c7-1faf-40f5-aa45-54cf7dcf8ac7",
+          "name": "HTTP: Check Lead",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4,
+          "position": [
+            896,
+            192
+          ],
+          "parameters": {
+            "method": "GET",
+            "url": "={{ \"https://xayroatliafknstvekcv.supabase.co/rest/v1/leads?email=eq.\" + encodeURIComponent($json.email||\"\") + \"&select=id,status,email,phone&limit=1\" }}",
+            "sendHeaders": true,
+            "headerParameters": {
+              "parameters": [
+                {
+                  "name": "apikey",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Authorization",
+                  "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            },
+            "options": {
+              "response": {
+                "response": {
+                  "responseFormat": "text",
+                  "neverError": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "c318de87-c702-4db1-8039-5c63e6f69a85",
+          "name": "Evaluate Lead",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1120,
+            192
+          ],
+          "parameters": {
+            "jsCode": "const raw=$input.first()?.json||{};let existing=null;if(typeof raw.data==='string'){try{const arr=JSON.parse(raw.data);if(Array.isArray(arr)&&arr.length>0)existing=arr[0];}catch(e){}}else if(raw.id){existing=raw;}let lead={};try{lead=$('Merge Workspace').first()?.json||{};}catch(e){}return[{json:{...lead,is_existing_lead:existing!==null,existing_lead_id:existing?existing.id:null,existing_stage:existing?existing.status:null}}];"
+          }
+        },
+        {
+          "id": "e302568b-e2c7-44f2-a94f-8c08d1615de3",
+          "name": "AI: BANT Qualify",
+          "type": "n8n-nodes-base.openAi",
+          "typeVersion": 1,
+          "position": [
+            1344,
+            192
+          ],
+          "parameters": {
+            "resource": "chat",
+            "operation": "complete",
+            "model": "gpt-4o",
+            "messages": {
+              "values": [
+                {
+                  "role": "system",
+                  "content": "You are a sales qualification agent. Score this lead on BANT (Budget, Authority, Need, Timeline).\n\nBANT Scoring:\n- Budget confirmed ($1k+/mo): +3\n- Decision maker / authority: +2\n- Clear business need stated: +2\n- Timeline within 60 days: +2\n- Referral or warm source: +1\n\n7-10 = QUALIFIED | 4-6 = NURTURE | 0-3 = NOT A FIT\n\nReturn ONLY valid JSON (no markdown):\n{\"lead_score\":0,\"is_qualified\":false,\"qualification_notes\":\"BANT analysis here\",\"ai_reply_email\":\"Warm reply under 120 words\",\"ai_reply_subject\":\"Subject under 8 words\",\"extracted_name\":\"\",\"extracted_email\":\"\",\"extracted_phone\":\"\",\"extracted_company\":\"\"}"
+                },
+                {
+                  "role": "user",
+                  "content": "={{ \"Source: \" + ($json.source||\"\") + \"\\nName: \" + ($json.name||\"\") + \"\\nEmail: \" + ($json.email||\"\") + \"\\nPhone: \" + ($json.phone||\"\") + \"\\nCompany: \" + ($json.company||\"\") + \"\\nBudget: \" + ($json.budget||\"\") + \"\\nTimeline: \" + ($json.timeline||\"\") + \"\\nMessage:\\n\" + ($json.message||\"\") }}"
+                }
+              ]
+            },
+            "simplifyOutput": true,
+            "options": {
+              "temperature": 0.2,
+              "maxTokens": 800
+            }
+          }
+        },
+        {
+          "id": "f592af2c-faae-4031-892f-c8e4aa9bf363",
+          "name": "Parse BANT",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1568,
+            192
+          ],
+          "parameters": {
+            "jsCode": "const r=$input.first().json;let aiText='';if(typeof r.output==='string')aiText=r.output;else if(Array.isArray(r.output))aiText=r.output[0]?.content?.[0]?.text||r.output[0]?.text||JSON.stringify(r.output);else if(r.message?.content)aiText=r.message.content;else if(r.choices?.[0])aiText=r.choices[0].message?.content||'';else aiText=JSON.stringify(r);let ai;try{const cleaned=aiText.replace(/```json|```/g,'').trim();ai=JSON.parse(cleaned);}catch(e){ai={lead_score:0,is_qualified:false,qualification_notes:'Parse error: '+e.message,ai_reply_email:'Thank you for reaching out. We will review your details and be in touch shortly.',ai_reply_subject:'Thanks for reaching out',extracted_name:'',extracted_email:'',extracted_phone:'',extracted_company:''};}const lead=$('Evaluate Lead').first().json;const score=typeof ai.lead_score==='number'?ai.lead_score:0;const isQual=score>=7;const stage=isQual?'qualified':'contacted';const name=lead.name||ai.extracted_name||'there';const email=lead.email||ai.extracted_email||'';const phone=lead.phone||ai.extracted_phone||'';const company=lead.company||ai.extracted_company||'';const calendlyLink=lead.calendly_link||'';const replyFrom=lead.reply_from_name||'Maya';const ownerEmail=lead.notification_email||lead.owner_email||'';let emailBody,emailSubject;if(isQual){emailSubject='You qualify -- book your strategy call';emailBody='Hi '+name+',\\n\\nGreat news -- based on your submission you are a strong fit for what we do.\\n\\n'+(calendlyLink?'Book your free 30-minute strategy call here:\\n'+calendlyLink+'\\n\\nLooking forward to it.':'Our team will reach out within 24 hours to schedule a call.')+'\\n\\nBest,\\n'+replyFrom;}else{emailSubject=ai.ai_reply_subject||'Thanks for reaching out';emailBody=ai.ai_reply_email||'Thank you for reaching out. We will review your details and be in touch soon.';}const now=new Date().toISOString();const nextFollowup=isQual?null:new Date(Date.now()+86400000).toISOString();const notifyBody='New qualified lead!\\n\\nName: '+name+'\\nEmail: '+email+'\\nPhone: '+phone+'\\nBANT Score: '+score+'/10\\nCompany: '+company+'\\n\\nView in dashboard:\\nhttps://useleadsup.com/app/leads';return[{json:{name,email,phone,company,source:lead.source,message:lead.message,lead_score:score,is_qualified:isQual,lead_stage:stage,qualification_notes:ai.qualification_notes||'',ai_reply_email:emailBody,ai_reply_subject:emailSubject,notification_email:ownerEmail,notification_body:notifyBody,workspace_id:lead.workspace_id||null,owner_user_id:lead.owner_user_id||null,nurture_step:isQual?0:1,next_followup_at:nextFollowup,last_contacted_at:now,is_existing_lead:lead.is_existing_lead,existing_lead_id:lead.existing_lead_id,existing_stage:lead.existing_stage,email_thread_id:lead.email_thread_id||'',call_id:lead.call_id||'',call_duration:lead.call_duration||0,call_summary:lead.call_summary||'',created_at:now}}];"
+          }
+        },
+        {
+          "id": "09a399cf-393a-4ef9-a49d-1075936442de",
+          "name": "Existing or New?",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.2,
+          "position": [
+            1792,
+            192
+          ],
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": true,
+                "leftValue": "",
+                "typeValidation": "strict"
+              },
+              "conditions": [
+                {
+                  "leftValue": "={{ $json.is_existing_lead }}",
+                  "operator": {
+                    "type": "boolean",
+                    "operation": "true",
+                    "singleValue": true
+                  }
+                }
+              ],
+              "combinator": "and"
+            }
+          }
+        },
+        {
+          "id": "5bd748f1-078d-4c72-a905-224bfd9e3157",
+          "name": "Supabase: Update Lead",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4,
+          "position": [
+            2016,
+            96
+          ],
+          "parameters": {
+            "method": "PATCH",
+            "url": "=https://xayroatliafknstvekcv.supabase.co/rest/v1/leads?id=eq.{{ $json.existing_lead_id }}",
+            "authentication": "genericCredentialType",
+            "genericAuthType": "httpHeaderAuth",
+            "sendHeaders": true,
+            "headerParameters": {
+              "parameters": [
+                {
+                  "name": "apikey",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Authorization",
+                  "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "name": "Prefer",
+                  "value": "return=representation"
+                }
+              ]
+            },
+            "sendBody": true,
+            "contentType": "json",
+            "specifyBody": "json",
+            "jsonBody": "={{ JSON.stringify({ name: $json.name, email: $json.email, phone: $json.phone, company: $json.company, source: $json.source, notes: $json.message, call_duration: $json.call_duration, call_summary: $json.call_summary, call_id: $json.call_id, email_thread_id: $json.email_thread_id, qualified: $json.is_qualified, status: $json.lead_stage, lead_score: $json.lead_score, qualification_notes: $json.qualification_notes, nurture_step: $json.nurture_step, next_followup_at: $json.next_followup_at, last_contacted_at: $json.last_contacted_at, workspace_id: $json.workspace_id, user_id: $json.owner_user_id }) }}",
+            "options": {}
+          }
+        },
+        {
+          "id": "9bce9565-7aef-42e4-a7e7-bf0c1cd8163e",
+          "name": "Supabase: Insert Lead",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4,
+          "position": [
+            2016,
+            288
+          ],
+          "parameters": {
+            "method": "POST",
+            "url": "https://xayroatliafknstvekcv.supabase.co/rest/v1/leads",
+            "authentication": "genericCredentialType",
+            "genericAuthType": "httpHeaderAuth",
+            "sendHeaders": true,
+            "headerParameters": {
+              "parameters": [
+                {
+                  "name": "apikey",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Authorization",
+                  "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheXJvYXRsaWFma25zdHZla2N2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA4MTEwMywiZXhwIjoyMDkzNjU3MTAzfQ.TwxYPBLo3XJFc28gZw5fDcTpjHYOJZPMx7FyWmvQlr4"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "name": "Prefer",
+                  "value": "return=representation"
+                }
+              ]
+            },
+            "sendBody": true,
+            "contentType": "json",
+            "specifyBody": "json",
+            "jsonBody": "={{ JSON.stringify({ name: $json.name, email: $json.email, phone: $json.phone, company: $json.company, source: $json.source, notes: $json.message, call_duration: $json.call_duration, call_summary: $json.call_summary, call_id: $json.call_id, email_thread_id: $json.email_thread_id, qualified: $json.is_qualified, status: $json.lead_stage, lead_score: $json.lead_score, qualification_notes: $json.qualification_notes, nurture_step: $json.nurture_step, next_followup_at: $json.next_followup_at, last_contacted_at: $json.last_contacted_at, workspace_id: $json.workspace_id, user_id: $json.owner_user_id, created_at: $json.created_at }) }}",
+            "options": {}
+          }
+        },
+        {
+          "id": "193fda8f-b5b6-408a-9b21-a7cb36daef85",
+          "name": "Attach Lead ID",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2240,
+            192
+          ],
+          "parameters": {
+            "jsCode": "const supaResp=$input.first().json;const prev=$('Parse BANT').first().json;const record=Array.isArray(supaResp)?supaResp[0]:supaResp;return[{json:{...prev,supabase_lead_id:record?.id||prev.existing_lead_id||null}}];"
+          }
+        },
+        {
+          "id": "152c2c0d-dfcb-465f-af11-95818c94adbf",
+          "name": "Has Email?",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.2,
+          "position": [
+            2464,
+            192
+          ],
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": false,
+                "leftValue": "",
+                "typeValidation": "loose"
+              },
+              "conditions": [
+                {
+                  "leftValue": "={{ $json.email }}",
+                  "operator": {
+                    "type": "string",
+                    "operation": "notEmpty"
+                  }
+                }
+              ],
+              "combinator": "and"
+            }
+          }
+        },
+        {
+          "id": "4c9642d1-44d3-457f-8e0a-7f15fdb2a683",
+          "name": "Gmail: Send Reply",
+          "type": "n8n-nodes-base.gmail",
+          "typeVersion": 2,
+          "position": [
+            2688,
+            192
+          ],
+          "parameters": {
+            "operation": "send",
+            "sendTo": "={{ $json.email }}",
+            "subject": "={{ $json.ai_reply_subject }}",
+            "emailType": "text",
+            "message": "={{ $json.ai_reply_email }}",
+            "options": {
+              "appendAttribution": false
+            }
+          },
+          "webhookId": "b7771688-0baf-47e7-a39c-e1949583a11f"
+        },
+        {
+          "id": "61b83727-5ba0-4d32-939e-8b29c56fbfb0",
+          "name": "Is Qualified?",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.2,
+          "position": [
+            2912,
+            192
+          ],
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": false,
+                "leftValue": "",
+                "typeValidation": "loose"
+              },
+              "conditions": [
+                {
+                  "leftValue": "={{ $json.is_qualified }}",
+                  "operator": {
+                    "type": "boolean",
+                    "operation": "true",
+                    "singleValue": true
+                  }
+                }
+              ],
+              "combinator": "and"
+            }
+          }
+        },
+        {
+          "id": "ea2b2ff3-757a-4ece-ab72-6e1855958bfe",
+          "name": "Gmail: Notify Owner",
+          "type": "n8n-nodes-base.gmail",
+          "typeVersion": 2,
+          "position": [
+            3136,
+            192
+          ],
+          "parameters": {
+            "operation": "send",
+            "sendTo": "={{ $json.notification_email }}",
+            "subject": "={{ \"New qualified lead: \" + $json.name }}",
+            "emailType": "text",
+            "message": "={{ $json.notification_body }}",
+            "options": {
+              "appendAttribution": false
+            }
+          },
+          "webhookId": "0b32c8f2-031f-44fa-8074-132828984d1b"
+        }
+      ],
+      "connections": {
+        "Trigger: Website Form": {
+          "main": [
+            [
+              {
+                "node": "Normalize: Form",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Normalize: Form": {
+          "main": [
+            [
+              {
+                "node": "HTTP: Fetch Workspace",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "HTTP: Fetch Workspace": {
+          "main": [
+            [
+              {
+                "node": "Merge Workspace",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Trigger: Gmail Inbox": {
+          "main": [
+            [
+              {
+                "node": "Normalize: Gmail",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Normalize: Gmail": {
+          "main": [
+            [
+              {
+                "node": "HTTP: Fetch Workspace",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Trigger: Retell Call": {
+          "main": [
+            [
+              {
+                "node": "Normalize: Retell",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Normalize: Retell": {
+          "main": [
+            [
+              {
+                "node": "HTTP: Fetch Workspace",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Merge Workspace": {
+          "main": [
+            [
+              {
+                "node": "HTTP: Check Lead",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "HTTP: Check Lead": {
+          "main": [
+            [
+              {
+                "node": "Evaluate Lead",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Evaluate Lead": {
+          "main": [
+            [
+              {
+                "node": "AI: BANT Qualify",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "AI: BANT Qualify": {
+          "main": [
+            [
+              {
+                "node": "Parse BANT",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Parse BANT": {
+          "main": [
+            [
+              {
+                "node": "Existing or New?",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Existing or New?": {
+          "main": [
+            [
+              {
+                "node": "Supabase: Update Lead",
+                "type": "main",
+                "index": 0
+              }
+            ],
+            [
+              {
+                "node": "Supabase: Insert Lead",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Supabase: Update Lead": {
+          "main": [
+            [
+              {
+                "node": "Attach Lead ID",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Supabase: Insert Lead": {
+          "main": [
+            [
+              {
+                "node": "Attach Lead ID",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Attach Lead ID": {
+          "main": [
+            [
+              {
+                "node": "Has Email?",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Has Email?": {
+          "main": [
+            [
+              {
+                "node": "Gmail: Send Reply",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Gmail: Send Reply": {
+          "main": [
+            [
+              {
+                "node": "Is Qualified?",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Is Qualified?": {
+          "main": [
+            [
+              {
+                "node": "Gmail: Notify Owner",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "tags": [],
+    "meta": {
+      "aiBuilderAssisted": true,
+      "builderVariant": "mcp",
+      "templateCredsSetupCompleted": true
+    },
+    "parentFolderId": null,
+    "description": "Lead intake pipeline: Website Form, Gmail, Retell Call → AI qualify → Supabase → Gmail reply",
+    "scopes": [
+      "workflow:create",
+      "workflow:delete",
+      "workflow:execute",
+      "workflow:execute-chat",
+      "workflow:list",
+      "workflow:move",
+      "workflow:publish",
+      "workflow:read",
+      "workflow:share",
+      "workflow:unpublish",
+      "workflow:unshare",
+      "workflow:update",
+      "workflow:updateRedactionSetting"
+    ],
+    "canExecute": true
+  },
+  "triggerInfo": "This workflow has the following trigger(s):\n\n\nWebhook trigger(s):\n\n\n\t\t\t\t<trigger 1>\n\t\t\t\t\t - Node name: Trigger: Retell Call\n\t\t\t\t\t - Base URL: https://dragandanevski.app.n8n.cloud/\n\t\t\t\t\t - Production path: /webhook/retell-call-ended\n\t\t\t\t\t - Test path: /webhook-test/retell-call-ended\n\t\t\t\t\t - HTTP Method: POST\n\t\t\t\t\t - Response Mode: Webhook is configured to respond immediately with the message \"Workflow got started.\"\n\t\t\t\t\t - No credentials required for this webhook.\n\t\t\t\t</trigger 1>\n\nForm trigger(s):\n\n\n\t\t\t\t<trigger 1>\n\t\t\t\t\t - Node name: On form submission\n\t\t\t\t\t - Form fields: {\"values\":[{\"fieldLabel\":\"Name\"},{\"fieldLabel\":\"Company name\"},{\"fieldLabel\":\"Email\",\"fieldType\":\"email\"},{\"fieldLabel\":\"Phone Number\",\"fieldType\":\"number\"},{\"fieldLabel\":\"Question\"}]}\n\t\t\t\t</trigger 1>\n\nUse the following input format when directly executing this workflow using any of the form triggers: { inputs { formData: Array<{ FIELD_NAME: VALUE }> } }"
+}

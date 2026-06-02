@@ -56,6 +56,7 @@ export default function LeadFormModal() {
         notes: `Via lead form | Business: ${form.business_type || '-'} | Leads/mo: ${form.monthly_leads || '-'}`,
         chat_source: 'website_form',
         user_id: 'af90ab79-739c-4483-9cf3-d6ffbdd67fa1',
+        workspace_id: '8c00a710-b9c3-4b96-98d5-1bddb32b1e24',
       }])
     } catch(err) { console.error('Lead save failed:', err) }
     setSubmitted(true)

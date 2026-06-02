@@ -80,6 +80,7 @@ export default function ChatWidget() {
         notes: `Business: ${d.business_type || '-'} | Leads/mo: ${d.monthly_leads || '-'} | Challenge: ${d.challenge || '-'} | Tools: ${d.current_tools || '-'}`,
         chat_source: 'website_chat',
         user_id: 'af90ab79-739c-4483-9cf3-d6ffbdd67fa1',
+        workspace_id: '8c00a710-b9c3-4b96-98d5-1bddb32b1e24',
       }])
     } catch(e) { console.error('Lead save failed:', e) }
   }
