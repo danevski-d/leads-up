@@ -1,11 +1,5 @@
-'use client'
+﻿'use client'
 import { useState, useRef, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 const STEPS = [
   { key: 'business_type', question: "What kind of business do you run?" },
@@ -62,36 +56,48 @@ export default function ChatWidget() {
   function addBot(html) { setMessages(prev => [...prev, { role: 'bot', html }]) }
   function addUser(text) { setMessages(prev => [...prev, { role: 'user', text }]) }
 
-  async function saveLead(d) {
+  async function saveLead(d, qualification = {}) {
     if (saved) return
     setSaved(true)
+    const isEmail = d.contact?.includes('@')
+    const email = isEmail ? d.contact : null
+    const phone = !isEmail ? d.contact : null
+    const leadPayload = {
+      workspace_token: 'test-token-123',
+      source: 'live_chat',
+      name: d.name || null,
+      email: email,
+      phone: phone,
+      company: d.business_type || null,
+      message: `Business: ${d.business_type || '-'} | Leads/mo: ${d.monthly_leads || '-'} | Challenge: ${d.challenge || '-'} | Tools: ${d.current_tools || '-'}`,
+      bant_score: qualification.score || 0,
+      call_type: 'new_lead',
+      intent: d.challenge || '',
+      outcome: qualification.outcome || 'save_only',
+      call_summary: `Chat lead. Business: ${d.business_type}. Challenge: ${d.challenge}. Monthly leads: ${d.monthly_leads}. Tools: ${d.current_tools}. AI Score: ${qualification.score}. Reason: ${qualification.reason}`,
+      note: qualification.reason || '',
+      priority: qualification.score >= 70 ? 'normal' : 'low',
+      next_step: qualification.outcome === 'book_meeting' ? 'Book strategy call' : qualification.outcome === 'send_followup' ? 'Send follow-up email' : 'Keep on file',
+      is_existing_client: false,
+      clear_need: !!d.challenge,
+      function_name: 'save_lead'
+    }
     try {
-      await supabase.from('leads').insert([{
-        name: d.name || null,
-        email: d.contact?.includes('@') ? d.contact : null,
-        phone: d.contact && !d.contact.includes('@') ? d.contact : null,
-        status: 'new',
-        source: 'website_chat',
-        value: 0,
-        business_type: d.business_type || null,
-        monthly_leads: d.monthly_leads || null,
-        challenge: d.challenge || null,
-        current_tools: d.current_tools || null,
-        notes: `Business: ${d.business_type || '-'} | Leads/mo: ${d.monthly_leads || '-'} | Challenge: ${d.challenge || '-'} | Tools: ${d.current_tools || '-'}`,
-        chat_source: 'website_chat',
-        user_id: 'af90ab79-739c-4483-9cf3-d6ffbdd67fa1',
-        workspace_id: '8c00a710-b9c3-4b96-98d5-1bddb32b1e24',
-      }])
-    } catch(e) { console.error('Lead save failed:', e) }
+      await fetch('https://dragandanevski.app.n8n.cloud/webhook/live-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadPayload)
+      })
+    } catch(e) { console.error('n8n webhook failed:', e) }
   }
 
   async function answerViaAI(text) {
     const updated = [...aiHistory, { role: 'user', content: text }]
     setAiHistory(updated)
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.NEXT_PUBLIC_ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 300, system: SYSTEM_PROMPT, messages: updated })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: updated, system: SYSTEM_PROMPT })
     })
     const data = await res.json()
     const reply = data.content?.[0]?.text || "Our team will cover that on the strategy call."
@@ -104,7 +110,7 @@ export default function ChatWidget() {
   }
 
   function bookingCard() {
-    return `<div style="background:linear-gradient(135deg,rgba(124,110,247,0.15),rgba(91,79,212,0.1));border:1px solid rgba(124,110,247,0.4);border-radius:12px;padding:14px 16px;margin-top:8px"><div style="font-size:14px;font-weight:600;color:#f0eeff;margin-bottom:4px">You are a great fit</div><div style="font-size:12px;color:#8b88a8;margin-bottom:12px;line-height:1.5">Book a free 30-minute strategy call. We will show you exactly how Leads Up works for your business.</div><a href="https://cal.com/leads-up" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#7c6ef7,#5b4fd4);color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600">Book your strategy call</a></div>`
+    return `<div style="background:linear-gradient(135deg,rgba(124,110,247,0.15),rgba(91,79,212,0.1));border:1px solid rgba(124,110,247,0.4);border-radius:12px;padding:14px 16px;margin-top:8px"><div style="font-size:14px;font-weight:600;color:#f0eeff;margin-bottom:4px">Ready to get started?</div><div style="font-size:12px;color:#8b88a8;margin-bottom:12px;line-height:1.5">Book a free 30-minute strategy call. We will show you exactly how Leads Up works for your business.</div><a href="https://cal.com/leads-up" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#7c6ef7,#5b4fd4);color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600">Book your strategy call</a></div>`
   }
 
   function summaryCard(d) {
@@ -133,8 +139,19 @@ export default function ChatWidget() {
           addBot(STEPS[next].question)
         } else {
           setPhase('done')
-          await saveLead(currentLead)
-          addBot(`Thanks ${currentLead.name || 'for sharing'}! Here is what I collected:${summaryCard(currentLead)}<br><br>Based on this you are a strong fit:${bookingCard()}`)
+          addBot("Give me just a moment while I review your profile…")
+          let qualification = { score: 0, outcome: 'save_only', qualified: false, closing_message: 'Thank you for reaching out! We will be in touch soon.', reason: '' }
+          try {
+            const res = await fetch('/api/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ qualify: true, lead: currentLead })
+            })
+            qualification = await res.json()
+          } catch(e) { console.error('Qualification failed:', e) }
+          await saveLead(currentLead, qualification)
+          const closingHtml = `Thanks ${currentLead.name || 'for sharing'}! Here is what I collected:${summaryCard(currentLead)}<br><br>${qualification.closing_message}${qualification.outcome === 'book_meeting' ? '<br><br>' + bookingCard() : ''}`
+          addBot(closingHtml)
         }
       } else {
         const answer = await answerViaAI(text)
@@ -221,7 +238,3 @@ export default function ChatWidget() {
     </>
   )
 }
-
-
-
-
