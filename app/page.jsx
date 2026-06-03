@@ -232,13 +232,13 @@ export default function Page() {
 
         {/* ── Hero ── */}
         <section className="hero-section" aria-labelledby="hero-heading"
-          style={{ paddingTop: 80, paddingBottom: 20, fontFamily: font }}>
+          style={{ paddingTop: 52, paddingBottom: 0, fontFamily: font }}>
           <div className="hero-inner" style={{ maxWidth: 820, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
 
             <div className="hero-badge" style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               border: `1px solid ${T.border}`, borderRadius: 99,
-              padding: '6px 14px', marginBottom: 20, fontSize: 12, color: T.sub,
+              padding: '6px 14px', marginBottom: 14, fontSize: 12, color: T.sub,
             }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34D399', display: 'inline-block', flexShrink: 0 }} />
               AI Revenue System · Now accepting new clients
@@ -246,10 +246,9 @@ export default function Page() {
 
             <h1 id="hero-heading" className="hero-headline" style={{
               fontSize: 44, fontWeight: 700, letterSpacing: '-0.025em',
-              lineHeight: 1.08, margin: '0 0 18px', color: T.text, whiteSpace: 'nowrap',
+              lineHeight: 1.08, margin: '0 0 12px', color: T.text,
             }}>
-              Never Miss<br />
-              <span style={{
+              Never Miss <span style={{
                 background: `linear-gradient(135deg, ${T.blue}, ${T.purple})`,
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>Another Lead</span>
@@ -257,7 +256,7 @@ export default function Page() {
 
             <p className="hero-sub" style={{
               fontSize: 18, color: T.sub, lineHeight: 1.7,
-              maxWidth: 560, margin: '0 auto 24px', textAlign: 'center',
+              maxWidth: 560, margin: '0 auto 16px', textAlign: 'center',
             }}>
               AI-powered lead conversion for B2B teams and service agencies. Respond, qualify, and book — automatically.
             </p>
@@ -281,7 +280,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="hub-outer" style={{ maxWidth: 860, margin: '28px auto 0', padding: '0 24px' }}>
+          <div className="hub-outer" style={{ maxWidth: 720, margin: '10px auto 0', padding: '0 24px' }}>
             <div className="hub-wrapper">
               <IntegrationHub />
             </div>
@@ -301,7 +300,7 @@ export default function Page() {
               { stat: '48h',  label: 'Live in two business days' },
             ].map(({ stat, label }, i) => (
               <div key={stat} className="stat-item" style={{
-                flex: 1, textAlign: 'center', padding: '28px 16px',
+                flex: 1, textAlign: 'center', padding: '18px 16px',
                 borderRight: i < 2 ? `1px solid ${T.border}` : 'none',
               }}>
                 <div className="stat-num-sm" style={{ fontSize: 26, fontWeight: 800, color: T.blue, letterSpacing: '-1px' }}>{stat}</div>
