@@ -200,11 +200,46 @@ function IntentChart({ leads }) {
   )
 }
 
-/* ── Response time chart ── */
-function ResponseTimeChart() {
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-  const vals = [61, 44, 38, 52, 39, 41, 43]
-  const max = 90, target = 60
+/* ── Response time chart — REAL DATA ── */
+function ResponseTimeChart({ leads }) {
+  const target = 60
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+  // Filter leads that have real response time data
+  const withTime = leads.filter(l => l.response_time_seconds > 0 && l.response_time_seconds <= 3600)
+
+  // Calculate real average
+  const avgTime = withTime.length > 0
+    ? Math.round(withTime.reduce((s, l) => s + l.response_time_seconds, 0) / withTime.length)
+    : null
+
+  // Group by day of week (0=Sun, 1=Mon ... 6=Sat)
+  const byDay = [1, 2, 3, 4, 5, 6, 0].map((dayIndex, i) => {
+    const dayLeads = withTime.filter(l => new Date(l.created_at).getDay() === dayIndex)
+    const avg = dayLeads.length > 0
+      ? Math.round(dayLeads.reduce((s, l) => s + l.response_time_seconds, 0) / dayLeads.length)
+      : null
+    return { label: days[i], avg, count: dayLeads.length }
+  })
+
+  const hasData = withTime.length > 0
+  const maxVal = hasData ? Math.max(...byDay.filter(d => d.avg).map(d => d.avg), target + 20) : 90
+
+  if (!hasData) {
+    return (
+      <div className="p-5 rounded-2xl" style={{ background: '#111827', border: '1px solid #1F2937' }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Clock size={14} style={{ color: '#818CF8' }} />
+          <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#818CF8' }}>Avg Response Time</span>
+        </div>
+        <div className="text-2xl font-black text-white mb-1">No data yet</div>
+        <p className="text-xs" style={{ color: '#6B7280' }}>
+          Response times will appear here once n8n starts saving them to leads.
+          Make sure Workflow 1 is writing <code style={{ color: '#818CF8' }}>response_time_seconds</code> to Supabase.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="p-5 rounded-2xl" style={{ background: '#111827', border: '1px solid #1F2937' }}>
@@ -215,8 +250,20 @@ function ResponseTimeChart() {
             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#818CF8' }}>Avg Response Time</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl md:text-3xl font-black text-white">43s</span>
-            <span className="text-sm font-bold" style={{ color: '#34D399' }}>↓ 12% faster</span>
+            <span className="text-2xl md:text-3xl font-black text-white">{avgTime}s</span>
+            {avgTime <= target && (
+              <span className="text-sm font-bold" style={{ color: '#34D399' }}>
+                ↓ {Math.round(((target - avgTime) / target) * 100)}% under target
+              </span>
+            )}
+            {avgTime > target && (
+              <span className="text-sm font-bold" style={{ color: '#FCA5A5' }}>
+                ↑ above target
+              </span>
+            )}
+          </div>
+          <div className="text-xs mt-1" style={{ color: '#4B5563' }}>
+            Based on {withTime.length} real responses
           </div>
         </div>
         <div className="text-right">
@@ -225,18 +272,29 @@ function ResponseTimeChart() {
         </div>
       </div>
       <div className="space-y-2 mt-3">
-        {days.map((day, i) => {
-          const pct = (vals[i] / max) * 100
-          const over = vals[i] > target
-          return (
+        {byDay.map(({ label, avg, count }, i) => {
+          if (!avg) return (
             <div key={i} className="flex items-center gap-2.5">
-              <span className="text-xs w-7 flex-shrink-0" style={{ color: '#4B5563' }}>{day}</span>
-              <div className="flex-1 h-5 rounded-lg overflow-hidden" style={{ background: '#1F2937' }}>
-                <div className="h-full rounded-lg flex items-center justify-end pr-2"
-                  style={{ width: `${pct}%`, background: over ? '#FCA5A5' : '#818CF8', opacity: 0.85 }}>
-                  <span className="text-[9px] font-bold text-white">{vals[i]}s</span>
+              <span className="text-xs w-7 flex-shrink-0" style={{ color: '#4B5563' }}>{label}</span>
+              <div className="flex-1 h-5 rounded-lg" style={{ background: '#1F2937' }}>
+                <div className="h-full flex items-center pl-2">
+                  <span className="text-[9px]" style={{ color: '#374151' }}>No data</span>
                 </div>
               </div>
+            </div>
+          )
+          const pct = Math.min((avg / maxVal) * 100, 100)
+          const over = avg > target
+          return (
+            <div key={i} className="flex items-center gap-2.5">
+              <span className="text-xs w-7 flex-shrink-0" style={{ color: '#4B5563' }}>{label}</span>
+              <div className="flex-1 h-5 rounded-lg overflow-hidden" style={{ background: '#1F2937' }}>
+                <div className="h-full rounded-lg flex items-center justify-end pr-2"
+                  style={{ width: `${pct}%`, background: over ? '#FCA5A5' : '#818CF8', opacity: 0.85, transition: 'width 0.5s ease' }}>
+                  <span className="text-[9px] font-bold text-white">{avg}s</span>
+                </div>
+              </div>
+              <span className="text-[9px] flex-shrink-0" style={{ color: '#374151' }}>{count}</span>
             </div>
           )
         })}
@@ -300,10 +358,18 @@ export default function Reports() {
   const meetingLeads= leads.filter(l => ['meeting_scheduled','won'].includes(l.status))
   const meetingRate = leads.length > 0 ? ((meetingLeads.length / leads.length) * 100).toFixed(1) : 0
 
+  // Real average response time from actual data
+  const leadsWithTime  = leads.filter(l => l.response_time_seconds > 0 && l.response_time_seconds <= 3600)
+  const avgResponseTime = leadsWithTime.length > 0
+    ? Math.round(leadsWithTime.reduce((s, l) => s + l.response_time_seconds, 0) / leadsWithTime.length)
+    : null
+  const avgResponseLabel = avgResponseTime ? `${avgResponseTime}s` : 'No data'
+
   const kpis = [
     { label: 'Revenue Won',    value: `$${totalValue.toLocaleString()}`, change: null, icon: DollarSign, color: '#34D399' },
     { label: 'Meeting Rate',   value: `${meetingRate}%`,                 change: null, icon: Calendar,   color: '#A78BFA' },
-    { label: 'Avg Response',   value: '43s',                             change: -12,  icon: Clock,      color: '#818CF8' },
+    { label: 'Avg Response',   value: avgResponseLabel,                  change: null, icon: Clock,      color: '#818CF8',
+      sub: leadsWithTime.length > 0 ? `${leadsWithTime.length} measured` : 'Update n8n workflow' },
   ]
 
   return (
@@ -336,7 +402,7 @@ export default function Reports() {
         <>
           {/* KPI strip */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-            {kpis.map(({ label, value, change, icon: Icon, color }) => (
+            {kpis.map(({ label, value, change, icon: Icon, color, sub }) => (
               <div key={label} className="p-4 rounded-2xl" style={{ background: '#111827', border: '1px solid #1F2937' }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${color}15` }}>
@@ -352,6 +418,7 @@ export default function Reports() {
                 </div>
                 <div className="text-2xl font-black text-white mb-1">{value}</div>
                 <div className="text-xs" style={{ color: '#6B7280' }}>{label}</div>
+                {sub && <div className="text-xs mt-1" style={{ color: '#4B5563' }}>{sub}</div>}
               </div>
             ))}
           </div>
@@ -361,7 +428,7 @@ export default function Reports() {
             <RevenueChart leads={leads} />
             <IntentChart leads={leads} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ResponseTimeChart />
+              <ResponseTimeChart leads={leads} />
               <ConversionFunnel leads={leads} />
             </div>
           </div>
