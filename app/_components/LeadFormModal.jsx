@@ -93,29 +93,59 @@ export default function LeadFormModal() {
 
   // ── Supabase submit (unchanged logic, updated field mapping) ──
   async function submit(e) {
-    e.preventDefault()
-    if (!step2Valid) return
-    setBusy(true)
+  e.preventDefault()
+  if (!step2Valid) return
+  setBusy(true)
+  try {
+    // Step 1 — Save to Supabase
+    const { data: insertedLead, error } = await supabase.from('leads').insert([{
+      name:          form.fullName     || null,
+      email:         form.email        || null,
+      phone:         null,
+      company:       form.company      || null,
+      status:        'new',
+      source:        'lead_form',
+      value:         0,
+      business_type: form.businessType || null,
+      monthly_leads: form.monthlyLeads || null,
+      notes:         `Via lead form | Budget: ${form.budget || '-'} | Timeline: ${form.timeline || '-'}`,
+      workspace_id:  '8c00a710-b9c3-4b96-98d5-1bddb32b1e24',
+      user_id:       'af90ab79-739c-4483-9cf3-d6ffbdd67fa1',
+    }]).select()
+
+    if (error) console.error('Lead save failed:', error)
+
+    // Step 2 — Trigger n8n Workflow 1 immediately
+    // This fires AI response, qualification, and pipeline update
     try {
-      await supabase.from('leads').insert([{
-        name:          form.fullName     || null,
-        email:         form.email        || null,
-        phone:         null,
-        company:       form.company      || null,
-        status:        'new',
-        source:        'lead_form',
-        value:         0,
-        business_type: form.businessType || null,
-        monthly_leads: form.monthlyLeads || null,
-        notes:         `Via lead form | Budget: ${form.budget || '-'} | Timeline: ${form.timeline || '-'}`,
-        chat_source:   'website_form',
-        user_id:       'af90ab79-739c-4483-9cf3-d6ffbdd67fa1',
-        workspace_id:  '8c00a710-b9c3-4b96-98d5-1bddb32b1e24',
-      }])
-    } catch (err) { console.error('Lead save failed:', err) }
-    setSubmitted(true)
-    setBusy(false)
+      await fetch('https://dragandanevski.app.n8n.cloud/webhook/lead-intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspace_token: 'test-token-123',
+          source: 'lead_form',
+          name:          form.fullName,
+          email:         form.email,
+          company:       form.company,
+          business_type: form.businessType,
+          monthly_leads: form.monthlyLeads,
+          budget:        form.budget,
+          timeline:      form.timeline,
+          message:       `Business: ${form.businessType} | Leads/mo: ${form.monthlyLeads} | Budget: ${form.budget} | Timeline: ${form.timeline}`,
+          priority:      form.timeline === 'Immediately' ? 'urgent' : 'normal',
+        })
+      })
+    } catch (webhookErr) {
+      console.error('n8n webhook failed:', webhookErr)
+      // Don't block the user — Supabase save already succeeded
+    }
+
+  } catch (err) {
+    console.error('Submit failed:', err)
   }
+  setSubmitted(true)
+  setBusy(false)
+}
 
   function field(key, e) {
     setForm(p => ({ ...p, [key]: e.target.value }))
