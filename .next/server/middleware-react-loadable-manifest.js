@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"app\\\\_components\\\\SiteNav.jsx -> ./NavMobile":{"id":5592,"files":["static/chunks/592.afa9650f6cdeb6ef.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{\"app\\\\_components\\\\SiteNav.jsx -> ./NavMobile\":{\"id\":\"app\\\\_components\\\\SiteNav.jsx -> ./NavMobile\",\"files\":[\"static/chunks/_app-pages-browser_app__components_NavMobile_jsx.js\"]}}"

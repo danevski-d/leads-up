@@ -1,8 +1,8 @@
 {
   "app\\_components\\SiteNav.jsx -> ./NavMobile": {
-    "id": 5592,
+    "id": "app\\_components\\SiteNav.jsx -> ./NavMobile",
     "files": [
-      "static/chunks/592.afa9650f6cdeb6ef.js"
+      "static/chunks/_app-pages-browser_app__components_NavMobile_jsx.js"
     ]
   }
 }

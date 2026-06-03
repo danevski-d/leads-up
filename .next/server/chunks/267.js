@@ -1,1 +1,0 @@
-"use strict";exports.id=267,exports.ids=[267],exports.modules={1267:(e,t,o)=>{o.r(t),o.d(t,{default:()=>s});let s=(0,o(8570).createProxy)(String.raw`C:\Users\DESKTOP\Downloads\Demo1\app\_components\OpenFormButton.jsx#default`)}};
