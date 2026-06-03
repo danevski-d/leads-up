@@ -232,13 +232,13 @@ export default function Page() {
 
         {/* ── Hero ── */}
         <section className="hero-section" aria-labelledby="hero-heading"
-          style={{ paddingTop: 96, paddingBottom: 40, fontFamily: font }}>
+          style={{ paddingTop: 80, paddingBottom: 20, fontFamily: font }}>
           <div className="hero-inner" style={{ maxWidth: 820, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
 
             <div className="hero-badge" style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               border: `1px solid ${T.border}`, borderRadius: 99,
-              padding: '6px 14px', marginBottom: 32, fontSize: 12, color: T.sub,
+              padding: '6px 14px', marginBottom: 20, fontSize: 12, color: T.sub,
             }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34D399', display: 'inline-block', flexShrink: 0 }} />
               AI Revenue System · Now accepting new clients
@@ -257,7 +257,7 @@ export default function Page() {
 
             <p className="hero-sub" style={{
               fontSize: 18, color: T.sub, lineHeight: 1.7,
-              maxWidth: 560, margin: '0 auto 36px', textAlign: 'center',
+              maxWidth: 560, margin: '0 auto 24px', textAlign: 'center',
             }}>
               Leads Up converts inbound leads automatically — by phone, text, or email — so B2B teams and service agencies close more deals without hiring more staff.
             </p>
@@ -281,7 +281,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="hub-outer" style={{ maxWidth: 1000, margin: '60px auto 0', padding: '0 24px' }}>
+          <div className="hub-outer" style={{ maxWidth: 860, margin: '28px auto 0', padding: '0 24px' }}>
             <div className="hub-wrapper">
               <IntegrationHub />
             </div>
