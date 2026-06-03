@@ -245,8 +245,8 @@ export default function Page() {
             </div>
 
             <h1 id="hero-heading" className="hero-headline" style={{
-              fontSize: 58, fontWeight: 700, letterSpacing: '-0.025em',
-              lineHeight: 1.08, margin: '0 0 22px', color: T.text,
+              fontSize: 44, fontWeight: 700, letterSpacing: '-0.025em',
+              lineHeight: 1.08, margin: '0 0 18px', color: T.text, whiteSpace: 'nowrap',
             }}>
               Never Miss<br />
               <span style={{
@@ -259,7 +259,7 @@ export default function Page() {
               fontSize: 18, color: T.sub, lineHeight: 1.7,
               maxWidth: 560, margin: '0 auto 24px', textAlign: 'center',
             }}>
-              Leads Up converts inbound leads automatically — by phone, text, or email — so B2B teams and service agencies close more deals without hiring more staff.
+              AI-powered lead conversion for B2B teams and service agencies. Respond, qualify, and book — automatically.
             </p>
 
             <div className="hero-btns" style={{
