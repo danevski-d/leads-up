@@ -118,7 +118,7 @@ export default function LeadFormModal() {
     // Step 2 — Trigger n8n Workflow 1 immediately
     // This fires AI response, qualification, and pipeline update
     try {
-      await fetch('https://dragandanevski.app.n8n.cloud/webhook/lead-intake', {
+      await fetch('/api/n8n-webhook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
