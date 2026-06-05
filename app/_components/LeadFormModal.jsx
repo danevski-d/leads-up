@@ -105,7 +105,7 @@ export default function LeadFormModal() {
       company:       form.company      || null,
       status:        'new',
       source:        'lead_form',
-      value:         0,
+      value: form.budget || null,
       business_type: form.businessType || null,
       monthly_leads: form.monthlyLeads || null,
       notes:         `Via lead form | Budget: ${form.budget || '-'} | Timeline: ${form.timeline || '-'}`,
