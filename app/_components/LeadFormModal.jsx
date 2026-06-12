@@ -85,8 +85,8 @@ export default function LeadFormModal() {
         business_type: form.businessType || null,
         monthly_leads: form.monthlyLeads || null,
         notes:         `Via lead form | Budget: ${form.budget} | Timeline: ${form.timeline}`,
-        workspace_id:  LEADS_UP_WORKSPACE_ID,,
-        // No hardcoded user_id — workspace_id + RLS is enough
+        workspace_id:  LEADS_UP_WORKSPACE_ID,
+        
       }]).select()
 
       if (error) console.error('Lead save failed:', error)
