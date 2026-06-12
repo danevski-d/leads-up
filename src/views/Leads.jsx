@@ -5,8 +5,6 @@ import { Search, Plus, X, Zap } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
-const WORKSPACE_ID = '8c00a710-b9c3-4b96-98d5-1bddb32b1e24'
-
 const COLUMNS = [
   { key: 'new',               label: 'New',               dot: '#818CF8', badge: 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' },
   { key: 'ai_responded',      label: 'AI Responded',      dot: '#67E8F9', badge: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' },
@@ -14,12 +12,14 @@ const COLUMNS = [
   { key: 'qualified',         label: 'Qualified',         dot: '#A78BFA', badge: 'bg-purple-500/20 text-purple-400 border border-purple-500/30' },
   { key: 'meeting_scheduled', label: 'Meeting Scheduled', dot: '#34D399', badge: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' },
   { key: 'won',               label: 'Won',               dot: '#FBBF24', badge: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' },
+  { key: 'nurture',           label: 'Nurture',           dot: '#60A5FA', badge: 'bg-blue-500/20 text-blue-400 border border-blue-500/30' },
   { key: 'lost',              label: 'Lost',              dot: '#6B7280', badge: 'bg-slate-500/20 text-slate-400 border border-slate-500/30' },
 ]
 
 const SOURCE_COLORS = {
   retell:       'bg-purple-500/10 text-purple-400',
   gmail:        'bg-red-500/10 text-red-400',
+  phone:        'bg-green-500/10 text-green-400',
   live_chat:    'bg-cyan-500/10 text-cyan-400',
   form:         'bg-blue-500/10 text-blue-400',
   lead_form:    'bg-blue-500/10 text-blue-400',
@@ -29,13 +29,6 @@ const SOURCE_COLORS = {
   'Google Ads': 'bg-blue-500/10 text-blue-400',
   Facebook:     'bg-indigo-500/10 text-indigo-400',
   Referral:     'bg-emerald-500/10 text-emerald-400',
-}
-
-const INTENT_COLORS = {
-  hot:    { color: '#EF4444', label: '🔥' },
-  warm:   { color: '#F59E0B', label: '🟡' },
-  cold:   { color: '#60A5FA', label: '🔵' },
-  nurture:{ color: '#A78BFA', label: '🟣' },
 }
 
 function ScoreBadge({ score }) {
@@ -50,9 +43,11 @@ function ScoreBadge({ score }) {
 }
 
 function LeadCard({ lead }) {
-  const intent = INTENT_COLORS[lead.intent_level]
   const score = lead.lead_score || lead.bant_score || 0
-
+  const displayValue = lead.value 
+  ? `$${Number(lead.value).toLocaleString()}` 
+  : lead.budget_range || null
+  
   return (
     <Link href={`/app/leads/${lead.id}`}
       className="block rounded-xl p-3.5 border transition-all group"
@@ -60,9 +55,8 @@ function LeadCard({ lead }) {
       onMouseOver={e => e.currentTarget.style.borderColor = '#374151'}
       onMouseOut={e => e.currentTarget.style.borderColor = '#1F2937'}
     >
-      {/* Header row */}
       <div className="flex items-start gap-2.5 mb-2">
-        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
           style={{ background: 'rgba(99,102,241,0.2)', color: '#818CF8' }}>
           {lead.name ? lead.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : '?'}
         </div>
@@ -77,23 +71,23 @@ function LeadCard({ lead }) {
         {score > 0 && <ScoreBadge score={score} />}
       </div>
 
-      {/* AI Summary */}
       {lead.ai_summary && (
         <div className="text-xs mb-2 line-clamp-2 leading-relaxed" style={{ color: '#4B5563' }}>
           {lead.ai_summary}
         </div>
       )}
 
-      {/* Footer row */}
       <div className="flex items-center justify-between gap-2">
         <span className={`text-xs px-2 py-0.5 rounded-full truncate max-w-[110px] ${SOURCE_COLORS[lead.source] || 'bg-slate-700/50 text-slate-400'}`}>
           {lead.source || 'Unknown'}
         </span>
         <div className="flex items-center gap-1.5 flex-shrink-0">
+          {displayValue && (
+            <span className="text-xs font-semibold" style={{ color: '#34D399' }}>{displayValue}</span>
+          )}
           {lead.response_time_seconds > 0 && (
             <span className="flex items-center gap-0.5 text-xs" style={{ color: '#34D399' }}>
-              <Zap size={9} />
-              {lead.response_time_seconds}s
+              <Zap size={9} />{lead.response_time_seconds}s
             </span>
           )}
           <span className="text-xs" style={{ color: '#374151' }}>
@@ -105,7 +99,7 @@ function LeadCard({ lead }) {
   )
 }
 
-function AddLeadModal({ onClose, onAdded, userId }) {
+function AddLeadModal({ onClose, onAdded, workspaceId, userId }) {
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState('')
 
@@ -121,7 +115,7 @@ function AddLeadModal({ onClose, onAdded, userId }) {
     const fd = new FormData(e.target)
     const { error } = await supabase.from('leads').insert({
       user_id:      userId,
-      workspace_id: WORKSPACE_ID,
+      workspace_id: workspaceId,
       name:         fd.get('leadName'),
       email:        fd.get('leadEmail'),
       source:       fd.get('source'),
@@ -157,14 +151,20 @@ function AddLeadModal({ onClose, onAdded, userId }) {
           </div>
           <div>
             <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Email</label>
-            <input name="leadEmail" type="email" required style={inputStyle}
+            <input name="leadEmail" type="email" style={inputStyle}
+              onFocus={e => e.target.style.borderColor = '#6366F1'}
+              onBlur={e => e.target.style.borderColor = '#1F2937'} />
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Phone</label>
+            <input name="leadPhone" type="tel" style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#6366F1'}
               onBlur={e => e.target.style.borderColor = '#1F2937'} />
           </div>
           <div>
             <label className="text-xs font-medium block mb-1.5" style={{ color: '#9CA3AF' }}>Source</label>
             <select name="source" style={{ ...inputStyle, cursor: 'pointer' }}>
-              {['Web Form','Google Ads','Facebook','Referral','Retell','Live Chat','Other'].map(o => (
+              {['Web Form','Phone','Email','Live Chat','Google Ads','Facebook','Referral','Other'].map(o => (
                 <option key={o}>{o}</option>
               ))}
             </select>
@@ -192,36 +192,29 @@ function AddLeadModal({ onClose, onAdded, userId }) {
 }
 
 export default function Leads() {
-  const { user } = useAuth()
+  const { user, workspaceId } = useAuth()
   const [leads, setLeads] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    if (!user) return
+    if (!user || !workspaceId) return
     fetchLeads()
 
-    // Real-time subscription — updates pipeline instantly when n8n changes a lead
     const channel = supabase
       .channel('leads-pipeline')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'leads',
-      }, () => {
-        fetchLeads()
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, fetchLeads)
       .subscribe()
 
     return () => supabase.removeChannel(channel)
-  }, [user])
+  }, [user, workspaceId])
 
   const fetchLeads = async () => {
     const { data, error } = await supabase
       .from('leads')
       .select('*')
-      .or(`user_id.eq.${user.id},workspace_id.eq.${WORKSPACE_ID}`)
+      .eq('workspace_id', workspaceId)
       .order('created_at', { ascending: false })
     if (error) console.error('Leads fetch:', error.message)
     setLeads(data || [])
@@ -249,21 +242,19 @@ export default function Leads() {
       {showModal && (
         <AddLeadModal
           userId={user?.id}
+          workspaceId={workspaceId}
           onClose={() => setShowModal(false)}
           onAdded={fetchLeads}
         />
       )}
 
-      {/* Header */}
       <div className="flex items-start sm:items-center justify-between gap-3 mb-4 flex-shrink-0">
         <div>
           <h1 className="text-xl font-bold text-white">Pipeline</h1>
           <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>
             {leads.length} leads ·{' '}
             <span style={{ color: '#34D399' }}>${(totalValue / 1000).toFixed(1)}k total value</span>
-            {hotLeads > 0 && (
-              <span style={{ color: '#EF4444', marginLeft: 8 }}>· 🔥 {hotLeads} hot</span>
-            )}
+            {hotLeads > 0 && <span style={{ color: '#EF4444', marginLeft: 8 }}>· 🔥 {hotLeads} hot</span>}
           </p>
         </div>
         <button
@@ -276,7 +267,6 @@ export default function Leads() {
         </button>
       </div>
 
-      {/* Search */}
       <div className="mb-4 flex-shrink-0">
         <div className="relative max-w-xs">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#6B7280' }} />
@@ -292,53 +282,35 @@ export default function Leads() {
         </div>
       </div>
 
-      {/* Kanban board */}
       {loading ? (
         <div className="flex items-center justify-center flex-1 text-sm" style={{ color: '#6B7280' }}>
           Loading pipeline...
         </div>
       ) : (
-        <div
-          className="flex gap-3 overflow-x-auto flex-1 pb-4"
-          style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x mandatory' }}
-        >
+        <div className="flex gap-3 overflow-x-auto flex-1 pb-4"
+          style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x mandatory' }}>
           {COLUMNS.map(col => {
             const colLeads = byStatus(col.key)
             const total    = colLeads.reduce((s, l) => s + (Number(l.value) || 0), 0)
             const hotCount = colLeads.filter(l => l.intent_level === 'hot').length
 
             return (
-              <div
-                key={col.key}
-                className="flex flex-col flex-shrink-0"
-                style={{ width: 284, minWidth: 280, scrollSnapAlign: 'start' }}
-              >
-                {/* Column header */}
+              <div key={col.key} className="flex flex-col flex-shrink-0"
+                style={{ width: 284, minWidth: 280, scrollSnapAlign: 'start' }}>
                 <div className="flex items-center justify-between mb-2.5 px-0.5">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ background: col.dot }} />
                     <span className="text-sm font-semibold text-white">{col.label}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${col.badge}`}>
-                      {colLeads.length}
-                    </span>
-                    {hotCount > 0 && (
-                      <span className="text-xs" style={{ color: '#EF4444' }}>🔥{hotCount}</span>
-                    )}
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${col.badge}`}>{colLeads.length}</span>
+                    {hotCount > 0 && <span className="text-xs" style={{ color: '#EF4444' }}>🔥{hotCount}</span>}
                   </div>
-                  {total > 0 && (
-                    <span className="text-xs" style={{ color: '#4B5563' }}>
-                      ${(total / 1000).toFixed(1)}k
-                    </span>
-                  )}
+                  {total > 0 && <span className="text-xs" style={{ color: '#4B5563' }}>${(total / 1000).toFixed(1)}k</span>}
                 </div>
 
-                {/* Cards */}
                 <div className="flex-1 space-y-2 min-h-[80px]">
                   {colLeads.length === 0 ? (
-                    <div
-                      className="h-20 rounded-xl border-2 border-dashed flex items-center justify-center text-xs"
-                      style={{ borderColor: '#1F2937', color: '#374151' }}
-                    >
+                    <div className="h-20 rounded-xl border-2 border-dashed flex items-center justify-center text-xs"
+                      style={{ borderColor: '#1F2937', color: '#374151' }}>
                       No leads
                     </div>
                   ) : (
