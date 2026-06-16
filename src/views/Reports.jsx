@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
 const RANGES = ['7d', '30d', '90d', 'All']
-const WORKSPACE_ID = '8c00a710-b9c3-4b96-98d5-1bddb32b1e24'
+const { user, workspaceId } = useAuth()
 
 /* ── Revenue chart ── */
 function RevenueChart({ leads }) {
@@ -336,7 +336,7 @@ export default function Reports() {
       let query = supabase
         .from('leads')
         .select('*')
-        .or(`user_id.eq.${user.id},workspace_id.eq.${WORKSPACE_ID}`)
+        .eq('workspace_id', workspaceId)
 
       if (range !== 'All') {
         const days = range === '7d' ? 7 : range === '30d' ? 30 : 90
