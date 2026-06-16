@@ -315,16 +315,22 @@ export default function Reports() {
   useEffect(() => {
     if (!user || !workspaceId) return
     const fetchLeads = async () => {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('leads')
-        .select('*')
-        .eq('workspace_id', workspaceId)
-        .order('created_at', { ascending: false })
-      if (error) console.error('Reports:', error.message)
-      setAllLeads(data || [])
-      setLoading(false)
-    }
+  setLoading(true)
+  console.log('=== REPORTS DEBUG ===')
+  console.log('user:', user)
+  console.log('workspaceId:', workspaceId)
+
+  const { data, error } = await supabase
+    .from('leads')
+    .select('*')
+    .eq('workspace_id', workspaceId)
+    .order('created_at', { ascending: false })
+
+  console.log('data:', data)
+  console.log('error:', error)
+  setAllLeads(data || [])
+  setLoading(false)
+}
     fetchLeads()
   }, [user, workspaceId])
 
