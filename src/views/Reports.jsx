@@ -5,7 +5,6 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
 const RANGES = ['7d', '30d', '90d', 'All']
-const { user, workspaceId } = useAuth()
 
 /* ── Revenue chart ── */
 function RevenueChart({ leads }) {
@@ -94,13 +93,13 @@ function RevenueChart({ leads }) {
 
 /* ── Conversion funnel ── */
 function ConversionFunnel({ leads }) {
-  const total    = leads.length
-  const aiResp   = leads.filter(l => ['ai_responded','engaged','qualified','meeting_scheduled','won'].includes(l.status)).length
-  const engaged  = leads.filter(l => ['engaged','qualified','meeting_scheduled','won'].includes(l.status)).length
-  const qualified= leads.filter(l => ['qualified','meeting_scheduled','won'].includes(l.status)).length
-  const meeting  = leads.filter(l => ['meeting_scheduled','won'].includes(l.status)).length
-  const won      = leads.filter(l => l.status === 'won').length
-  const rate     = total > 0 ? ((meeting / total) * 100).toFixed(1) : 0
+  const total     = leads.length
+  const aiResp    = leads.filter(l => ['ai_responded','engaged','qualified','meeting_scheduled','won'].includes(l.status)).length
+  const engaged   = leads.filter(l => ['engaged','qualified','meeting_scheduled','won'].includes(l.status)).length
+  const qualified = leads.filter(l => ['qualified','meeting_scheduled','won'].includes(l.status)).length
+  const meeting   = leads.filter(l => ['meeting_scheduled','won'].includes(l.status)).length
+  const won       = leads.filter(l => l.status === 'won').length
+  const rate      = total > 0 ? ((meeting / total) * 100).toFixed(1) : 0
 
   const stages = [
     { label: 'Leads Captured',    count: total,     pct: 100 },
@@ -161,9 +160,7 @@ function IntentChart({ leads }) {
 
   if (scored === 0) return null
 
-  const avgScore = scored > 0
-    ? Math.round(leads.reduce((s, l) => s + (l.lead_score || l.bant_score || 0), 0) / leads.length)
-    : 0
+  const avgScore = Math.round(leads.reduce((s, l) => s + (l.lead_score || l.bant_score || 0), 0) / leads.length)
 
   return (
     <div className="p-5 rounded-2xl" style={{ background: '#111827', border: '1px solid #1F2937' }}>
@@ -200,20 +197,17 @@ function IntentChart({ leads }) {
   )
 }
 
-/* ── Response time chart — REAL DATA ── */
+/* ── Response time chart ── */
 function ResponseTimeChart({ leads }) {
   const target = 60
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-  // Filter leads that have real response time data
   const withTime = leads.filter(l => l.response_time_seconds > 0 && l.response_time_seconds <= 3600)
 
-  // Calculate real average
   const avgTime = withTime.length > 0
     ? Math.round(withTime.reduce((s, l) => s + l.response_time_seconds, 0) / withTime.length)
     : null
 
-  // Group by day of week (0=Sun, 1=Mon ... 6=Sat)
   const byDay = [1, 2, 3, 4, 5, 6, 0].map((dayIndex, i) => {
     const dayLeads = withTime.filter(l => new Date(l.created_at).getDay() === dayIndex)
     const avg = dayLeads.length > 0
@@ -257,14 +251,10 @@ function ResponseTimeChart({ leads }) {
               </span>
             )}
             {avgTime > target && (
-              <span className="text-sm font-bold" style={{ color: '#FCA5A5' }}>
-                ↑ above target
-              </span>
+              <span className="text-sm font-bold" style={{ color: '#FCA5A5' }}>↑ above target</span>
             )}
           </div>
-          <div className="text-xs mt-1" style={{ color: '#4B5563' }}>
-            Based on {withTime.length} real responses
-          </div>
+          <div className="text-xs mt-1" style={{ color: '#4B5563' }}>Based on {withTime.length} real responses</div>
         </div>
         <div className="text-right">
           <div className="text-xs mb-1" style={{ color: '#4B5563' }}>Target</div>
@@ -324,13 +314,13 @@ function EmptyReports() {
 
 /* ── Main page ── */
 export default function Reports() {
-  const { user } = useAuth()
+  const { user, workspaceId } = useAuth()
   const [range, setRange] = useState('30d')
   const [leads, setLeads] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!user) return
+    if (!user || !workspaceId) return
     const fetchLeads = async () => {
       setLoading(true)
       let query = supabase
@@ -350,37 +340,32 @@ export default function Reports() {
       setLoading(false)
     }
     fetchLeads()
-  }, [user, range])
+  }, [user, workspaceId, range])
 
-  // Fixed: use 'won' not 'booked'
-  const wonLeads    = leads.filter(l => l.status === 'won')
-  const totalValue  = wonLeads.reduce((s, l) => s + Number(l.value || 0), 0)
-  const meetingLeads= leads.filter(l => ['meeting_scheduled','won'].includes(l.status))
-  const meetingRate = leads.length > 0 ? ((meetingLeads.length / leads.length) * 100).toFixed(1) : 0
+  const wonLeads     = leads.filter(l => l.status === 'won')
+  const totalValue   = wonLeads.reduce((s, l) => s + Number(l.value || 0), 0)
+  const meetingLeads = leads.filter(l => ['meeting_scheduled', 'won'].includes(l.status))
+  const meetingRate  = leads.length > 0 ? ((meetingLeads.length / leads.length) * 100).toFixed(1) : 0
 
-  // Real average response time from actual data
-  const leadsWithTime  = leads.filter(l => l.response_time_seconds > 0 && l.response_time_seconds <= 3600)
+  const leadsWithTime   = leads.filter(l => l.response_time_seconds > 0 && l.response_time_seconds <= 3600)
   const avgResponseTime = leadsWithTime.length > 0
     ? Math.round(leadsWithTime.reduce((s, l) => s + l.response_time_seconds, 0) / leadsWithTime.length)
     : null
   const avgResponseLabel = avgResponseTime ? `${avgResponseTime}s` : 'No data'
 
   const kpis = [
-    { label: 'Revenue Won',    value: `$${totalValue.toLocaleString()}`, change: null, icon: DollarSign, color: '#34D399' },
-    { label: 'Meeting Rate',   value: `${meetingRate}%`,                 change: null, icon: Calendar,   color: '#A78BFA' },
-    { label: 'Avg Response',   value: avgResponseLabel,                  change: null, icon: Clock,      color: '#818CF8',
+    { label: 'Revenue Won',  value: `$${totalValue.toLocaleString()}`, change: null, icon: DollarSign, color: '#34D399' },
+    { label: 'Meeting Rate', value: `${meetingRate}%`,                 change: null, icon: Calendar,   color: '#A78BFA' },
+    { label: 'Avg Response', value: avgResponseLabel,                  change: null, icon: Clock,      color: '#818CF8',
       sub: leadsWithTime.length > 0 ? `${leadsWithTime.length} measured` : 'Update n8n workflow' },
   ]
 
   return (
     <div className="p-4 md:p-6 max-w-5xl mx-auto">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-white">Reports</h1>
-          <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>
-            Response time, meeting rate, revenue won
-          </p>
+          <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>Response time, meeting rate, revenue won</p>
         </div>
         <div className="flex gap-1 p-1 rounded-xl self-start sm:self-auto"
           style={{ background: '#111827', border: '1px solid #1F2937' }}>
@@ -400,7 +385,6 @@ export default function Reports() {
         <EmptyReports />
       ) : (
         <>
-          {/* KPI strip */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
             {kpis.map(({ label, value, change, icon: Icon, color, sub }) => (
               <div key={label} className="p-4 rounded-2xl" style={{ background: '#111827', border: '1px solid #1F2937' }}>
@@ -423,7 +407,6 @@ export default function Reports() {
             ))}
           </div>
 
-          {/* Charts */}
           <div className="space-y-4">
             <RevenueChart leads={leads} />
             <IntentChart leads={leads} />
