@@ -93,7 +93,7 @@ export default function LeadFormModal() {
 
       // 2 — Trigger n8n for AI qualification + follow-up
       try {
-        await fetch('/api/n8n-webhook', {
+        await fetch('https://leadsup.app.n8n.cloud/webhook/lead-intake', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
