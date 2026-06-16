@@ -6,15 +6,16 @@ import { useAuth } from '../context/AuthContext'
 
 const RANGES = ['7d', '30d', '90d', 'All']
 
-/* ── Revenue chart ── */
 function RevenueChart({ leads }) {
   const wonLeads = leads.filter(l => l.status === 'won' && l.value)
-
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
   const byMonth = months.map((month, i) => ({
     month,
     value: wonLeads
-      .filter(l => new Date(l.created_at).getMonth() === i)
+      .filter(l => {
+        const d = l.won_at || l.created_at
+        return new Date(d).getMonth() === i
+      })
       .reduce((s, l) => s + Number(l.value), 0),
   })).filter(d => d.value > 0)
 
@@ -91,7 +92,6 @@ function RevenueChart({ leads }) {
   )
 }
 
-/* ── Conversion funnel ── */
 function ConversionFunnel({ leads }) {
   const total     = leads.length
   const aiResp    = leads.filter(l => ['ai_responded','engaged','qualified','meeting_scheduled','won'].includes(l.status)).length
@@ -151,7 +151,6 @@ function ConversionFunnel({ leads }) {
   )
 }
 
-/* ── Intent breakdown ── */
 function IntentChart({ leads }) {
   const hot    = leads.filter(l => l.intent_level === 'hot').length
   const warm   = leads.filter(l => l.intent_level === 'warm').length
@@ -197,25 +196,20 @@ function IntentChart({ leads }) {
   )
 }
 
-/* ── Response time chart ── */
 function ResponseTimeChart({ leads }) {
   const target = 60
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
+  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const withTime = leads.filter(l => l.response_time_seconds > 0 && l.response_time_seconds <= 3600)
-
   const avgTime = withTime.length > 0
     ? Math.round(withTime.reduce((s, l) => s + l.response_time_seconds, 0) / withTime.length)
     : null
-
   const byDay = [1, 2, 3, 4, 5, 6, 0].map((dayIndex, i) => {
     const dayLeads = withTime.filter(l => new Date(l.created_at).getDay() === dayIndex)
     const avg = dayLeads.length > 0
       ? Math.round(dayLeads.reduce((s, l) => s + l.response_time_seconds, 0) / dayLeads.length)
       : null
-    return { label: days[i], avg, count: dayLeads.length }
+    return { label: dayLabels[i], avg, count: dayLeads.length }
   })
-
   const hasData = withTime.length > 0
   const maxVal = hasData ? Math.max(...byDay.filter(d => d.avg).map(d => d.avg), target + 20) : 90
 
@@ -312,35 +306,34 @@ function EmptyReports() {
   )
 }
 
-/* ── Main page ── */
 export default function Reports() {
   const { user, workspaceId } = useAuth()
   const [range, setRange] = useState('30d')
-  const [leads, setLeads] = useState([])
+  const [allLeads, setAllLeads] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user || !workspaceId) return
     const fetchLeads = async () => {
       setLoading(true)
-      let query = supabase
+      const { data, error } = await supabase
         .from('leads')
         .select('*')
         .eq('workspace_id', workspaceId)
-
-      if (range !== 'All') {
-        const days = range === '7d' ? 7 : range === '30d' ? 30 : 90
-        const from = new Date(Date.now() - days * 86400000).toISOString()
-        query = query.gte('created_at', from)
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: false })
+        .order('created_at', { ascending: false })
       if (error) console.error('Reports:', error.message)
-      setLeads(data || [])
+      setAllLeads(data || [])
       setLoading(false)
     }
     fetchLeads()
-  }, [user, workspaceId, range])
+  }, [user, workspaceId])
+
+  const leads = range === 'All' ? allLeads : allLeads.filter(l => {
+    const days = range === '7d' ? 7 : range === '30d' ? 30 : 90
+    const cutoff = Date.now() - days * 86400000
+    const date = l.status === 'won' && l.won_at ? new Date(l.won_at) : new Date(l.created_at)
+    return date.getTime() >= cutoff
+  })
 
   const wonLeads     = leads.filter(l => l.status === 'won')
   const totalValue   = wonLeads.reduce((s, l) => s + Number(l.value || 0), 0)
@@ -381,7 +374,7 @@ export default function Reports() {
 
       {loading ? (
         <div className="text-center py-16 text-sm" style={{ color: '#6B7280' }}>Loading reports...</div>
-      ) : leads.length === 0 ? (
+      ) : allLeads.length === 0 ? (
         <EmptyReports />
       ) : (
         <>
@@ -406,7 +399,6 @@ export default function Reports() {
               </div>
             ))}
           </div>
-
           <div className="space-y-4">
             <RevenueChart leads={leads} />
             <IntentChart leads={leads} />
