@@ -84,7 +84,7 @@ export default function LeadFormModal() {
         budget_range:  form.budget       || null,
         business_type: form.businessType || null,
         monthly_leads: form.monthlyLeads || null,
-        notes:         `Via lead form | Budget: ${form.budget} | Timeline: ${form.timeline}`,
+        notes:         [{ text: `Via lead form | Budget: ${form.budget} | Timeline: ${form.timeline}`, at: new Date().toISOString() }],
         workspace_id:  LEADS_UP_WORKSPACE_ID,
         
       }]).select()

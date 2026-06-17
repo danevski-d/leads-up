@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
     setWorkspace(null)
   }
 
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = profile?.role === 'superadmin'
   const isClient = profile?.role === 'client'
   const displayName = profile?.full_name || user?.email?.split('@')[0] || 'User'
   const avatarInitials = displayName.split(' ').map(w => w[0]?.toUpperCase() ?? '').slice(0, 2).join('')

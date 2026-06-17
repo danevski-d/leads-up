@@ -4,7 +4,7 @@ const footerLinks = [
   { label: 'Privacy',  href: '/privacy'  },
   { label: 'Terms',    href: '/terms'    },
   { label: 'Security', href: '/security' },
-  { label: 'Contact',  href: '#'         },
+  { label: 'Contact',  href: 'mailto:19dragan96@gmail.com' },
 ]
 
 export default function SiteFooter() {

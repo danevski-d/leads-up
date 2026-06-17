@@ -156,7 +156,7 @@ function ScoreBadge({ score }) {
 export default function LeadDetail() {
   const { id } = useParams()
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, workspaceId, isAdmin } = useAuth()
 
   const [lead, setLead] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -164,14 +164,12 @@ export default function LeadDetail() {
   const [showNote, setShowNote] = useState(false)
   const [notes, setNotes] = useState([])
 
-  useEffect(() => { if (user) fetchLead() }, [id, user])
+  useEffect(() => { if (user && (isAdmin || workspaceId)) fetchLead() }, [id, user, workspaceId, isAdmin])
 
   const fetchLead = async () => {
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle()
+    let query = supabase.from('leads').select('*').eq('id', id)
+    if (!isAdmin) query = query.eq('workspace_id', workspaceId)
+    const { data, error } = await query.maybeSingle()
     if (error) console.error('LeadDetail:', error.message)
     setLead(data ?? null)
     if (data?.notes) setNotes(Array.isArray(data.notes) ? data.notes : [])
@@ -180,20 +178,18 @@ export default function LeadDetail() {
 
   const updateStatus = async (newStatus) => {
     setUpdating(true)
-    const { error } = await supabase
-      .from('leads')
-      .update({ status: newStatus })
-      .eq('id', id)
+    let query = supabase.from('leads').update({ status: newStatus }).eq('id', id)
+    if (!isAdmin) query = query.eq('workspace_id', workspaceId)
+    const { error } = await query
     if (!error) setLead(l => ({ ...l, status: newStatus }))
     setUpdating(false)
   }
 
   const saveNote = async (text) => {
     const updated = [...notes, { text, at: new Date().toISOString() }]
-    const { error } = await supabase
-      .from('leads')
-      .update({ notes: updated })
-      .eq('id', id)
+    let query = supabase.from('leads').update({ notes: updated }).eq('id', id)
+    if (!isAdmin) query = query.eq('workspace_id', workspaceId)
+    const { error } = await query
     if (!error) setNotes(updated)
   }
 
