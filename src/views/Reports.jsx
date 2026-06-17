@@ -307,26 +307,25 @@ function EmptyReports() {
 }
 
 export default function Reports() {
-  const { user, workspaceId } = useAuth()
+  const { user, workspaceId, isAdmin } = useAuth()
   const [range, setRange] = useState('30d')
   const [allLeads, setAllLeads] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!user || !workspaceId) return
+    if (!user) return
+    if (!isAdmin && !workspaceId) return
     const fetchLeads = async () => {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('leads')
-        .select('*')
-        .eq('workspace_id', workspaceId)
-        .order('created_at', { ascending: false })
+      let query = supabase.from('leads').select('*')
+      if (!isAdmin) query = query.eq('workspace_id', workspaceId)
+      const { data, error } = await query.order('created_at', { ascending: false })
       if (error) console.error('Reports:', error.message)
       setAllLeads(data || [])
       setLoading(false)
     }
     fetchLeads()
-  }, [user, workspaceId])
+  }, [user, workspaceId, isAdmin])
 
   const leads = range === 'All' ? allLeads : allLeads.filter(l => {
     const days = range === '7d' ? 7 : range === '30d' ? 30 : 90

@@ -187,12 +187,13 @@ function RecentLeads({ leads }) {
 }
 
 export default function Dashboard() {
-  const { user, workspaceId, displayName } = useAuth()
+  const { user, workspaceId, isAdmin, displayName } = useAuth()
   const [leads, setLeads] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!user || !workspaceId) return
+    if (!user) return
+    if (!isAdmin && !workspaceId) return
     fetchLeads()
 
     const channel = supabase
@@ -201,14 +202,12 @@ export default function Dashboard() {
       .subscribe()
 
     return () => supabase.removeChannel(channel)
-  }, [user, workspaceId])
+  }, [user, workspaceId, isAdmin])
 
   const fetchLeads = async () => {
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*')
-      .eq('workspace_id', workspaceId)
-      .order('created_at', { ascending: false })
+    let query = supabase.from('leads').select('*')
+    if (!isAdmin) query = query.eq('workspace_id', workspaceId)
+    const { data, error } = await query.order('created_at', { ascending: false })
     if (error) console.error('Dashboard:', error.message)
     setLeads(data || [])
     setLoading(false)

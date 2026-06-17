@@ -132,7 +132,7 @@ export default function Login() {
 
           <p className="text-center text-sm mt-6" style={{ color: '#3D4165' }}>
             Don't have an account?{' '}
-            <a href="#" style={{ color: '#7677F4' }}>Start free trial</a>
+            <Link href="/register" style={{ color: '#7677F4' }}>Start free trial</Link>
           </p>
         </div>
 

@@ -27,12 +27,14 @@ export function AuthProvider({ children }) {
   }, [])
 
   const fetchProfileAndWorkspace = async (userId) => {
-    const [{ data: profileData }, { data: workspaceData }] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
-      supabase.from('workspaces').select('*').eq('owner_user_id', userId).maybeSingle(),
-    ])
+    const { data: profileData } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+    let workspaceData = null
+    if (profileData?.workspace_id) {
+      const { data } = await supabase.from('workspaces').select('*').eq('id', profileData.workspace_id).maybeSingle()
+      workspaceData = data || null
+    }
     setProfile(profileData || null)
-    setWorkspace(workspaceData || null)
+    setWorkspace(workspaceData)
     setLoading(false)
   }
 
@@ -44,6 +46,50 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
     return data
+  }
+
+  // Self-serve sign up: create the auth user, create their workspace, then
+  // link profiles.workspace_id -> workspace.id. The profiles row itself is
+  // auto-created by the on_auth_user_created trigger, so we only update it.
+  const register = async ({ email, password, companyName, fullName }) => {
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password })
+    if (signUpError) throw signUpError
+
+    const newUser = signUpData.user
+    if (!newUser) throw new Error('Sign up failed: no user returned.')
+
+    // If email confirmation is required, there's no session yet and RLS
+    // (auth.uid()) won't resolve — workspace creation has to wait until
+    // after the user confirms and actually logs in.
+    if (!signUpData.session) {
+      return { needsEmailConfirmation: true }
+    }
+
+    const slug = (companyName || email.split('@')[0])
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') + '-' + newUser.id.slice(0, 6)
+
+    const { data: workspaceData, error: workspaceError } = await supabase
+      .from('workspaces')
+      .insert({
+        name: companyName || `${fullName || email}'s workspace`,
+        slug,
+        owner_email: email,
+        owner_user_id: newUser.id,
+      })
+      .select()
+      .single()
+    if (workspaceError) throw workspaceError
+
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ workspace_id: workspaceData.id, full_name: fullName || null })
+      .eq('id', newUser.id)
+    if (profileError) throw profileError
+
+    await fetchProfileAndWorkspace(newUser.id)
+    return { needsEmailConfirmation: false }
   }
 
   const logout = async () => {
@@ -61,8 +107,8 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{
       user, profile, workspace,
-      workspaceId: workspace?.id ?? null,
-      login, logout, loading,
+      workspaceId: profile?.workspace_id ?? null,
+      login, logout, register, loading,
       isAdmin, isClient,
       displayName, avatarInitials,
       refetchProfile

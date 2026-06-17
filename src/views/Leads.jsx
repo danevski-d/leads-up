@@ -192,14 +192,15 @@ function AddLeadModal({ onClose, onAdded, workspaceId, userId }) {
 }
 
 export default function Leads() {
-  const { user, workspaceId } = useAuth()
+  const { user, workspaceId, isAdmin } = useAuth()
   const [leads, setLeads] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    if (!user || !workspaceId) return
+    if (!user) return
+    if (!isAdmin && !workspaceId) return
     fetchLeads()
 
     const channel = supabase
@@ -208,14 +209,12 @@ export default function Leads() {
       .subscribe()
 
     return () => supabase.removeChannel(channel)
-  }, [user, workspaceId])
+  }, [user, workspaceId, isAdmin])
 
   const fetchLeads = async () => {
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*')
-      .eq('workspace_id', workspaceId)
-      .order('created_at', { ascending: false })
+    let query = supabase.from('leads').select('*')
+    if (!isAdmin) query = query.eq('workspace_id', workspaceId)
+    const { data, error } = await query.order('created_at', { ascending: false })
     if (error) console.error('Leads fetch:', error.message)
     setLeads(data || [])
     setLoading(false)
